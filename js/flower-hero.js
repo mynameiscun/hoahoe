@@ -5,7 +5,24 @@
   function init() {
     var root = document.getElementById('flowerHeroCarousel');
     if (!root) return;
-    // Nếu Bootstrap JS gốc đã được tải thì tránh khởi tạo hai carousel.
+    // Đồng bộ trạng thái navbar theo slide: 1 giữ nguyên, 2 nền trắng, 3 nổi trên ảnh.
+    function syncNav(index) {
+      var body = document.body;
+      body.classList.remove('hoa-hero-slide-1', 'hoa-hero-slide-2', 'hoa-hero-slide-3');
+      body.classList.add('hoa-hero-slide-' + (index + 1));
+    }
+    syncNav(Math.max(0, Array.prototype.slice.call(root.querySelectorAll('.carousel-item')).findIndex(function(el) {
+      return el.classList.contains('active');
+    })));
+    root.addEventListener('slide.bs.carousel', function (event) {
+      if (typeof event.to === 'number') syncNav(event.to);
+    });
+    root.addEventListener('slid.bs.carousel', function () {
+      syncNav(Math.max(0, Array.prototype.slice.call(root.querySelectorAll('.carousel-item')).findIndex(function(el) {
+        return el.classList.contains('active');
+      })));
+    });
+    // Bootstrap khởi tạo carousel; không được khởi tạo fallback hai lần.
     if (window.bootstrap && window.bootstrap.Carousel) return;
     var slides = Array.prototype.slice.call(root.querySelectorAll('.carousel-item'));
     var dots = Array.prototype.slice.call(root.querySelectorAll('.carousel-indicators button'));
@@ -15,6 +32,7 @@
     var timer = null;
     function select(i) {
       active = (i + slides.length) % slides.length;
+      syncNav(active);
       slides.forEach(function (el, n) {
         var yes = n === active;
         el.classList.toggle('active', yes);

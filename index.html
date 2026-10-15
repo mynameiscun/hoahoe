@@ -23,7 +23,8 @@
 <link href="css/flower-font-fallback.css" rel="stylesheet"/>
 <link href="css/flower-cart-demo.css" rel="stylesheet"/>
 <link href="css/hoa-hoe-products.css" rel="stylesheet"/>
-<link href="css/hoa-hoe-home-v2.css" rel="stylesheet"/></head>
+<link href="css/hoa-hoe-home-v2.css" rel="stylesheet"/>
+<link href="css/hoa-hoe-home-v4.css" rel="stylesheet"/></head>
 <body class="hoa-hoe-home">
 <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
@@ -285,12 +286,13 @@
 </div>
 <!-- Utilize Mobile Menu End -->
 <div class="ltn__utilize-overlay"></div>
-<!-- HOA HOÈ | HERO TOÀN MÀN HÌNH: 2 slide theo thiết kế Hoa Hoè -->
+<!-- HOA HOÈ | HERO TOÀN MÀN HÌNH: 3 slide theo hình mẫu đã duyệt -->
 <section aria-label="Lời chào Hoa Hoè" class="flower-hero flower-hero-fullscreen">
 <div aria-roledescription="carousel" class="carousel slide carousel-fade" data-bs-interval="6500" data-bs-pause="hover" data-bs-ride="carousel" id="flowerHeroCarousel">
 <div class="carousel-indicators">
 <button aria-current="true" aria-label="Slide 1: Logo Hoa Hoè" class="active" data-bs-slide-to="0" data-bs-target="#flowerHeroCarousel" type="button"></button>
 <button aria-label="Slide 2: Gửi điều bình thường" data-bs-slide-to="1" data-bs-target="#flowerHeroCarousel" type="button"></button>
+<button aria-label="Slide 3: Hình ảnh Hoa Hoè" data-bs-slide-to="2" data-bs-target="#flowerHeroCarousel" type="button"></button>
 
 </div>
 <div class="carousel-inner">
@@ -301,20 +303,27 @@
 </picture>
 </div>
 </div>
-<div aria-label="Thông điệp dành cho người thương" class="carousel-item">
-<div class="flower-hero-slide hoa-banner-letter">
-<img alt="" aria-hidden="true" class="hoa-pattern-backdrop" loading="lazy" src="img/slider/hoa-hoe-floral-pattern.png"/>
-<div class="container hoa-letter-wrap">
-<div class="hoa-letter-panel">
-<span class="hoa-letter-eyebrow">một chút hoa, một chút thương</span>
-<h1 class="hoa-piquant-title">Gửi điều bình thường<br/><em>tới người mình thương</em></h1>
-<span aria-hidden="true" class="hoa-letter-underline"></span>
-<a class="hoa-letter-cta" href="shop.html">Chọn một bó hoa xinh<span aria-hidden="true">↗</span></a>
+<div aria-label="Hoa sáp và quà tặng — gửi điều bình thường tới người mình thương" class="carousel-item" data-hoa-slide="2">
+  <div class="flower-hero-slide hoa-banner-editorial">
+    <img alt="" aria-hidden="true" class="hoa-pattern-backdrop" loading="lazy" src="img/slider/hoa-hoe-floral-pattern.png"/>
+    <div class="hoa-editorial-content">
+      <p class="hoa-editorial-kicker">hoa sáp &amp; quà tặng</p>
+      <h1 class="hoa-editorial-title">
+        <span class="hoa-editorial-coral">GỬI ĐIỀU BÌNH THƯỜNG</span>
+        <span class="hoa-editorial-green">TỚI NGƯỜI MÌNH THƯƠNG</span>
+      </h1>
+      <p class="hoa-editorial-desc">Chọn hoa và hẹn lịch giao trong khu vực cửa hàng</p>
+      <a class="hoa-editorial-cta" href="shop.html">KHÁM PHÁ SẢN PHẨM</a>
+    </div>
+  </div>
 </div>
+<div aria-label="Hình ảnh Hoa Hoè — bộ sưu tập áo thương hiệu" class="carousel-item" data-hoa-slide="3">
+  <div class="flower-hero-slide hoa-banner-photo">
+    <picture class="hoa-photo-cover">
+      <img alt="Hai người mẫu mặc áo Hoa Hoè, in thông điệp gửi điều bình thường tới người mình thương" loading="eager" decoding="async" src="img/slider/hoa-hoe-lifestyle.jpg"/>
+    </picture>
+  </div>
 </div>
-</div>
-</div>
-
 </div>
 <button aria-label="Slide trước" class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#flowerHeroCarousel" type="button">
 <span aria-hidden="true" class="carousel-control-prev-icon"></span>

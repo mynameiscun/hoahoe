@@ -1,0 +1,176 @@
+/* Hoa Hoè Homepage V4 — slide 1 giữ nguyên, 2/3 dựng từ ảnh gốc người dùng cung cấp.
+   Font tham chiếu Google Fonts có dự phòng cục bộ; không sử dụng phông thương mại không được cấp phép. */
+@import url('https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap');
+
+/* Wordmark mới, PNG trong suốt: logo rộng thay thế logo bó hoa dạng đứng. */
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img {
+  width: auto; max-width: 172px; max-height: 58px; height: auto; object-fit: contain;
+}
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+  max-width: 155px; max-height: 53px;
+}
+
+/* Navbar theo từng ảnh nhưng vẫn ở trên slide. Giữ nguyên slide 1 của V3. */
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active){
+  transition:background-color .38s ease, box-shadow .38s ease, color .3s ease;
+}
+.hoa-hoe-home.hoa-hero-slide-2 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav {
+  background:linear-gradient(to bottom,rgba(13,24,17,.35),rgba(13,24,17,0)) !important;
+}
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+  background-color: transparent !important;
+}
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .ltn__main-menu>ul>li>a,
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2>a,
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2>a .mini-cart-icon i,
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2>a h6,
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2>a h6 span {
+  color:#fff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.68);
+}
+.hoa-hoe-home.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mobile-menu-toggle svg path {
+  stroke:#fff;
+}
+/* Quay về chữ đậm trên nền sáng khi navbar sticky, cả ở slide ảnh. */
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .ltn__main-menu>ul>li>a,
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .mini-cart-icon-2>a,
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .mini-cart-icon-2>a .mini-cart-icon i,
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .mini-cart-icon-2>a h6,
+.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .mini-cart-icon-2>a h6 span {
+  color: #43543d !important;
+  text-shadow: none;
+}
+
+/* SLIDE 2: hoa sáp & quà tặng. Không nhúng chữ đã bị raster hóa trong ảnh ví dụ. */
+.flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial {
+  display: flex; align-items: stretch; background:#fff; --hoa-v4-header-height:123px;
+}
+.flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop {
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+}
+.hoa-editorial-content {
+  position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start;
+  justify-content:center; width:100%; max-width:1440px; margin:0 auto;
+  padding:calc(var(--hoa-v4-header-height) + 30px) clamp(38px,6.65vw,105px) 55px;
+  text-align:left;
+}
+.hoa-editorial-kicker {
+  margin:0 0 9px; color:#576632; font-size:clamp(1.3rem,3.1vw,2.7rem);
+  font-family:'Mali','Comic Neue',monospace; font-weight:500; line-height:1.3;
+}
+.hoa-editorial-title {
+  color:#f18a78; margin:0; max-width:100%;
+  font-family:'Oswald','Impact','Arial Narrow','DejaVu Sans Condensed',sans-serif;
+  font-weight:700; font-stretch:condensed;
+  font-size:clamp(3.2rem,6.25vw,6.9rem); line-height:1.2; letter-spacing:-.018em;
+  text-transform:uppercase;
+}
+.hoa-editorial-title span {display:block; white-space:nowrap;}
+.hoa-editorial-title .hoa-editorial-coral {color:#f08d7b;}
+.hoa-editorial-title .hoa-editorial-green {color:#52631b;}
+.hoa-editorial-desc {
+  font-family:'Mali','Lobster Two','Comic Neue',cursive;
+  color:#657437; font-size:clamp(1.28rem,2.8vw,2.85rem);
+  font-weight:500; line-height:1.45; margin:18px 0 29px; max-width:100%;
+}
+.hoa-editorial-cta {
+  display:inline-flex; justify-content:center; align-items:center; text-decoration:none!important;
+  background:#98a16c; color:#f9dbd1!important; min-width:clamp(245px,25.7vw,350px);
+  border-radius:40px; padding:13px 26px;
+  font-family:'Oswald','Impact','Arial Narrow',sans-serif;
+  font-size:clamp(1.1rem,2.15vw,1.95rem); font-weight:400;
+  letter-spacing:.012em; box-shadow:none; transition:background-color .2s ease,transform .2s ease;
+}
+.hoa-editorial-cta:hover,.hoa-editorial-cta:focus-visible {
+  background:#52631b; color:#fff!important; transform:translateY(-2px);
+}
+.hoa-editorial-cta:focus-visible{outline:3px solid #e96e5e;outline-offset:4px}
+
+/* SLIDE 3: ảnh chụp người mặc áo Hoa Hoè; navbar phủ trực tiếp trên ảnh. */
+.flower-hero-fullscreen .flower-hero-slide.hoa-banner-photo {background:#c7c6bb}
+.flower-hero-fullscreen .hoa-photo-cover,
+.flower-hero-fullscreen .hoa-photo-cover img {display:block;width:100%;height:100%}
+.flower-hero-fullscreen .hoa-photo-cover img {
+  object-fit:cover; object-position:center 35%;
+}
+/* Mũi tên điều hướng nhẹ, trên ảnh tối hay sáng đều nhìn được. */
+.flower-hero-fullscreen .carousel-control-prev-icon,
+.flower-hero-fullscreen .carousel-control-next-icon {background-color:rgba(57,69,49,.42)}
+
+@media(min-width:1500px) {
+  .hoa-editorial-content {max-width:1530px}
+  .hoa-editorial-title {font-size:clamp(5rem,5.5vw,7rem)}
+}
+@media(max-width:1199px) {
+  .hoa-editorial-title {font-size:clamp(2.8rem,5.9vw,5.9rem)}
+  .hoa-editorial-desc {font-size:clamp(1.25rem,2.45vw,2.15rem)}
+}
+@media(max-width:991px) {
+  .hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img {max-width:136px;max-height:45px}
+  .hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {max-width:125px;max-height:41px}
+  .flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial {--hoa-v4-header-height:86px}
+  .hoa-editorial-title {font-size:clamp(2.6rem,6.25vw,5.3rem)}
+  .hoa-editorial-content {padding-left:6vw;padding-right:5vw}
+}
+@media(max-width:767px) {
+  .flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial {--hoa-v4-header-height:75px}
+  .hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img {max-width:122px;max-height:39px}
+  .hoa-editorial-content {padding:calc(var(--hoa-v4-header-height) + 20px) 31px 50px}
+  .hoa-editorial-kicker {font-size:clamp(1.05rem,4.5vw,1.5rem);margin-bottom:14px}
+  .hoa-editorial-title {font-size:clamp(2.25rem,7.1vw,4.25rem);line-height:1.24;letter-spacing:-.025em}
+  .hoa-editorial-title span {white-space:normal}
+  .hoa-editorial-desc {font-size:clamp(1.05rem,4.4vw,1.65rem);margin:20px 0 25px}
+  .hoa-editorial-cta {font-size:1.2rem;min-width:210px;padding:11px 19px}
+  .flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop {object-position:center}
+  .flower-hero-fullscreen .hoa-photo-cover img {object-position:58% 34%}
+}
+@media(max-width:420px) {
+  .hoa-editorial-content {padding-left:22px;padding-right:22px}
+  .hoa-editorial-title {font-size:clamp(2.1rem,7.7vw,2.65rem)}
+  .flower-hero-fullscreen .hoa-photo-cover img {object-position:56% 32%}
+}
+@media(prefers-reduced-motion:reduce) {
+  .hoa-editorial-cta,.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {transition:none!important}
+}
+
+/* Fiama đặt màu trắng cho <p> trong hero bằng selector rộng hơn; ghi đè rõ ràng. */
+.flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {color:#576632!important}
+.flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {color:#657437!important}
+.flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+  font-size:clamp(1.3rem,3.1vw,2.7rem)!important;
+  font-family:'Mali','Comic Neue',monospace!important;
+  font-weight:500!important; line-height:1.3!important; margin:0 0 9px!important;
+}
+.flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+  font-size:clamp(1.28rem,2.8vw,2.85rem)!important;
+  font-family:'Mali','Lobster Two','Comic Neue',cursive!important;
+  font-weight:500!important; line-height:1.45!important; margin:18px 0 29px!important;
+}
+@media(max-width:1199px) {
+  .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {font-size:clamp(1.25rem,2.45vw,2.15rem)!important}
+}
+@media(max-width:767px) {
+  .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {font-size:clamp(1.05rem,4.5vw,1.5rem)!important;margin-bottom:14px!important}
+  .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {font-size:clamp(1.05rem,4.4vw,1.65rem)!important;margin:20px 0 25px!important}
+}
+@media(min-width:768px) {
+  /* Fiama giới hạn đoạn mô tả hero ở 650px; bản mẫu cần một hàng rộng. */
+  .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+    max-width:none!important; width:max-content; white-space:nowrap;
+  }
+}
+@media(max-width:767px) {
+  .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+    max-width:100%!important; width:auto; white-space:normal;
+  }
+}
