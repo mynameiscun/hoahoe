@@ -1,0 +1,509 @@
+/* Hoa Hoè — Motion V2
+   Chỉ làm mượt giao diện. Không tác động dữ liệu giỏ hàng, giá, checkout.
+   Được nạp SAU toàn bộ stylesheet Fiama/Home V4. */
+:root {
+  --hoa-motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --hoa-motion-coral: #d96c61;
+  --hoa-motion-olive: #52631b;
+}
+
+/* NAV: cha giữ vị trí liên tục, không còn nhảy từ static sang fixed
+   khi main.js thêm sticky-active ở mốc 445px. */
+body.hoa-motion-ready:not(.hoa-hoe-home) .ltn__header-area {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  transition: transform .52s var(--hoa-motion-ease);
+}
+body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 999;
+  transition: transform .52s var(--hoa-motion-ease);
+}
+body.hoa-motion-ready .ltn__header-sticky.sticky-active {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  animation: none !important;
+  -webkit-animation: none !important;
+}
+body.hoa-motion-ready .ltn__header-area.hoa-nav-hidden {
+  transform: translate3d(0, -110%, 0);
+  pointer-events: none;
+}
+body.hoa-motion-ready .ltn__header-middle-area.ltn__header-sticky {
+  transition: background-color .48s ease, box-shadow .48s ease,
+              border-color .48s ease, backdrop-filter .48s ease,
+              -webkit-backdrop-filter .48s ease;
+}
+/* Không làm header co giật ở mốc đổi sang sticky. */
+body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area,
+body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+  max-width: 172px;
+  max-height: 58px;
+}
+/* Trang 2 vẫn trong suốt như chỉnh sửa gần nhất của người dùng. */
+body.hoa-motion-ready.hoa-hoe-home.hoa-hero-slide-2 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body.hoa-motion-ready.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop {
+  top: 0;
+  bottom: 0;
+  height: 100%;
+}
+@media (max-width: 991px) {
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area,
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    max-width: 136px;
+    max-height: 45px;
+  }
+}
+@media (max-width: 767px) {
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+  body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    max-width: 122px;
+    max-height: 39px;
+  }
+}
+
+/* Điều hướng: chuyển màu + nét gạch nhỏ dưới mục, không đổi layout. */
+body.hoa-motion-ready .ltn__main-menu > ul > li > a {
+  position: relative;
+  transition: color .3s ease, text-shadow .3s ease !important;
+}
+body.hoa-motion-ready .ltn__main-menu > ul > li > a::after {
+  content: '';
+  position: absolute;
+  bottom: 13px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: currentColor;
+  opacity: .72;
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform .34s var(--hoa-motion-ease);
+  pointer-events: none;
+}
+body.hoa-motion-ready .ltn__main-menu > ul > li:hover > a::after,
+body.hoa-motion-ready .ltn__main-menu > ul > li > a:focus-visible::after { transform: scaleX(1); }
+body.hoa-motion-ready .ltn__main-menu > ul > li > a:hover,
+body.hoa-motion-ready .ltn__main-menu > ul > li > a:focus-visible { color: var(--hoa-motion-coral) !important; }
+body.hoa-motion-ready.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .ltn__main-menu > ul > li > a:hover,
+body.hoa-motion-ready.hoa-hero-slide-3 .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .ltn__main-menu > ul > li > a:focus-visible {
+  color: #ffd6c9 !important;
+}
+body.hoa-motion-ready .ltn__header-area .sub-menu a,
+body.hoa-motion-ready .ltn__utilize-menu a {
+  transition: color .26s ease, background-color .26s ease;
+}
+body.hoa-motion-ready .ltn__header-area .sub-menu a:hover,
+body.hoa-motion-ready .ltn__header-area .sub-menu a:focus-visible,
+body.hoa-motion-ready .ltn__utilize-menu a:hover,
+body.hoa-motion-ready .ltn__utilize-menu a:focus-visible { color: var(--hoa-motion-coral) !important; }
+
+/* HERO: Mờ dần khi kéo xuống, khôi phục ngay khi cuộn lên.
+   Không dùng filter/blur (nặng trên ảnh lớn), chỉ chuyển opacity. */
+body.hoa-motion-ready.hoa-hoe-home .flower-hero-fullscreen #flowerHeroCarousel {
+  opacity: var(--hoa-hero-scroll-opacity, 1);
+}
+
+/* Crossfade thực sự cho Bootstrap Carousel: ảnh tiếp theo phủ lên ảnh cũ.
+   Bootstrap mặc định giữ slide cũ chỉ 0.6s; phải đồng bộ với thời gian mới
+   để tránh cả hai mờ cùng lúc làm lộ nền trắng ở giữa. */
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item {
+  transition: opacity .82s cubic-bezier(.25, .65, .25, 1) !important;
+  backface-visibility: hidden;
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item.active.carousel-item-start,
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item.active.carousel-item-end {
+  opacity: 1 !important;
+  /* Giữ duration để Bootstrap chờ fade kết thúc trước khi đổi active. */
+  transition: opacity .82s linear !important;
+  z-index: 0;
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item-next.carousel-item-start,
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item-prev.carousel-item-end {
+  z-index: 2;
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-indicators button {
+  transition: opacity .32s ease, transform .32s ease, background-color .32s ease;
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-control-prev-icon,
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-control-next-icon {
+  transition: transform .32s var(--hoa-motion-ease), background-color .32s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  body.hoa-motion-ready .flower-hero-fullscreen .carousel-control-prev:hover .carousel-control-prev-icon,
+  body.hoa-motion-ready .flower-hero-fullscreen .carousel-control-next:hover .carousel-control-next-icon {
+    transform: scale(1.12);
+    background-color: rgba(57, 69, 49, .75);
+  }
+}
+/* Chỉ anim chữ slide 2. Hình slide 1/3 không bị kéo, zoom gây vỡ nét. */
+@keyframes hoa-hero-copy-in {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-item.active .hoa-editorial-content > * {
+  animation: hoa-hero-copy-in .55s var(--hoa-motion-ease) both;
+}
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-item.active .hoa-editorial-content > :nth-child(2) { animation-delay: .06s; }
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-item.active .hoa-editorial-content > :nth-child(3) { animation-delay: .12s; }
+body.hoa-motion-ready .flower-hero-fullscreen .carousel-item.active .hoa-editorial-content > :nth-child(4) { animation-delay: .18s; }
+
+/* Sản phẩm: zoom hình riêng, card bay lên một chút khi hover. */
+body.hoa-motion-ready .ltn__product-item .product-img { overflow: hidden; }
+body.hoa-motion-ready .ltn__product-item .product-img img {
+  transform: scale(1);
+  transition: transform .7s var(--hoa-motion-ease) !important;
+  backface-visibility: hidden;
+}
+@media (hover: hover) and (pointer: fine) {
+  body.hoa-motion-ready .ltn__product-item:hover .product-img img,
+  body.hoa-motion-ready .ltn__product-item:focus-within .product-img img { transform: scale(1.065); }
+  body.hoa-motion-ready .ltn__product-item.hoa-reveal.is-visible:hover {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+body.hoa-motion-ready .ltn__product-item .product-title a,
+body.hoa-motion-ready .ltn__product-item .product-hover-action a,
+body.hoa-motion-ready .ltn__product-item .product-price {
+  transition: color .28s ease, background-color .28s ease, box-shadow .28s ease;
+}
+body.hoa-motion-ready .ltn__product-item .product-title a:hover,
+body.hoa-motion-ready .ltn__product-item .product-title a:focus-visible { color: var(--hoa-motion-coral) !important; }
+
+/* Reveal khi cuộn: chỉ ẩn nội dung sau khi JS đã gắn .hoa-reveal. */
+body.hoa-motion-ready .hoa-reveal {
+  opacity: 0;
+  transform: translate3d(0, 25px, 0);
+  transition: opacity .8s var(--hoa-motion-ease),
+              transform .8s var(--hoa-motion-ease);
+  transition-delay: var(--hoa-reveal-delay, 0ms);
+}
+body.hoa-motion-ready .hoa-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+/* CTA, thẻ và liên kết: nâng rất nhẹ, không phá các hiệu ứng gốc. */
+body.hoa-motion-ready .hoa-editorial-cta,
+body.hoa-motion-ready .flower-main-button,
+body.hoa-motion-ready .flower-more-section a,
+body.hoa-motion-ready .flower-social:not(:disabled) {
+  transition: transform .33s var(--hoa-motion-ease),
+              background-color .33s ease, color .33s ease,
+              box-shadow .33s ease !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body.hoa-motion-ready .hoa-editorial-cta:hover,
+  body.hoa-motion-ready .flower-main-button:hover,
+  body.hoa-motion-ready .flower-more-section a:hover,
+  body.hoa-motion-ready .flower-social:not(:disabled):hover {
+    transform: translate3d(0, -3px, 0);
+    box-shadow: 0 12px 27px rgba(59, 76, 44, .14);
+  }
+}
+body.hoa-motion-ready a:focus-visible,
+body.hoa-motion-ready button:focus-visible {
+  outline: 2px solid #d96c61;
+  outline-offset: 3px;
+}
+
+/* Tôn trọng người dùng không muốn chuyển động, tránh tự động lướt carousel. */
+@media (prefers-reduced-motion: reduce) {
+  body.hoa-motion-ready .hoa-reveal,
+  body.hoa-motion-ready .hoa-reveal.is-visible,
+  body.hoa-motion-ready .ltn__product-item .product-img img,
+  body.hoa-motion-ready .ltn__header-area,
+  body.hoa-motion-ready .ltn__header-middle-area,
+  body.hoa-motion-ready .flower-hero-fullscreen .carousel-item,
+  body.hoa-motion-ready.hoa-hoe-home .flower-hero-fullscreen #flowerHeroCarousel,
+  body.hoa-motion-ready .flower-hero-fullscreen .carousel-item.active .hoa-editorial-content > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  body.hoa-motion-ready .ltn__header-area.hoa-nav-hidden { transform: none !important; }
+  body.hoa-motion-ready .ltn__main-menu > ul > li > a::after { transition: none; }
+}
+
+/* Không thay fade khi người dùng đã yêu cầu giảm chuyển động. */
+@media (prefers-reduced-motion: reduce) {
+  body.hoa-motion-ready.hoa-hoe-home .flower-hero-fullscreen #flowerHeroCarousel {
+    opacity: 1 !important;
+  }
+  body.hoa-motion-ready .flower-hero-fullscreen .carousel-fade .carousel-item {
+    transition: none !important;
+  }
+}
+
+
+/* ==============================================================
+   Hoa Hoè Typography — file font do chủ cửa hàng cung cấp.
+   Computer Says No: Christian Munk, CC BY-SA 3.0.
+   Chi tiết và điều kiện tái phân phối: ../fonts/computer-says-no/license.txt
+   ============================================================= */
+@font-face {
+  font-family: 'Hoa Computer Says No';
+  src: url('../fonts/computer-says-no/computer-says-no.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Hoa Danh Da';
+  src: url('../fonts/hoa-hoe/DanhDa-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Hoa Piquant';
+  src: url('../fonts/hoa-hoe/Piquant-1.woff2') format('woff2'),
+       url('../fonts/hoa-hoe/Piquant-1.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Áp dụng Computer Says No cho menu desktop, dropdown và mobile
+   trên toàn bộ trang; không áp lên giỏ hàng để tránh lệch icon. */
+body .ltn__header-area .ltn__main-menu > ul > li > a,
+body .ltn__header-area .ltn__main-menu .sub-menu a,
+body .ltn__utilize-mobile-menu .ltn__utilize-menu li > a {
+  font-family: 'Hoa Computer Says No', 'Arial', sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .015em;
+}
+/* Font có chiều cao chữ nhỏ hơn font mặc định của Fiama. */
+@media (min-width: 1200px) {
+  body .ltn__header-area .ltn__main-menu > ul > li > a {
+    font-size: clamp(24px, 1.8vw, 28px) !important;
+  }
+  body .ltn__header-area .ltn__main-menu .sub-menu a {
+    font-size: 20px !important;
+  }
+}
+body .ltn__utilize-mobile-menu .ltn__utilize-menu li > a {
+  font-size: 24px !important;
+}
+
+/* Typography slide 2: ba font đúng như yêu cầu.
+   Dùng selector đủ cụ thể để vượt quy tắc p/h1 của Fiama. */
+body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+  font-family: 'Hoa Computer Says No', 'Arial', sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .02em !important;
+}
+body .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-title,
+body .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-title span {
+  font-family: 'Hoa Danh Da', 'Impact', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -.012em !important;
+}
+body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+  font-family: 'Hoa Piquant', 'Georgia', cursive !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+
+/* Phông Danh Da có chiều cao nét chữ nhỏ hơn Oswald: cân lại theo ảnh mẫu.
+   Các dòng chữ hiển thị bằng HTML, rõ nét và có thể thay đổi về sau. */
+body .flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial h1.hoa-editorial-title {
+  font-size: clamp(78px, 8.5vw, 142px) !important;
+  line-height: 1.13 !important;
+  max-width: none !important;
+}
+body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+  font-size: clamp(23px, 3.35vw, 52px) !important;
+}
+@media (max-width: 1199px) {
+  body .flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial h1.hoa-editorial-title {
+    font-size: clamp(66px, 8.3vw, 110px) !important;
+  }
+  body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+    font-size: clamp(21px, 3vw, 39px) !important;
+  }
+}
+@media (max-width: 767px) {
+  body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+    font-size: clamp(24px, 5.7vw, 30px) !important;
+  }
+  body .flower-hero-fullscreen .flower-hero-slide.hoa-banner-editorial h1.hoa-editorial-title {
+    font-size: clamp(42px, 11.3vw, 65px) !important;
+    line-height: 1.17 !important;
+    max-width: 100% !important;
+  }
+  body .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+    font-size: clamp(16px, 4.4vw, 23px) !important;
+  }
+}
+
+
+/* ================================================================
+   Hoa Hoè — Navbar typography and geometry (reference 1651px image)
+   Desktop: logo / 6 evenly-spaced entries / shopping cart.
+   Does not change mobile off-canvas menu, hero images or order data.
+   ================================================================ */
+body .ltn__header-area .ltn__main-menu > ul > li > a,
+body .ltn__header-area .ltn__main-menu li ul li > a,
+body .ltn__utilize-menu li > a {
+  font-family: 'Hoa Computer Says No', sans-serif !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: .018em !important;
+}
+
+/* Cart uses same display font as the nav; retain icon font separately. */
+body .ltn__header-area .mini-cart-icon-2 > a h6,
+body .ltn__header-area .mini-cart-icon-2 > a h6 span {
+  font-family: 'Hoa Computer Says No', sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .01em;
+  text-transform: none !important;
+}
+
+@media (min-width: 1200px) {
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+    padding-top: clamp(34px, 3.05vw, 50px) !important;
+    padding-bottom: 15px !important;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area > .container > .row {
+    display: grid !important;
+    grid-template-columns: clamp(205px, 17vw, 280px) minmax(0, 1fr) clamp(145px, 11.5vw, 180px);
+    align-items: center;
+    column-gap: clamp(12px, 1.65vw, 26px);
+    min-height: 89px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area > .container > .row > .col {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0;
+    flex: none !important;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .site-logo { min-width: 0; margin: 0; }
+  body.hoa-hoe-home .hoa-hoe-nav .site-logo img,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    width: auto;
+    max-width: min(100%, 187px) !important;
+    max-height: 64px !important;
+    height: auto;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .header-menu,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu { width: 100%; }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(7px, 1.2vw, 20px);
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li {
+    flex: 0 0 auto;
+    margin-right: 0 !important;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > a {
+    font-size: clamp(32px, 2.42vw, 41px) !important;
+    line-height: 1.22 !important;
+    padding: 12px 0 !important;
+    white-space: nowrap;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-options > ul {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-options > ul > li { margin: 0 !important; }
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a .mini-cart-icon { margin-right: 0; }
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a .mini-cart-icon i { font-size: 26px; }
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a h6 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    line-height: 1.15;
+    font-size: clamp(30px, 2.15vw, 36px) !important;
+    white-space: nowrap;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a h6 span {
+    font-size: inherit !important;
+    line-height: inherit;
+  }
+}
+
+@media (min-width: 1500px) {
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area > .container {
+    max-width: 1510px;
+  }
+}
+
+/* White banners: dark menu/cart text. Photo slide 3 keeps white labels. */
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .ltn__main-menu > ul > li > a,
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2 > a,
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2 > a i,
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2 > a h6,
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mini-cart-icon-2 > a h6 span {
+  color: #151515 !important;
+  text-shadow: none !important;
+}
+body.hoa-hoe-home:is(.hoa-hero-slide-1, .hoa-hero-slide-2)
+  .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) .mobile-menu-toggle svg path {
+  stroke: #151515 !important;
+}
+
+@media (max-width: 1199px) {
+  body .ltn__utilize-menu li > a { font-size: 32px !important; }
+}
+
+/* Correct the typography selectors even when the banner font declarations
+   from home-v4.css have stronger specificity. */
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+  font-family: 'Hoa Computer Says No', sans-serif !important;
+}
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title,
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title span {
+  font-family: 'Hoa Danh Da', sans-serif !important;
+}
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+  font-family: 'Hoa Piquant', cursive !important;
+}
