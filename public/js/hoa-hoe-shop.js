@@ -44,14 +44,15 @@
         return (originalOrder.get(aId) || 0) - (originalOrder.get(bId) || 0);
       });
 
-      cards.forEach(function (card) {
+      cards.forEach(function (card, index) {
+        // Chỉ di chuyển khi thứ tự thật sự đổi. Mỗi lần gõ tìm kiếm không
+        // tạo hàng loạt mutation kích hoạt hiệu ứng reveal gây giật.
+        if (container.children[index] !== card) container.insertBefore(card, container.children[index] || null);
         var id = card.getAttribute('data-flower-sort-id');
         var product = products[id];
         var matches = Boolean(product && String(product.name).toLocaleLowerCase('vi').includes(needle));
         card.style.display = matches ? '' : 'none';
         if (viewIndex === 0 && matches) visibleCount++;
-        // Chỉ di chuyển khi cần: hạn chế DOM thay đổi và tránh nháy màn hình.
-        container.appendChild(card);
       });
     });
 
@@ -85,7 +86,13 @@
     });
   }
 
-  if (search) search.addEventListener('input', update);
+  // Gom sự kiện tìm kiếm vào tối đa một lần cập nhật mỗi frame.
+  var pending = 0;
+  function scheduleUpdate() {
+    if (pending) return;
+    pending = requestAnimationFrame(function () { pending = 0; update(); });
+  }
+  if (search) search.addEventListener('input', scheduleUpdate);
   if (form) form.addEventListener('submit', function (event) {
     event.preventDefault();
     update();

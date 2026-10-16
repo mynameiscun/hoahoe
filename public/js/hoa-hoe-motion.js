@@ -34,14 +34,13 @@
       heroCarousel.style.setProperty('--hoa-hero-scroll-opacity', (1 - eased * .92).toFixed(3));
     }
 
-    // Chỉ điều khiển navbar trên trang chủ.
-    // Trang Shop và các trang khác dùng sticky header gốc của Fiama;
-    // tránh hai cơ chế cùng thay đổi vị trí header khi cuộn lên/xuống.
+    // Navbar luôn ở một hệ tọa độ (sticky với trang thường; fixed với home).
+    // Chỉ hide khi kéo xuống một quãng, hiện lại khi kéo lên; tránh rung ở mỗi pixel.
     function updateNav() {
       frame = 0;
       var y = Math.max(0, window.scrollY || 0);
       updateHeroFade(y);
-      if (!isHome || !header) return;
+      if (!header) return;
       var delta = y - lastY;
       lastY = y;
       if (Math.abs(delta) < 1) return;
@@ -49,7 +48,7 @@
       if (dir !== lastDirection) directionTotal = 0;
       lastDirection = dir;
       directionTotal += Math.abs(delta);
-      var threshold = Math.max(window.innerHeight * .85, 460);
+      var threshold = isHome ? Math.max(window.innerHeight * .85, 460) : 300;
       var menuOpen = body.classList.contains('ltn__utilize-open');
       var hasKeyboardFocus = header.contains(document.activeElement);
       var keepVisible = y < threshold || menuOpen || hasKeyboardFocus || reduceMotion.matches;
@@ -64,17 +63,24 @@
     function scheduleNav() {
       if (!frame) frame = requestAnimationFrame(updateNav);
     }
-    if (isHome && (header || heroCarousel)) {
+    if (header || heroCarousel) {
       window.addEventListener('scroll', scheduleNav, { passive: true });
       window.addEventListener('resize', scheduleNav, { passive: true });
       window.addEventListener('pageshow', scheduleNav);
     }
-    if (isHome && header) {
+    if (header) {
       header.addEventListener('focusin', function () { header.classList.remove('hoa-nav-hidden'); });
       header.addEventListener('mouseenter', function () { header.classList.remove('hoa-nav-hidden'); });
     }
 
     // Dựng bộ quan sát một lần; các thẻ phát sinh do lọc/sắp xếp vẫn được xử lý.
+    // Trang Shop/Giỏ/Checkout ưu tiên tốc độ và thao tác mua hàng:
+    // không cần IntersectionObserver/MutationObserver áp lên từng sản phẩm.
+    if (!isHome) {
+      body.classList.add('hoa-motion-ready');
+      scheduleNav();
+      return;
+    }
     var observer = null;
     if (!reduceMotion.matches && 'IntersectionObserver' in window) {
       observer = new IntersectionObserver(function (entries) {
@@ -150,14 +156,14 @@
     }
     if (reduceMotion.addEventListener) {
       reduceMotion.addEventListener('change', function () {
-        if (isHome) scheduleNav();
+        scheduleNav();
         if (reduceMotion.matches) {
           if (header) header.classList.remove('hoa-nav-hidden');
           document.querySelectorAll('.hoa-reveal').forEach(function (el) { el.classList.add('is-visible'); });
         }
       });
     }
-    if (isHome) scheduleNav();
+    scheduleNav();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

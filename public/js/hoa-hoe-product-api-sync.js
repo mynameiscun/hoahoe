@@ -16,7 +16,10 @@
     return;
   }
 
+  var controller = new AbortController();
+  var timeout = setTimeout(function () { controller.abort(); }, 22000);
   window.HOA_HOE_CATALOG_READY = fetch('/api/products/', {
+    signal: controller.signal,
     credentials: 'same-origin',
     cache: 'no-store',
     headers: { Accept: 'application/json' }
@@ -24,7 +27,7 @@
     if (!response.ok) throw new Error('HTTP ' + response.status);
     return response.json();
   }).then(function (data) {
-    if (!data || !Array.isArray(data.products)) throw new Error('Dữ liệu API không hợp lệ');
+    if (!data || data.ok === false || !Array.isArray(data.products)) throw new Error(data && data.error || 'Dữ liệu API không hợp lệ');
 
     var next = {};
     data.products.forEach(function (item) {
@@ -60,9 +63,8 @@
   }).catch(function (error) {
     console.error('Hoa Hoè: Không thể lấy giá sản phẩm từ API:', error);
     window.HOA_HOE_CATALOG_SYNC_STATE = 'error';
-    // Không dùng giá demo để bán khi API lỗi.
-    Object.keys(catalog).forEach(function (id) { delete catalog[id]; });
+    // Không xóa snapshot giỏ hoặc catalog giao diện khi API lỗi. Chức năng mua vẫn khóa.
     document.dispatchEvent(new CustomEvent('hoa-hoe:catalog-error'));
     return 'error';
-  });
+  }).finally(function () { clearTimeout(timeout); });
 }());

@@ -36,7 +36,7 @@ async function verifyTurnstile(request, secret, token) {
   } catch (_) { return false; }
   finally { clearTimeout(timeout); }
 }
-export async function onRequest({ request, env }) {
+export async function onRequest({ request, env, ctx }) {
   const url = new URL(request.url);
   const route = url.pathname.replace(/^\/api\//, '').replace(/\/+$/, '');
   const entry = ROUTES[route];
@@ -52,6 +52,18 @@ export async function onRequest({ request, env }) {
   if (!/^https:\/\/script\.google\.com\/macros\/s\/[-\w]+\/exec$/.test(env.GAS_URL))
     return fail('Cấu hình Apps Script URL không hợp lệ.', 503);
   if (!enabled && route !== 'products') return fail('Chưa bật nhận đơn và tra cứu trên website.', 503);
+  // Chỉ cache GET sản phẩm (dữ liệu công khai) tại Cloudflare trong 30 giây.
+  // Preview/submit/lookup KHÔNG cache và luôn kiểm tra giá trực tiếp với Sheet.
+  let catalogCache = null;
+  let catalogKey = null;
+  if (route === 'products' && typeof caches !== 'undefined' && caches.default) {
+    try {
+      catalogCache = caches.default;
+      catalogKey = new Request(url.origin + '/api/products/', { method:'GET' });
+      const hit = await catalogCache.match(catalogKey);
+      if (hit) return send(await hit.json());
+    } catch (_) { catalogCache = null; }
+  }
 
   let payload = {};
   if (entry[0] === 'POST') {
@@ -88,6 +100,12 @@ export async function onRequest({ request, env }) {
     if (!output || typeof output !== 'object' || typeof output.ok !== 'boolean')
       return fail('Phản hồi từ Sheets không hợp lệ.', 502);
     const status = !output.ok ? (output.error_code === 'not_found' ? 404 : 400) : 200;
+    if (route === 'products' && output.ok && catalogCache && catalogKey && ctx && ctx.waitUntil) {
+      const cacheResponse = new Response(JSON.stringify(output), {
+        headers: {'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30'}
+      });
+      ctx.waitUntil(catalogCache.put(catalogKey, cacheResponse).catch(() => {}));
+    }
     return send(output, status);
   } catch (_) { return fail('Không liên lạc được Google Sheets. Nếu đã gửi đơn, hãy tra cứu trước khi gửi lại.', 502); }
   finally { clearTimeout(timeout); }

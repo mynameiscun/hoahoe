@@ -471,14 +471,15 @@
       try {
         await Promise.resolve(window.HOA_HOE_CATALOG_READY);
         if (window.HOA_HOE_CATALOG_SYNC_STATE !== 'live') throw new Error('Chưa xác minh được giá sản phẩm từ dữ liệu cửa hàng.');
+        // Hiển thị giỏ ngay khi giá đã xác minh, ngay cả khi API nhận đơn còn khóa.
+        items = readItems();
+        renderItems();
         const r = await fetch('/api/orders/health/', {credentials:'same-origin', cache:'no-store'});
         if (!r.ok) throw new Error('API đơn hàng không hoạt động (HTTP '+r.status+').');
         const health = await r.json();
         if (!health.ok || !health.orders_enabled ||
           (sheetsWebsite ? health.public_orders_enabled !== true : health.public_orders_enabled !== false))
           throw new Error('API chưa cho phép nhận yêu cầu ở chế độ hiện tại.');
-        items = readItems();
-        renderItems();
         active = Boolean(items.length);
         banner.textContent = sheetsWebsite
           ? 'GỬI YÊU CẦU ĐẶT HOA — Shop xác nhận thủ công trước khi thanh toán/giao hàng. Dữ liệu được lưu trong Google Sheets riêng tư.'
@@ -508,10 +509,31 @@
           ? (sheetsWebsite ? 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Chưa thanh toán trước khi shop xác nhận.' : 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Dùng dữ liệu thử nghiệm, không dùng thông tin khách thật.')
           : 'Giỏ hàng trống. Vui lòng quay về trang Shop chọn hoa.', !items.length);
       } catch (error) {
-        banner.textContent = 'Tạm khóa yêu cầu: Chưa xác minh được API dữ liệu cửa hàng.';
-        message(error.message, true);
-        rows.innerHTML = '<tr><td colspan="2">Không thể xác minh giỏ hàng; không dùng giá mẫu.</td></tr>';
-        total.textContent = '—';
+        active = false;
+        banner.textContent = 'Tạm khóa gửi yêu cầu: Giỏ hàng của bạn vẫn được giữ.';
+        message(error.message + ' Giỏ hàng vẫn hiển thị để bạn kiểm tra; chưa thể gửi đơn.', true);
+        if (window.HOA_HOE_CATALOG_SYNC_STATE === 'live' && items.length) {
+          // Giỏ đã được vẽ bằng dữ liệu giá API: giữ nguyên danh sách và tổng tiền.
+        } else {
+          // API lỗi: chỉ hiện tên và số lượng từ snapshot, không hiện giá nháp.
+          let draft = [];
+          try { const stored = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+            if (Array.isArray(stored)) draft = stored; }
+          catch (_) { /* Giỏ bị lỗi định dạng */ }
+          rows.replaceChildren();
+          draft.slice(0, 30).forEach(entry => {
+            if (!entry || typeof entry.id !== 'string' || !Number.isInteger(entry.qty) ||
+                entry.qty < 1 || entry.qty > 99) return;
+            const tr = document.createElement('tr');
+            const name = document.createElement('td');
+            const amount = document.createElement('td');
+            name.textContent = (typeof entry.name === 'string' && entry.name.trim() ? entry.name : entry.id).slice(0, 150) + ' × ' + entry.qty;
+            amount.textContent = 'Chưa xác minh';
+            tr.append(name, amount); rows.appendChild(tr);
+          });
+          if (!rows.childElementCount) rows.innerHTML = '<tr><td colspan="2">Giỏ hàng trống hoặc chưa có dữ liệu.</td></tr>';
+          total.textContent = 'Chưa xác minh giá';
+        }
       } finally {disableActions();}
     }
     initialize();
