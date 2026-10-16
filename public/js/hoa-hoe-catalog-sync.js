@@ -13,10 +13,10 @@
     var state = window.HOA_HOE_CATALOG_SYNC_STATE;
     document.querySelectorAll('.ltn__product-item[data-fiama-product-id]').forEach(function (card) {
       var p = catalog[card.getAttribute('data-fiama-product-id')];
-      // Không ghi đè chữ 'Chờ xác minh giá' bằng giá demo khi Sheets chưa sẵn sàng.
+      // Trong thời gian tải API, chỉ hiển thị trạng thái tải, không dùng giá demo.
       if (state === 'error' || state === 'loading') {
         var label = card.querySelector('.product-price span');
-        if (label) label.textContent = state === 'error' ? 'Giá chưa xác minh' : 'Đang xác minh giá…';
+        if (label) label.textContent = state === 'error' ? 'Không tải được giá' : 'Đang tải giá…';
         return;
       }
       if (!p) {

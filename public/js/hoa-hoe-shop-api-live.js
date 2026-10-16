@@ -37,14 +37,14 @@
   [grid, list].forEach(function (box) {
     box.setAttribute('aria-busy', 'true');
     box.querySelectorAll('.product-price span').forEach(function (span) {
-      span.textContent = 'Đang xác minh giá…';
+      span.textContent = 'Đang tải giá…';
     });
   });
 
   var banner = document.createElement('p');
   banner.setAttribute('role', 'status');
   banner.style.cssText = 'margin:0 0 18px; padding:10px 14px; border:1px solid #ddd; font-size:14px;';
-  banner.textContent = 'Đang đồng bộ giá và sản phẩm từ cửa hàng. Bạn vẫn có thể xem mẫu hoa trong khi tải…';
+  banner.textContent = 'Đang tải sản phẩm và bảng giá mới nhất… Bạn vẫn có thể xem mẫu hoa trong lúc chờ.';
   options.parentNode.insertBefore(banner, options);
 
   var numberFormat = new Intl.NumberFormat('vi-VN', {

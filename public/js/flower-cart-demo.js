@@ -14,6 +14,7 @@
   function escapeHTML(s) { return String(s).replace(/[&<>"']/g, function(c) {return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function isVerified() { return window.HOA_HOE_CATALOG_SYNC_STATE === 'live'; }
   function isDemo() { return window.HOA_HOE_CATALOG_SYNC_STATE === 'demo'; }
+  function priceStatus() { return window.HOA_HOE_CATALOG_SYNC_STATE === 'error' ? 'Không tải được giá' : 'Đang tải giá…'; }
   function readCart() {
     // Không bao giờ xóa/ẩn giỏ chỉ vì API chậm hoặc lỗi. Dùng tên và số lượng
     // đã lưu để hiển thị, nhưng KHÔNG tin giá cũ khi chưa xác minh với Sheets.
@@ -69,7 +70,7 @@
     return match ? 'product-details.html?product=' + encodeURIComponent(match.id) : 'shop.html';
   }
   function add(product) {
-    if (!(isVerified() || isDemo())) { notify('Đang xác minh giá. Vui lòng chờ một chút.'); return; }
+    if (!(isVerified() || isDemo())) { notify(window.HOA_HOE_CATALOG_SYNC_STATE === 'error' ? 'Không tải được giá. Vui lòng thử tải lại trang.' : 'Đang tải giá sản phẩm, vui lòng chờ…'); return; }
     var list = readCart();
     var p = list.find(function(x) { return x.id === product.id; });
     if (p) p.qty = Math.min(99, p.qty + product.qty);
@@ -95,7 +96,7 @@
   }
   function renderBadges(list) {
     all('.mini-cart-icon-2 sup, .ltn__utilize-buttons a[href="cart.html"] sup').forEach(function(el){ el.textContent=String(totalQty(list)); el.title='Số sản phẩm trong giỏ hàng chạy thử';});
-    all('.mini-cart-icon-2 h6').forEach(function(el){el.innerHTML='<span>Giỏ hàng</span> <span class="ltn__secondary-color">'+(list.some(function(x){return x.pending;})?'Đang xác minh':money(subtotal(list)))+'</span>';});
+    all('.mini-cart-icon-2 h6').forEach(function(el){el.innerHTML='<span>Giỏ hàng</span> <span class="ltn__secondary-color">'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</span>';});
     all('.ltn__utilize-menu-title').forEach(function(el){ if (el.closest('#ltn__utilize-cart-menu')) el.textContent='Giỏ hàng'; });
   }
   function renderMini(list) {
@@ -107,10 +108,10 @@
       return '<div class="mini-cart-item clearfix">'
         +'<div class="mini-cart-img"><a href="'+detailLink(p)+'">'+img+'</a><button type="button" class="mini-cart-item-delete flower-mini-remove" data-demo-remove="'+escapeHTML(p.id)+'" aria-label="Xóa '+escapeHTML(p.name)+'"><i class="icon-trash"></i></button></div>'
         +'<div class="mini-cart-info"><h6><a href="'+detailLink(p)+'">'+escapeHTML(p.name)+'</a></h6>'
-        +'<span class="mini-cart-quantity">'+p.qty+' × '+(p.pending?'Chờ xác minh giá':money(p.price))+'</span></div></div>';
+        +'<span class="mini-cart-quantity">'+p.qty+' × '+(p.pending?priceStatus():money(p.price))+'</span></div></div>';
     }).join('');
     var sub=one('#ltn__utilize-cart-menu .mini-cart-sub-total span');
-    if(sub) sub.textContent=list.some(function(p){return p.pending;})?'Đang xác minh':money(subtotal(list));
+    if(sub) sub.textContent=list.some(function(p){return p.pending;})?priceStatus():money(subtotal(list));
     var link=one('#ltn__utilize-cart-menu .mini-cart-footer .btn-wrapper a[href="cart.html"]');
     if(link) link.textContent='Xem giỏ hàng';
     var checkoutLink=one('#ltn__utilize-cart-menu .mini-cart-footer .btn-wrapper a.theme-btn-2');
@@ -129,13 +130,13 @@
         return '<tr data-demo-row="'+id+'"><td class="cart-product-remove"><button type="button" class="flower-remove-btn" data-demo-remove="'+id+'" aria-label="Xóa '+name+'">×</button></td>'
           +'<td class="cart-product-image"><a href="'+detailLink(p)+'">'+img+'</a></td>'
           +'<td class="cart-product-info"><h4><a href="'+detailLink(p)+'">'+name+'</a></h4></td>'
-          +'<td class="cart-product-price">'+(p.pending?'Chờ xác minh':money(p.price))+'</td>'
+          +'<td class="cart-product-price">'+(p.pending?priceStatus():money(p.price))+'</td>'
           +'<td class="cart-product-quantity"><div class="flower-qty-control"><button type="button" data-demo-step="-1" data-demo-id="'+id+'" aria-label="Giảm số lượng '+name+'">−</button><input type="number" min="1" max="99" value="'+p.qty+'" data-demo-qty="'+id+'" aria-label="Số lượng '+name+'"><button type="button" data-demo-step="1" data-demo-id="'+id+'" aria-label="Tăng số lượng '+name+'">+</button></div></td>'
           +'<td class="cart-product-subtotal">'+(p.pending?'—':money(p.qty*p.price))+'</td></tr>';
       }).join('');
     }
     var totals=one('.shoping-cart-total table tbody');
-    if(totals) totals.innerHTML='<tr><td>Tạm tính tiền hoa</td><td>'+(list.some(function(x){return x.pending;})?'Chờ xác minh giá':money(subtotal(list)))+'</td></tr><tr><td>Phí giao hoa</td><td>Chưa tính — Admin sẽ cấu hình theo vùng</td></tr><tr><td><strong>Tiền sản phẩm tạm tính</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?'Chờ xác minh giá':money(subtotal(list)))+'</strong></td></tr>';
+    if(totals) totals.innerHTML='<tr><td>Tạm tính tiền hoa</td><td>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</td></tr><tr><td>Phí giao hoa</td><td>Chưa tính — Admin sẽ cấu hình theo vùng</td></tr><tr><td><strong>Tiền sản phẩm tạm tính</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</strong></td></tr>';
     var button=one('.shoping-cart-total a[href="checkout.html"]');
     if(button){
       var djangoLocal = location.port === '8000' && ['127.0.0.1', 'localhost'].includes(location.hostname);
@@ -143,7 +144,7 @@
       var apiSite = djangoLocal || sheetsWebsite;
       var devCheckout = djangoLocal && window.HOA_HOE_CATALOG_SYNC_STATE === 'live';
       var needsCheckout = !apiSite || !isVerified() || list.some(function(p) {return p.pending || p.unavailable;});
-      button.textContent = needsCheckout ? 'Đang chờ xác minh giá sản phẩm' : devCheckout ? 'Tiếp tục gửi yêu cầu đặt hoa (thử nghiệm)' : 'Tiếp tục đặt hoa';
+      button.textContent = needsCheckout ? (window.HOA_HOE_CATALOG_SYNC_STATE === 'error' ? 'Không tải được giá — Tải lại trang' : 'Đang tải giá sản phẩm…') : devCheckout ? 'Tiếp tục gửi yêu cầu đặt hoa (thử nghiệm)' : 'Tiếp tục đặt hoa';
       if(!list.length || needsCheckout) {button.classList.add('disabled');button.setAttribute('aria-disabled','true');}
       else{button.classList.remove('disabled');button.removeAttribute('aria-disabled');}
     }
@@ -152,7 +153,7 @@
       var node=one('.shoping-cart-inner');
       if(node){note=document.createElement('p');note.id='flower-cart-notice';note.className='flower-cart-demo-note';node.insertBefore(note,node.firstChild);}
     }
-    if(note) note.textContent=list.some(function(p){return p.pending;})?'Giỏ hàng vẫn được giữ. Đang kiểm tra giá từ Google Sheets; tạm khóa nút đặt hoa.':'Giỏ hàng được lưu trong trình duyệt. Giá sẽ được xác minh lại khi gửi đơn; chưa bao gồm phí giao.';
+    if(note) note.textContent=list.some(function(p){return p.pending;})?(window.HOA_HOE_CATALOG_SYNC_STATE === 'error' ? 'Không tải được giá từ cửa hàng. Giỏ hoa vẫn được giữ; vui lòng tải lại trang để thử lại.' : 'Đang tải bảng giá mới nhất từ cửa hàng… Giỏ hoa vẫn được giữ, nút đặt hoa tạm khóa trong lúc tải.'):'Giỏ hàng được lưu trong trình duyệt. Giá sẽ được xác minh lại khi gửi đơn; chưa bao gồm phí giao.';
     var coupon=one('.cart-coupon'); if(coupon) coupon.style.display='none';
     var update=all('button').find(function(b){return text(b).toLowerCase()==='update cart';});if(update) update.style.display='none';
   }
@@ -169,7 +170,7 @@
     var payment=one('.ltn__checkout-payment-method');
     if(payment){payment.innerHTML='<h4 class="title-2">Thanh toán</h4><p><strong>Chỉ chuyển khoản thủ công sau khi shop xác nhận đơn.</strong> Không thanh toán trên bản chạy thử này.</p>';}
     var total=one('.shoping-cart-total table tbody');
-    if(total){total.innerHTML=list.map(function(p){return '<tr><td>'+escapeHTML(p.name)+' × '+p.qty+'</td><td>'+money(p.qty*p.price)+'</td></tr>';}).join('')+'<tr><td>Phí giao</td><td>Chờ cấu hình khu vực</td></tr><tr><td><strong>Tạm tính tiền hoa</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?'Chờ xác minh giá':money(subtotal(list)))+'</strong></td></tr>';}
+    if(total){total.innerHTML=list.map(function(p){return '<tr><td>'+escapeHTML(p.name)+' × '+p.qty+'</td><td>'+money(p.qty*p.price)+'</td></tr>';}).join('')+'<tr><td>Phí giao</td><td>Chờ cấu hình khu vực</td></tr><tr><td><strong>Tạm tính tiền hoa</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</strong></td></tr>';}
     all('a,button,input[type="submit"]').forEach(function(btn){
       if((text(btn)||'').toLowerCase().includes('place order')){
         btn.textContent='Chưa thể gửi đơn thật';btn.setAttribute('aria-disabled','true');btn.setAttribute('title','Cần tích hợp Django và MySQL');
@@ -193,7 +194,7 @@
         event.preventDefault(); event.stopPropagation();
         notify(window.HOA_HOE_CATALOG_SYNC_STATE === 'error' ?
           'Không xác minh được giá. Vui lòng tải lại trang.' :
-          'Đang đồng bộ giá sản phẩm, xin chờ một chút.');
+          'Đang tải giá sản phẩm, xin chờ một chút.');
         return;
       }
     }
@@ -203,7 +204,7 @@
     if(del){event.preventDefault();modify(del.getAttribute('data-demo-remove'),0);return;}
     var step=event.target.closest('[data-demo-step]');
     if(step){event.preventDefault();var list=readCart(),p=list.find(function(x){return x.id===step.getAttribute('data-demo-id');});if(p)modify(p.id,Math.max(1,p.qty+Number(step.getAttribute('data-demo-step'))));return;}
-    var checkoutDisabled=event.target.closest('.shoping-cart-total a[aria-disabled="true"]');if(checkoutDisabled){event.preventDefault();notify('Chưa thể tiếp tục: giỏ hàng trống hoặc giá chưa được xác minh từ cửa hàng.');}
+    var checkoutDisabled=event.target.closest('.shoping-cart-total a[aria-disabled="true"]');if(checkoutDisabled){event.preventDefault();notify('Giỏ hàng trống hoặc giá sản phẩm chưa tải xong. Vui lòng thử lại khi dữ liệu sẵn sàng.');}
   },true);
   document.addEventListener('change',function(event){var input=event.target.closest('[data-demo-qty]');if(input){modify(input.getAttribute('data-demo-qty'),Math.max(1,Math.min(99,parseInt(input.value,10)||1)));}});
   function wireProducts(){
@@ -229,7 +230,8 @@
     document.addEventListener('hoa-hoe:catalog-error', renderEverywhere);
   }
   function start(){
-    // Dựng giỏ ngay, không phải chờ Google Sheets. Giá chưa xác minh hiển thị 'đang tải'.
+    // Dựng giỏ ngay. Trong thời gian API phản hồi, chỉ hiện trạng thái tải giá;
+    // không sử dụng giá cũ để đặt hàng hay gắn giá 0 lên giao diện.
     init();
     Promise.resolve(window.HOA_HOE_CATALOG_READY).then(renderEverywhere, renderEverywhere);
   }
