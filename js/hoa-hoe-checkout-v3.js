@@ -236,7 +236,7 @@
     loadDistricts();
 
     const catalog = window.FIAMA_DEMO_PRODUCTS || {};
-    let active = false, busy = false, items = [], previewed = null, submissionId = null;
+    let active = false, ordersEnabled = false, busy = false, items = [], previewed = null, submissionId = null;
 
     function message(text, isError) {
       status.textContent = text;
@@ -244,7 +244,7 @@
     }
     function disableActions() {
       previewButton.disabled = !active || busy || items.length === 0;
-      submitButton.disabled = !active || busy || !previewed || !consent.checked || (sheetsWebsite && !captchaToken);
+      submitButton.disabled = !ordersEnabled || !active || busy || !previewed || !consent.checked || (sheetsWebsite && !captchaToken);
     }
     function invalidate(event) {
       if (event && event.target === consent) return;
@@ -422,6 +422,15 @@
     }
     async function doPreview() {
       if (!active || busy || !validForm()) return;
+      // Khi shop chưa bật nhận đơn: chỉ kiểm tra dữ liệu nhập trên trình duyệt.
+      // TUYỆT ĐỐI không gọi API preview/submit hay tạo mã đơn.
+      if (!ordersEnabled) {
+        previewed = null;
+        renderItems();
+        disableActions();
+        message('Kiểm tra giao diện đạt: đã nhập các trường bắt buộc và có sản phẩm với giá lấy từ danh mục. Đây KHÔNG phải xác nhận đơn, chưa kiểm tra lịch giao/tồn kho tại máy chủ, chưa ghi Google Sheets và chưa phát sinh thanh toán.', false);
+        return;
+      }
       busy = true;
       previewed = null;
       disableActions();
@@ -440,7 +449,7 @@
       } finally {busy = false; disableActions();}
     }
     async function doSubmit() {
-      if (!active || busy || !previewed || !consent.checked || !validForm()) return;
+      if (!ordersEnabled || !active || busy || !previewed || !consent.checked || !validForm()) return;
       busy = true;
       disableActions();
       message('Đang kiểm tra giá lần cuối...', false);
@@ -537,14 +546,17 @@
         const r = await fetch('/api/orders/health/', {credentials:'same-origin', cache:'no-store'});
         if (!r.ok) throw new Error('API đơn hàng không hoạt động (HTTP '+r.status+').');
         const health = await r.json();
-        if (!health.ok || !health.orders_enabled ||
-          (sheetsWebsite ? health.public_orders_enabled !== true : health.public_orders_enabled !== false))
-          throw new Error('API chưa cho phép nhận yêu cầu ở chế độ hiện tại.');
+        if (!health.ok) throw new Error('API không trả được trạng thái hệ thống.');
+        ordersEnabled = Boolean(health.orders_enabled &&
+          (sheetsWebsite ? health.public_orders_enabled === true : health.public_orders_enabled === false));
         active = Boolean(items.length);
-        banner.textContent = sheetsWebsite
-          ? 'GỬI YÊU CẦU ĐẶT HOA — Shop xác nhận thủ công trước khi thanh toán/giao hàng. Dữ liệu được lưu trong Google Sheets riêng tư.'
-          : 'CHẠY THỬ TRÊN MÁY LOCAL — Gửi yêu cầu sẽ tạo bản ghi trong MySQL; chưa nhận đơn công khai.';
-        if (sheetsWebsite) {
+        previewButton.textContent = ordersEnabled ? 'Kiểm tra yêu cầu' : 'Kiểm tra thông tin (không gửi đơn)';
+        banner.textContent = ordersEnabled
+          ? (sheetsWebsite
+            ? 'GỬI YÊU CẦU ĐẶT HOA — Shop xác nhận thủ công trước khi thanh toán/giao hàng. Dữ liệu được lưu trong Google Sheets riêng tư.'
+            : 'CHẠY THỬ TRÊN MÁY LOCAL — Gửi yêu cầu sẽ tạo bản ghi trong MySQL; chưa nhận đơn công khai.')
+          : 'CHẾ ĐỘ KIỂM THỬ AN TOÀN — Chỉ kiểm tra thông tin tại trình duyệt. Shop chưa bật nhận đơn, không ghi Google Sheets/MySQL.';
+        if (ordersEnabled && sheetsWebsite) {
           const label = document.querySelector('label.hoa-checkout-consent');
           if (label) {
             // Preserve checkbox and replace text only, no innerHTML from untrusted data.
@@ -565,13 +577,23 @@
             token => { captchaToken = token; disableActions(); }
           );
         }
-        message(items.length
-          ? (sheetsWebsite ? 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Chưa thanh toán trước khi shop xác nhận.' : 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Dùng dữ liệu thử nghiệm, không dùng thông tin khách thật.')
-          : 'Giỏ hàng trống. Vui lòng quay về trang Shop chọn hoa.', !items.length);
+        if (!ordersEnabled && sheetsWebsite) {
+          const label = document.querySelector('label.hoa-checkout-consent');
+          if (label) {
+            label.replaceChildren(consent, document.createTextNode(' Tôi đã đọc và đồng ý với chính sách xử lý thông tin của shop. Chưa thể gửi đơn khi shop đang đóng nhận đơn.'));
+          }
+        }
+        message(!items.length ? 'Giỏ hàng trống. Vui lòng quay về trang Shop chọn hoa.'
+          : ordersEnabled ? 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Chưa thanh toán trước khi shop xác nhận.'
+          : 'Bạn có thể nhập thông tin và bấm “Kiểm tra thông tin (không gửi đơn)”. Shop chưa bật nhận đơn nên nút Gửi yêu cầu vẫn khóa.', !items.length);
       } catch (error) {
-        active = false;
-        banner.textContent = 'Tạm khóa gửi yêu cầu: Giỏ hàng của bạn vẫn được giữ.';
-        message(error.message + ' Giỏ hàng vẫn hiển thị để bạn kiểm tra; chưa thể gửi đơn.', true);
+        ordersEnabled = false;
+        active = window.HOA_HOE_CATALOG_SYNC_STATE === 'live' && items.length > 0;
+        previewButton.textContent = 'Kiểm tra thông tin (không gửi đơn)';
+        banner.textContent = 'TẠM KHÓA GỬI YÊU CẦU — API chưa sẵn sàng. Có thể kiểm tra các trường đã nhập mà không gửi dữ liệu.';
+        message(error.message + (active
+          ? ' Có thể kiểm tra thông tin tại trang; nút Gửi yêu cầu vẫn khóa.'
+          : ' Không thể kiểm tra do danh mục/giỏ chưa được xác minh.'), true);
         if (window.HOA_HOE_CATALOG_SYNC_STATE === 'live' && items.length) {
           // Giỏ đã được vẽ bằng dữ liệu giá API: giữ nguyên danh sách và tổng tiền.
         } else {

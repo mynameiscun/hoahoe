@@ -309,33 +309,19 @@
                                     <th class="cart-product-quantity">Quantity</th>
                                     <th class="cart-product-subtotal">Subtotal</th>
                                 </thead> -->
-<tbody><tr><td colspan="6">Giỏ hàng đang tải...</td></tr></tbody>
+<tbody><tr><td colspan="6" role="status">Đang đọc giỏ hàng và đồng bộ giá sản phẩm…</td></tr></tbody>
 </table>
 </div>
 <div class="shoping-cart-total mt-50">
-<h4>Cart Totals</h4>
+<h4>Tóm tắt giỏ hoa</h4>
 <table class="table">
 <tbody>
-<tr>
-<td>Cart Subtotal</td>
-<td>$618.00</td>
-</tr>
-<tr>
-<td>Shipping and Handing</td>
-<td>$15.00</td>
-</tr>
-<tr>
-<td>Vat</td>
-<td>$00.00</td>
-</tr>
-<tr>
-<td><strong>Order Total</strong></td>
-<td><strong>$633.00</strong></td>
-</tr>
+<tr><td>Tạm tính tiền hoa</td><td>Đang xác minh giá…</td></tr>
+<tr><td>Phí giao</td><td>Shop xác nhận sau</td></tr>
 </tbody>
 </table>
 <div class="btn-wrapper text-right">
-<a class="theme-btn-1 btn btn-effect-1" href="checkout.html">Proceed to checkout</a>
+<a class="theme-btn-1 btn btn-effect-1 disabled" href="checkout.html" aria-disabled="true">Đang xác minh giá…</a>
 </div>
 </div>
 </div>
@@ -384,8 +370,7 @@
 <script src="js/plugins.js"></script>
 <!-- Main JS -->
 <script src="js/main.js"></script>
-<script src="js/flower-product-data.js"></script>
-<script src="js/hoa-hoe-product-api-sync.js"></script>
+<script src="js/flower-product-data.js"></script><script src="js/hoa-hoe-product-api-sync.js"></script>
 <script src="js/hoa-hoe-catalog-sync.js"></script><script src="js/flower-cart-demo.js"></script>
 <script src="js/hoa-hoe-motion.js"></script>
 </body>

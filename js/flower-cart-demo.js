@@ -119,7 +119,7 @@
     if(shippingClaim) shippingClaim.textContent='Phí giao được shop xác nhận thủ công theo khu vực.';
   }
   function renderCart(list) {
-    if (!document.body.classList.contains('flower-cart-page')) return;
+    if (!document.querySelector('.liton__shoping-cart-area .shoping-cart-table')) return;
     var body=one('.shoping-cart-table table tbody');
     if(body) {
       if(!list.length) body.innerHTML='<tr><td colspan="6" class="flower-cart-empty">Giỏ hàng trống. <a href="shop.html">Xem sản phẩm hoa</a></td></tr>';
@@ -143,7 +143,7 @@
       var apiSite = djangoLocal || sheetsWebsite;
       var devCheckout = djangoLocal && window.HOA_HOE_CATALOG_SYNC_STATE === 'live';
       var needsCheckout = !apiSite || !isVerified() || list.some(function(p) {return p.pending || p.unavailable;});
-      button.textContent = needsCheckout ? 'Chưa thể xác minh đơn — tạm khóa' : devCheckout ? 'Tiếp tục gửi yêu cầu đặt hoa (thử nghiệm)' : 'Tiếp tục đặt hoa';
+      button.textContent = needsCheckout ? 'Đang chờ xác minh giá sản phẩm' : devCheckout ? 'Tiếp tục gửi yêu cầu đặt hoa (thử nghiệm)' : 'Tiếp tục đặt hoa';
       if(!list.length || needsCheckout) {button.classList.add('disabled');button.setAttribute('aria-disabled','true');}
       else{button.classList.remove('disabled');button.removeAttribute('aria-disabled');}
     }
@@ -181,7 +181,11 @@
   function renderEverywhere(){
     // Hiển thị snapshot giỏ ở cả chế độ loading/error để không gây cảm giác mất hàng.
     var list=readCart();
-    renderBadges(list); renderMini(list); renderCart(list); renderCheckout(list);
+    [renderCart, renderBadges, renderMini, renderCheckout].forEach(function(render){
+      try {render(list);} catch (error) {
+        console.error('Hoa Hoè: lỗi hiển thị giỏ hàng:', error);
+      }
+    });
   }
   document.addEventListener('click',function(event){
     if (!(isVerified() || isDemo())) {
@@ -199,7 +203,7 @@
     if(del){event.preventDefault();modify(del.getAttribute('data-demo-remove'),0);return;}
     var step=event.target.closest('[data-demo-step]');
     if(step){event.preventDefault();var list=readCart(),p=list.find(function(x){return x.id===step.getAttribute('data-demo-id');});if(p)modify(p.id,Math.max(1,p.qty+Number(step.getAttribute('data-demo-step'))));return;}
-    var checkoutDisabled=event.target.closest('.shoping-cart-total a[aria-disabled="true"]');if(checkoutDisabled){event.preventDefault();notify('Giỏ hàng đang trống.');}
+    var checkoutDisabled=event.target.closest('.shoping-cart-total a[aria-disabled="true"]');if(checkoutDisabled){event.preventDefault();notify('Chưa thể tiếp tục: giỏ hàng trống hoặc giá chưa được xác minh từ cửa hàng.');}
   },true);
   document.addEventListener('change',function(event){var input=event.target.closest('[data-demo-qty]');if(input){modify(input.getAttribute('data-demo-qty'),Math.max(1,Math.min(99,parseInt(input.value,10)||1)));}});
   function wireProducts(){
@@ -209,7 +213,7 @@
   }
   function init(){
     var path=(location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    if(path==='cart.html')document.body.classList.add('flower-cart-page');
+    if(path==='cart.html' || one('.liton__shoping-cart-area .shoping-cart-table'))document.body.classList.add('flower-cart-page');
     if(path==='checkout.html')document.body.classList.add('flower-checkout-page');
     wireProducts();
     renderEverywhere();
