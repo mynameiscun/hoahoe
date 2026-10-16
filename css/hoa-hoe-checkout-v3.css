@@ -28,3 +28,40 @@
 .hoa-hoe-checkout-v3 .hoa-checkout-success h3 {font-size:21px;}
 @media(max-width:991px){.hoa-hoe-checkout-v3 .hoa-checkout-summary{margin-top:22px;}}
 @media(max-width:575px){.hoa-hoe-checkout-v3 fieldset{padding:16px 13px 11px;}}
+
+/* Step 12.4.2 — thumbnail hoa trong tom tat Checkout; giu bo cuc cua Fiama. */
+.hoa-hoe-checkout-v3 .hoa-checkout-product {
+  display: flex; align-items: center; gap: 12px; min-width: 0;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__media {
+  flex: 0 0 72px; width: 72px; height: 72px;
+  border-radius: 10px; overflow: hidden;
+  background: #f7f3ee; border: 1px solid #e7e3dd;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__media img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__media--empty {
+  background: #f6f1ea;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__details {
+  min-width: 0; display: flex; flex-direction: column; gap: 4px;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__details strong {
+  font-size: 14px; font-weight: 600; line-height: 1.4;
+  color: #354329; overflow-wrap: anywhere;
+}
+.hoa-hoe-checkout-v3 .hoa-checkout-product__details small {
+  margin: 0; font-size: 12px; color: #68716a; line-height: 1.4;
+}
+.hoa-hoe-checkout-v3 #hoa-checkout-items td { vertical-align: middle; }
+.hoa-hoe-checkout-v3 #hoa-ward-source-note { margin-top: 1px; }
+@media (max-width: 575px) {
+  .hoa-hoe-checkout-v3 .hoa-checkout-product { gap: 9px; }
+  .hoa-hoe-checkout-v3 .hoa-checkout-product__media {
+    flex-basis: 60px; width: 60px; height: 60px;
+  }
+  .hoa-hoe-checkout-v3 .hoa-checkout-product__details strong { font-size: 13px; }
+  .hoa-hoe-checkout-v3 .hoa-checkout-summary th,
+  .hoa-hoe-checkout-v3 .hoa-checkout-summary td { padding: 10px 3px; }
+}

@@ -196,10 +196,10 @@
         option(wardSelect, '', 'Chọn quận / huyện trước');
         return;
       }
-      if (!djangoLocal) {
-        useManualWard(sheetsWebsite
-          ? 'Nhập tên phường/xã. Shop sẽ kiểm tra địa chỉ trên Google Sheets trước khi xác nhận.'
-          : 'Bản xem giao diện — không gửi đơn thật tại đây.');
+      // Cloudflare Pages cung cap danh muc phuong/xa cu qua API cung domain.
+      // Google Sheets van yeu cau Admin xac minh khu vuc truoc khi giao.
+      if (!djangoLocal && !sheetsWebsite) {
+        useManualWard('Bản xem giao diện — không gửi đơn thật tại đây.');
         return;
       }
       option(wardSelect, '', 'Đang tải phường / xã...');
@@ -212,12 +212,20 @@
         if (requestNo !== wardRequestCounter) return;
         if (body.ok !== true || !Array.isArray(body.wards) || !body.wards.length)
           throw new Error('Danh sách hiện chưa sẵn sàng.');
+        const seen = new Set();
         wardSelect.replaceChildren();
         option(wardSelect, '', 'Chọn phường / xã cũ');
-        body.wards.forEach(w => option(wardSelect, String(w.code), w.name));
+        body.wards.forEach(w => {
+          const code = String(w.code || '');
+          const label = String(w.name || '').trim();
+          if (!/^\d{4,8}$/.test(code) || label.length < 2 || label.length > 100 || seen.has(code)) return;
+          seen.add(code);
+          option(wardSelect, code, label);
+        });
+        if (!seen.size) throw new Error('Danh mục địa danh chưa hợp lệ.');
         option(wardSelect, 'manual', 'Không thấy địa danh? Nhập tay để shop kiểm tra');
         wardSelect.disabled = false;
-        messageArea.textContent = 'Địa danh lịch sử theo quận/huyện cũ; shop vẫn kiểm tra địa chỉ trước khi xác nhận.';
+        messageArea.textContent = 'Danh mục phường/xã theo quận/huyện cũ (trước 01/07/2025). Shop vẫn xác minh địa chỉ trước khi giao.';
       } catch (_) {
         if (requestNo === wardRequestCounter)
           useManualWard('Danh mục phường/xã tạm thời không truy cập được. Bạn có thể nhập tay để Admin kiểm tra.');
@@ -274,6 +282,16 @@
         return {code: entry.id, quantity: entry.qty, product};
       });
     }
+    // Chi nhan anh o cung website, trong thu muc san pham duoc Apps Script cho phep.
+    function trustedProductImage(value) {
+      if (typeof value !== 'string' || !value) return '';
+      try {
+        const url = new URL(value, location.href);
+        if (url.origin !== location.origin ||
+            !/^\/img\/(?:product|catalog)\/[a-zA-Z0-9_.-]+\.(?:webp|png|jpe?g)$/.test(url.pathname)) return '';
+        return url.href;
+      } catch (_) { return ''; }
+    }
     function renderItems(serverItems) {
       rows.replaceChildren();
       let subtotal = 0;
@@ -286,22 +304,64 @@
         total.textContent = '—';
         return;
       }
-      const lines = Array.isArray(serverItems) ? serverItems.map(p => ({name:p.name, qty:p.quantity, line:p.line_total})) :
-        items.map(p => ({name:p.product.name, qty:p.quantity, line:p.product.price * p.quantity}));
+      // Noi thong tin API da kiem gia voi anh trong catalog da dong bo.
+      // Anh KHONG duoc dung de tinh gia, ma san pham do server tra ve la nguon doi chieu.
+      const lineByCode = new Map(items.map(p => [p.code, p]));
+      const lines = Array.isArray(serverItems)
+        ? serverItems.map(p => {
+            const matching = lineByCode.get(String(p.code || ''));
+            return {name:p.name, qty:p.quantity, line:p.line_total,
+              image:matching ? matching.product.image : ''};
+          })
+        : items.map(p => ({name:p.product.name, qty:p.quantity,
+            line:p.product.price * p.quantity, image:p.product.image}));
       lines.forEach(line => {
+        if (!Number.isSafeInteger(line.line) || line.line < 0) return;
         subtotal += line.line;
-        const tr = document.createElement('tr'), name = document.createElement('td'), price = document.createElement('td');
-        name.textContent = line.name + ' × ' + line.qty;
+        const tr = document.createElement('tr');
+        const name = document.createElement('td');
+        const price = document.createElement('td');
+        const wrap = document.createElement('div');
+        wrap.className = 'hoa-checkout-product';
+        const media = document.createElement('div');
+        media.className = 'hoa-checkout-product__media';
+        const safeImage = trustedProductImage(line.image);
+        if (safeImage) {
+          const img = document.createElement('img');
+          img.src = safeImage; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+          img.width = 72; img.height = 72;
+          img.addEventListener('error', () => {
+            img.remove();
+            media.classList.add('hoa-checkout-product__media--empty');
+          }, {once:true});
+          media.appendChild(img);
+        } else media.classList.add('hoa-checkout-product__media--empty');
+        const content = document.createElement('div');
+        content.className = 'hoa-checkout-product__details';
+        const label = document.createElement('strong');
+        label.textContent = typeof line.name === 'string' ? line.name : 'Sản phẩm';
+        const amount = document.createElement('small');
+        amount.textContent = 'Số lượng: ' + line.qty;
+        content.append(label, amount);
+        wrap.append(media, content);
+        name.appendChild(wrap);
         price.textContent = money(line.line);
-        tr.append(name,price);
+        tr.append(name, price);
         rows.appendChild(tr);
       });
       total.textContent = money(subtotal);
     }
     function payload() {
       const out = Object.fromEntries(new FormData(form).entries());
-      // Backend tự chuẩn hóa địa chỉ từ mã khu vực; không tin chuỗi ghép ở client.
-      // Không đưa giá/tên hoa lên làm nguồn tính tiền.
+      // Apps Script Sheets v1 chi chap nhan delivery_ward_code='manual'.
+      // Khach van CHON tu danh muc cu; ten da chon se duoc gui de Admin doi chieu.
+      // Khong can sua Apps Script/Orders, khong tin thong tin dia chi chi tu client.
+      if (sheetsWebsite && wardSelect.value && wardSelect.value !== 'manual') {
+        const label = wardSelect.selectedOptions[0]?.textContent?.trim() || '';
+        out.delivery_ward_code = 'manual';
+        out.delivery_ward_manual = label.slice(0, 100);
+      }
+      // Khong dua gia/ten hoa len lam nguon tinh tien.
       out.items = items.map(item => ({code:item.code, quantity:item.quantity}));
       return out;
     }

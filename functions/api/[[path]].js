@@ -11,7 +11,68 @@ function send(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
 }
 function fail(reason, status) { return send({ok: false, error: reason}, status); }
+const LEGACY_HCM_DISTRICT_CODES = new Set([
+  '760','761','764','765','766','767','768','769','770','771','772','773',
+  '774','775','776','777','778','783','784','785','786','787'
+]);
+const LEGACY_WARDS_SOURCE = 'tinhthanhpho.com (dữ liệu đơn vị hành chính trước 01/07/2025)';
+
+async function getLegacyWards(request, ctx) {
+  const url = new URL(request.url);
+  const district = String(url.searchParams.get('district') || '');
+  if (!LEGACY_HCM_DISTRICT_CODES.has(district))
+    return fail('Quận/huyện không thuộc phạm vi TP.HCM cũ.', 400);
+  const cache = typeof caches !== 'undefined' ? caches.default : null;
+  const cacheKey = new Request(url.origin + '/api/orders/areas/?district=' + district, {method:'GET'});
+  if (cache) {
+    try { const cached = await cache.match(cacheKey); if (cached) return cached; }
+    catch (_) { /* Thu muc cache khong san sang */ }
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6500);
+  try {
+    // Du lieu mo, khong can khoa API; chi tra ve HCMC cu (ma tinh 79).
+    const remote = await fetch('https://www.tinhthanhpho.com/api/v1/districts/' + district + '/wards?limit=100&page=1', {
+      headers: {'Accept':'application/json'}, signal:controller.signal
+    });
+    if (!remote.ok) throw new Error('Nguon du lieu khong kha dung');
+    const raw = await remote.text();
+    if (raw.length > 150000) throw new Error('Phan hoi vuot gioi han');
+    const body = JSON.parse(raw);
+    if (body.success !== true || !Array.isArray(body.data) || !body.data.length ||
+        (body.metadata && Number(body.metadata.total) > body.data.length))
+      throw new Error('Danh muc khong day du');
+    const seen = new Set();
+    const wards = [];
+    for (const entry of body.data) {
+      if (!entry || typeof entry !== 'object' ||
+          (entry.district_code != null && String(entry.district_code) !== district) ||
+          (entry.province_code != null && String(entry.province_code) !== '79')) continue;
+      const code = String(entry.code || '');
+      const name = String(entry.name || '').trim();
+      const kind = String(entry.type || '').trim();
+      if (!/^\d{4,8}$/.test(code) || !name || name.length > 90 || seen.has(code)) continue;
+      seen.add(code);
+      const label = /^(phường|xã|thị trấn)\s/i.test(name) ? name : (kind ? kind + ' ' + name : name);
+      wards.push({code, name:label});
+    }
+    if (!wards.length) throw new Error('Khong co phuong xa');
+    const result = {ok:true, district, wards, requires_manual_review:true, source:LEGACY_WARDS_SOURCE};
+    const response = new Response(JSON.stringify(result), {
+      headers: {'content-type':'application/json; charset=utf-8',
+        'cache-control':'public, max-age=300', 'x-content-type-options':'nosniff'}
+    });
+    if (cache && ctx && ctx.waitUntil) {
+      ctx.waitUntil(cache.put(cacheKey, response.clone()).catch(() => {}));
+    }
+    return response;
+  } catch (_) {
+    // Danh muc phu thuoc API mo: neu loi thi CHI cho nhap tay va Admin doi chieu.
+    return fail('Chưa tải được phường/xã cũ; vui lòng nhập tay để shop kiểm tra.', 503);
+  } finally { clearTimeout(timeout); }
+}
 const ROUTES = {
+  'orders/areas': ['GET', 'areas'],
   'products': ['GET', 'products'],
   'orders/health': ['GET', 'health'],
   'orders/preview': ['POST', 'preview'],
@@ -42,6 +103,8 @@ export async function onRequest({ request, env, ctx }) {
   const entry = ROUTES[route];
   if (!entry) return fail('Không tìm thấy API.', 404);
   if (request.method !== entry[0]) return fail('Phương thức không được hỗ trợ.', 405);
+  // Phuong/xa cu: du lieu dia gioi cong khai, khong truy cap Sheets/khong mo nhan don.
+  if (route === 'orders/areas') return getLegacyWards(request, ctx);
   const isReady = Boolean(env.GAS_URL && env.GAS_API_KEY && env.TURNSTILE_SECRET_KEY && env.TURNSTILE_SITE_KEY);
   const enabled = isReady && env.PUBLIC_ORDERS_ENABLED === 'true';
   if (route === 'orders/health') return send({
