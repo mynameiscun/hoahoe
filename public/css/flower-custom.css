@@ -1,0 +1,29 @@
+/* Các thành phần Step 03 đã được người dùng yêu cầu trên trang chủ. */
+/* Chỉ áp dụng cho các thành phần Step 03; không sửa style.css gốc */
+.flower-hero-slide{min-height:540px;background-size:cover;background-position:center;display:flex;align-items:center;color:#fff}
+.flower-hero-content{padding-top:120px;padding-bottom:100px}
+.flower-hero-slide h1,.flower-hero-slide h2{color:#fff;font-size:clamp(2rem,5vw,3.8rem);line-height:1.14;max-width:740px;margin:14px 0 18px}
+.flower-hero-slide p{color:#fff;max-width:650px;font-size:1.1rem}
+.flower-hero-eyebrow{font-weight:600;letter-spacing:.06em}
+.flower-hero-btn,.flower-more-btn{background:#426b55!important;color:#fff!important;border-radius:6px;padding:13px 28px;text-decoration:none}
+.flower-hero-btn:hover,.flower-more-btn:hover{background:#345540!important;color:#fff!important}
+.flower-more-section{padding:36px 16px 70px}
+.flower-delivery-info{background:#fff9f4;padding:60px 0}
+.flower-delivery-info h2{text-align:center;margin-bottom:30px}
+.flower-info-card{background:#fff;border:1px solid #efe7e0;border-radius:12px;padding:22px;height:100%;margin-bottom:16px}
+.flower-info-card h3{font-size:1.2rem;margin-bottom:12px}
+.flower-info-card p{margin-bottom:10px}
+.flower-policy-link{text-align:center;margin:20px 0 0}
+.flower-policy-link a{color:#426b55;text-decoration:underline}
+.flower-footer{background:#273b31;color:#f7f7f7;padding:60px 0 22px}
+.flower-footer h2{color:#fff;font-size:1.2rem;margin-bottom:16px}
+.flower-footer h2 small{font-size:.75rem;font-weight:400}
+.flower-footer p{color:#f4f0e9}
+.flower-footer-links{list-style:none;padding:0;margin:0 0 15px}
+.flower-footer-links li{margin-bottom:10px}
+.flower-footer-links a{color:#f4f0e9}
+.flower-socials{display:flex;flex-wrap:wrap;gap:8px}
+.flower-social{border:1px solid #b6c6bc;color:#f5f5f5;background:transparent;border-radius:8px;padding:8px 12px;opacity:.75}
+.flower-social:disabled{cursor:not-allowed}
+.flower-footer-bottom{border-top:1px solid rgba(255,255,255,.2);padding-top:20px;margin-top:30px;font-size:.9rem;color:#efefef}
+@media(max-width:767px){.flower-hero-slide{min-height:440px}.flower-hero-content{padding-top:85px;padding-bottom:75px}.flower-hero-slide h1,.flower-hero-slide h2{max-width:90%;font-size:2rem}.flower-hero-slide p{font-size:1rem}.flower-delivery-info{padding:40px 0}}

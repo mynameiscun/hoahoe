@@ -1,0 +1,11 @@
+/* Chỉ áp dụng cho bản chạy thử giỏ hàng, giữ nguyên style Fiama gốc. */
+.flower-cart-demo-note{padding:16px 20px;background:#fff8eb;border-left:4px solid #c88a3a;margin:20px 0;color:#453929;line-height:1.6}
+.flower-cart-empty{padding:26px;text-align:center;color:#626262}
+.flower-remove-btn{cursor:pointer;border:0;background:transparent;font-size:24px;color:#a33;padding:4px 12px}
+.flower-qty-control{display:flex;align-items:center;justify-content:center;gap:5px;min-width:130px}
+.flower-qty-control button{cursor:pointer;width:32px;height:32px;border:1px solid #ddd;background:#fff;border-radius:3px}
+.flower-qty-control input{max-width:55px;min-width:45px;text-align:center;height:32px;border:1px solid #ddd;padding:1px}
+.flower-mini-remove{border:0;background:transparent;cursor:pointer;color:#9b1c1c}
+#flower-cart-toast{position:fixed;z-index:99999;right:20px;bottom:20px;max-width:330px;background:#355c45;color:white;padding:12px 16px;border-radius:8px;box-shadow:0 4px 18px #0002;opacity:0;transform:translateY(12px);transition:opacity .18s,transform .18s;pointer-events:none}
+#flower-cart-toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){#flower-cart-toast{right:12px;left:12px;max-width:none}.flower-qty-control{min-width:110px}.flower-qty-control button{width:26px}}

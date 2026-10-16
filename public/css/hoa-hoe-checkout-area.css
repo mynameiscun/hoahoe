@@ -1,0 +1,109 @@
+/* Hoa Hoè Step 09.5 — Chỉ ảnh hưởng biểu mẫu địa chỉ Checkout. */
+.hoa-hoe-checkout-v3 #hoa-delivery-province[readonly] { background:#f5f6f3; color:#46513c; cursor:default; }
+.hoa-hoe-checkout-v3 #hoa-ward-manual-group[hidden] { display:none !important; }
+.hoa-hoe-checkout-v3 #hoa-ward-source-note { margin:-7px 0 14px; }
+.hoa-hoe-checkout-v3 #hoa-delivery-district:disabled,
+.hoa-hoe-checkout-v3 #hoa-delivery-ward:disabled { background:#f1f1ef; cursor:wait; }
+
+
+/* FIX 09.5 — Nice Select của Fiama có thể chạy SAU script Checkout,
+   tạo dropdown giả từ option cũ. Ép 2 ô khu vực hiển thị select thật
+   dù plugin đã thêm style="display:none" và menu giả. */
+.hoa-hoe-checkout-v3 #hoa-delivery-district,
+.hoa-hoe-checkout-v3 #hoa-delivery-ward {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+  width: 100% !important;
+  min-height: 47px;
+  cursor: pointer;
+}
+.hoa-hoe-checkout-v3 #hoa-delivery-district + .nice-select,
+.hoa-hoe-checkout-v3 #hoa-delivery-ward + .nice-select {
+  display: none !important;
+}
+
+
+/* Step 09.7 — modal sau khi tạo YÊU CẦU thành công. Không thay đổi dropdown khu vực. */
+body.hoa-order-modal-open { overflow: hidden !important; }
+.hoa-order-modal[hidden] { display: none !important; }
+.hoa-order-modal {
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; justify-content: center; align-items: center;
+  padding: 18px;
+}
+.hoa-order-modal__backdrop { position: absolute; inset: 0; background: rgba(29, 25, 30, .63); }
+.hoa-order-modal__panel {
+  position: relative; width: min(100%, 500px); max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px); overflow-y: auto;
+  padding: 29px 29px 25px; background: #fffdfa; color: #363039;
+  border: 1px solid #f2e4e5; border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(29, 20, 29, .25);
+  text-align: center;
+}
+.hoa-order-modal__panel:focus { outline: none; }
+.hoa-order-modal__close {
+  position: absolute; right: 13px; top: 9px; width: 38px; height: 38px;
+  border: 0; background: transparent; color: #666; font-size: 29px;
+  line-height: 1; cursor: pointer;
+}
+.hoa-order-modal__close:hover { color: #a24d69; }
+.hoa-order-modal__flower {
+  margin: 0 auto 11px; display: grid; place-items: center;
+  width: 59px; height: 59px; border-radius: 50%;
+  background: #f9e9ec; color: #aa526b; font-size: 34px;
+}
+.hoa-order-modal__panel h2 { margin: 0 0 8px; font-size: 25px; line-height: 1.3; color: #4f3845; }
+.hoa-order-modal__panel p { margin: 0 0 13px; font-size: 14px; line-height: 1.65; }
+.hoa-order-modal__codebox {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 17px 12px 12px; border: 1px dashed #d7a0ad;
+  border-radius: 14px; background: #fff6f7; margin: 16px 0;
+}
+.hoa-order-modal__eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .09em; color: #7a5260; }
+.hoa-order-modal__code {
+  display: block; width: 100%; font-family: ui-monospace, Consolas, monospace;
+  color: #75374b; font-size: clamp(18px, 4.8vw, 26px); font-weight: 800;
+  line-height: 1.5; letter-spacing: .02em; overflow-wrap: anywhere; user-select: all;
+}
+.hoa-order-modal__copy, .hoa-checkout-success-copy {
+  display: inline-flex; justify-content: center; align-items: center;
+  padding: 9px 18px; border: 1px solid #b96d83; border-radius: 8px;
+  color: #8d415a; background: #fff; font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.hoa-order-modal__copy:hover, .hoa-checkout-success-copy:hover { background: #fff0f3; }
+.hoa-order-modal__copy-status { min-height: 16px; font-size: 12px; color: #5a7762; }
+.hoa-order-modal__panel .hoa-order-modal__reminder {
+  margin-bottom: 10px; padding: 9px 10px; background: #fff1d9;
+  border-radius: 8px; color: #70502d; text-align: left;
+}
+.hoa-order-modal__panel .hoa-order-modal__pending { margin-bottom: 8px; font-size: 13px; }
+.hoa-order-modal__panel .hoa-order-modal__test { font-size: 11px; font-weight: 800; color: #8e5262; }
+.hoa-order-modal__actions { display: grid; gap: 9px; margin: 16px 0 11px; }
+.hoa-order-modal__tracking, .hoa-order-modal__shop {
+  display: flex; justify-content: center; align-items: center; width: 100%;
+  min-height: 45px; padding: 11px 16px; border-radius: 9px;
+  font-size: 15px; font-weight: 700; line-height: 1.4; text-decoration: none;
+}
+.hoa-order-modal__tracking { background: #a95773; border: 1px solid #a95773; color: #fff !important; }
+.hoa-order-modal__tracking:hover { background: #86445c; color: #fff !important; }
+.hoa-order-modal__shop { background: #fff; border: 1px solid #a95773; color: #87445c; cursor: pointer; }
+.hoa-order-modal__shop:disabled { background: #f5f0f1; border-color: #d8cad0; color: #877e84; cursor: not-allowed; opacity: 1; }
+.hoa-order-modal__shop:not(:disabled):hover { background: #fff1f4; }
+.hoa-order-modal__hint { display: block; font-size: 12px; color: #6b6269; line-height: 1.5; }
+.hoa-order-modal__panel :focus-visible { outline: 3px solid #bd7d95; outline-offset: 3px; }
+.hoa-checkout-success-copy { margin: 0 12px 12px 0; }
+.hoa-checkout-success-feedback { font-size: 13px; color: #50765a; }
+.hoa-checkout-success p strong { font-family: ui-monospace, Consolas, monospace; user-select: all; }
+@media (max-width: 540px) {
+  .hoa-order-modal { padding: 10px; }
+  .hoa-order-modal__panel { padding: 24px 17px 18px; max-height: calc(100dvh - 20px); }
+  .hoa-order-modal__panel h2 { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoa-order-modal *, .hoa-order-modal *::before, .hoa-order-modal *::after { transition: none !important; animation: none !important; }
+}

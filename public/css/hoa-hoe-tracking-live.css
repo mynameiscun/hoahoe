@@ -1,0 +1,26 @@
+/* Step 09.6: Chỉ bổ sung kết quả tra cứu, giữ nguyên toàn bộ Fiama. */
+.hoa-track-result {
+  margin-top: 24px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid #dce3d5;
+  border-radius: 16px;
+  background: #fbfcf9;
+}
+.hoa-track-result[hidden] { display: none !important; }
+.hoa-track-result h3 { margin: 0 0 18px; font-size: 23px; }
+.hoa-track-details { margin: 0; }
+.hoa-track-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(130px, 1.25fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e5e9df;
+  align-items: start;
+}
+.hoa-track-row dt, .hoa-track-row dd { margin: 0; line-height: 1.55; }
+.hoa-track-row dt { color: #616b59; }
+.hoa-track-row dd { font-weight: 600; color: #293529; overflow-wrap: anywhere; }
+.hoa-track-advice { font-size: 14px; color: #59644f; margin: 18px 0 0; }
+@media (max-width: 540px) {
+  .hoa-track-row { grid-template-columns: 1fr; gap: 2px; }
+}

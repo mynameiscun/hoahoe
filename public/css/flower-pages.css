@@ -1,0 +1,45 @@
+/* Step 04: Style them rieng cho 5 trang moi, khong sua 5 trang Fiama cu */
+.flower-page-body{padding:62px 0 70px;background:#fff}
+.flower-panel{background:#fff;border:1px solid #f0e7e2;border-radius:14px;box-shadow:0 12px 28px rgba(38,45,35,.035);padding:38px 40px;margin-bottom:24px}
+.flower-panel--soft{background:#fff9f4;border-color:#f5ede5}
+.flower-panel--center{text-align:center;max-width:820px;margin:0 auto}
+.flower-panel h2{font-size:clamp(1.55rem,2.8vw,2.35rem);line-height:1.25;margin:8px 0 20px;color:#2e2b2a}
+.flower-panel h3{font-size:1.25rem;color:#2e2b2a;margin-bottom:16px}
+.flower-panel p,.flower-page-bottom-help{color:#5e5c58;line-height:1.8}
+.flower-kicker{font-size:.77rem;font-weight:800;color:#b86078;letter-spacing:.11em;text-transform:uppercase}
+.flower-kicker i{margin-right:8px}
+.flower-main-button{background:#426b55!important;border-color:#426b55!important;color:#fff!important;border-radius:6px!important;min-height:45px}
+.flower-main-button:hover{background:#31513f!important;color:#fff!important}
+.flower-text-link{color:#426b55!important;text-decoration:underline;font-weight:600}
+.flower-field{margin-bottom:20px}
+.flower-field label{display:block;font-weight:700;color:#343835;margin:0 0 8px}
+.flower-field input{border-radius:8px!important;min-height:56px;width:100%;margin-bottom:0!important;background:#fff}
+.flower-form .btn-wrapper{margin-top:12px!important}
+.flower-notice{border-radius:9px;padding:14px 17px;text-align:left;margin:22px 0;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
+.flower-notice[hidden]{display:none}
+.flower-notice--neutral{background:#f6f5ee;border:1px solid #e5e4d5;color:#425547}
+.flower-notice i{margin-top:4px}
+.flower-inline-info{display:flex;align-items:flex-start;gap:12px;background:#fff9f4;padding:15px;border-radius:8px;margin-top:18px}
+.flower-inline-info>i{font-size:22px;color:#426b55;margin-top:4px}
+.flower-inline-info p{margin:0;font-size:.9rem}
+.flower-page-bottom-help{text-align:center;font-size:.93rem;margin:5px auto 0;max-width:680px}
+.flower-icon-circle{display:inline-flex;justify-content:center;align-items:center;color:#426b55;background:#e8f0e9;font-size:28px;width:74px;height:74px;border-radius:50%;margin-bottom:20px}
+.flower-order-preview{border:1px solid #e9e9e4;border-radius:12px;overflow:hidden;text-align:left;margin:26px 0}
+.flower-order-preview>div{display:flex;justify-content:space-between;gap:22px;padding:15px 18px;border-bottom:1px solid #eee}
+.flower-order-preview>div:last-child{border-bottom:0}
+.flower-order-preview span{color:#64625f}
+.flower-order-preview strong{font-weight:700;color:#34473a;text-align:right}
+.flower-actions,.flower-policy-actions{display:flex;gap:24px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.flower-two-col>.col-lg-5,.flower-two-col>.col-lg-7{margin-bottom:15px}
+.flower-two-col .flower-panel{height:100%}
+.flower-image-placeholder{min-height:310px;background:#f5e9e9;border:1px dashed #dabfca;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;color:#796877}
+.flower-image-placeholder i{font-size:42px}.flower-image-placeholder span{font-size:1.1rem;font-weight:600}.flower-image-placeholder small{color:#8b7f83}
+.flower-info-row{margin-top:18px}.flower-feature{background:#fff9f4;border:1px solid #f0e9df;border-radius:11px;padding:25px;height:100%;margin-bottom:14px}.flower-feature>i{font-size:25px;color:#426b55;display:block;margin-bottom:14px}.flower-feature h3{font-size:1.05rem;margin-bottom:8px}.flower-feature p{font-size:.9rem;line-height:1.65;color:#68635d;margin-bottom:0}
+.flower-contact-list{margin:25px 0}.flower-contact-list>div{display:flex;align-items:center;gap:18px;border-bottom:1px solid #f0ede7;padding:15px 0}.flower-contact-list>div>i{font-size:24px;color:#426b55;width:29px;flex-shrink:0}.flower-contact-list span{display:flex;flex-direction:column;gap:3px}.flower-contact-list small{color:#686560}
+.flower-social-row{display:flex;flex-wrap:wrap;gap:9px}.flower-social-chip{padding:10px 13px;border:1px solid #dfd9d0;border-radius:7px;font-size:.86rem}.flower-social-chip i{margin-right:6px}.flower-social-chip--disabled{background:#f4f3f1;color:#898681;cursor:not-allowed}
+.flower-mini-timetable{display:grid;grid-template-columns:1fr auto;gap:12px 16px;padding:18px 0;margin:15px 0;border-top:1px solid #eadfda;border-bottom:1px solid #eadfda}
+.flower-mini-timetable strong{color:#426b55;text-align:right}
+.flower-note-draft{background:#fff7ed;border:1px solid #efd7ba;border-radius:9px;padding:15px 17px;margin:22px 0}
+.flower-note-draft i{margin-right:8px;color:#b47b42}
+.flower-policy-sections section{padding:21px 0;border-top:1px solid #eee9e2}.flower-policy-sections h3{font-size:1.22rem;color:#426b55;margin-bottom:8px}.flower-policy-sections p{margin-bottom:0}
+@media(max-width:767px){.flower-page-body{padding:35px 0 44px}.flower-panel{padding:26px 20px}.flower-order-preview>div{display:block}.flower-order-preview strong{display:block;margin-top:4px;text-align:left}.flower-image-placeholder{min-height:200px}.flower-panel h2{margin-bottom:13px}}

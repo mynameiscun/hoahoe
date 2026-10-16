@@ -1,0 +1,20 @@
+/* Ảnh và nhận diện Hoa Hoè; bổ sung tối thiểu, không đổi bố cục Fiama đã duyệt. */
+.site-logo img {width:auto; max-width:170px; max-height:96px; object-fit:contain}
+@media (max-width:767px){.site-logo img {max-height:72px;max-width:124px}}
+.ltn__product-item .product-img {overflow:hidden;background:#faf8f6}
+.ltn__product-item .product-img img {width:100%;height:310px;object-fit:cover;object-position:center center}
+.ltn__product-list-view .ltn__product-item .product-img img{height:230px}
+@media (max-width:767px){.ltn__product-item .product-img img {height:230px}}
+.ltn__shop-details-large-img img{width:100%;height:min(70vh,620px);object-fit:contain;background:#faf8f6}
+.ltn__shop-details-small-img img{height:100px;width:100%;object-fit:cover}
+.hoa-draft-notice{padding:10px 14px; border-left:3px solid #b68578;background:#fff8f4;color:#563f3b;font-size:14px}
+.hoa-detail-meta{padding:10px 0;font-size:15px;line-height:1.8}
+.hoa-detail-meta strong{color:#493a36}
+.hoa-detail-meta p{margin:0 0 7px}
+.hoa-no-results{margin:22px 0;padding:20px;color:#654c45;background:#fff7f3}
+.ltn__shop-details-inner .modal-product-brief p{line-height:1.75}
+.flower-hero-slide{background-position:center 40%}
+.flower-hero .carousel-item:first-child .flower-hero-slide{background-position:center 43%}
+/* Fiama gốc đặt ảnh dưới nền bằng z-index:-1; khi thêm nền sáng cho thẻ hoa phải đưa ảnh lên lại. */
+.ltn__product-item .product-img img { z-index: 0; }
+.ltn__product-item .product-hover-action { z-index: 2; }
