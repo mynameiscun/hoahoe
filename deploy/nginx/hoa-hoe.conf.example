@@ -1,0 +1,74 @@
+# BAN MAU CHUA THE SU DUNG NGAY - can thay __DOMAIN__ va cert paths.
+# Copy FRONTEND da loc den /srv/hoa-hoe/public, khong dung root /srv/hoa-hoe.
+# Nginx va Django cung origin, khong can mo CORS.
+
+server {
+    listen 80;
+    server_name __DOMAIN__ www.__DOMAIN__;
+    # Chi dung sau khi da cau hinh TLS va chung chi hoat dong.
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name __DOMAIN__ www.__DOMAIN__;
+
+    ssl_certificate /etc/letsencrypt/live/__DOMAIN__/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/__DOMAIN__/privkey.pem;
+
+    root /srv/hoa-hoe/public;
+    index index.html;
+    autoindex off;
+    client_max_body_size 8m;
+
+    # Defense in depth: chan API nhan don/tra cuu tren reverse proxy.
+    # Backend cung phai tiep tuc khoa hai endpoint nay.
+    location = /api/orders/submit/ { return 503; }
+    location = /api/orders/lookup/ { return 503; }
+
+    # URL API san pham va cac chuc nang backend con lai.
+    location ^~ /api/ {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # Nginx ghi de header tu client, neu tin proxy trong settings.py.
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 45s;
+    }
+
+    location ^~ /admin/ {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 45s;
+    }
+
+    # Django Admin: chay manage.py collectstatic tren server.
+    location ^~ /static/ {
+        alias /srv/hoa-hoe/backend/staticfiles/;
+        add_header X-Content-Type-Options nosniff always;
+        expires 7d;
+    }
+
+    # Anh san pham upload qua Admin - dung media rieng, can backup.
+    location ^~ /media/ {
+        alias /srv/hoa-hoe/backend/media/;
+        add_header X-Content-Type-Options nosniff always;
+        expires 1h;
+    }
+
+    # Khong cho truy cap file an du co sai sot trong public assets.
+    location ~ /\. {
+        deny all;
+    }
+
+    # Fiama HTML / css / js / img - CHI nam trong thu muc public.
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

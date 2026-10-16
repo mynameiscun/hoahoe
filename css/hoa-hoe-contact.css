@@ -1,0 +1,231 @@
+/* Hoa Hoè | Floating Bouquet Contact 5.2
+   Independent from Fiama, navbar, cart and parallax styles. */
+:root {
+  --hoa-contact-right: 24px;
+  --hoa-contact-bottom: 25px;
+  --hoa-contact-main-size: 78px;
+  --hoa-contact-item-size: 57px;
+  --hoa-contact-shadow: 0 9px 28px rgba(57, 65, 37, .17);
+}
+.hoa-contact-fab,
+.hoa-contact-fab * { box-sizing: border-box; }
+.hoa-contact-fab {
+  position: fixed;
+  right: calc(var(--hoa-contact-right) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--hoa-contact-bottom) + env(safe-area-inset-bottom, 0px));
+  width: var(--hoa-contact-main-size);
+  height: var(--hoa-contact-main-size);
+  z-index: 99990;
+  isolation: isolate;
+  font-family: Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.hoa-contact-fab button,
+.hoa-contact-fab a {
+  appearance: none;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  text-decoration: none !important;
+  user-select: none;
+}
+.hoa-contact-fab.is-open::before {
+  content: '';
+  position: absolute;
+  width: 265px;
+  height: 265px;
+  right: -8px;
+  bottom: -8px;
+  pointer-events: auto;
+  z-index: 0;
+}
+/* Nút lên đầu trang của Fiama chuyển sang trái để không bị bó hoa che. */
+body.hoa-contact-enabled #scrollUp {
+  right: auto !important;
+  left: 20px !important;
+  bottom: 20px !important;
+}
+.hoa-contact-fab__main {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 255, 255, .95);
+  border-radius: 50%;
+  padding: 8px;
+  color: #536b35;
+  background: linear-gradient(142deg, #fcebe6 7%, #fbf5e9 54%, #e6ecd9 100%);
+  box-shadow: 0 4px 0 #ffffffbb, 0 10px 24px rgba(70, 78, 46, .21);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transform: translateZ(0);
+  transition: transform .3s ease, box-shadow .3s ease;
+  z-index: 2;
+}
+.hoa-contact-fab__main:hover { transform: scale(1.055); }
+.hoa-contact-fab.is-open .hoa-contact-fab__main { transform: rotate(-8deg) scale(1.045); }
+.hoa-contact-fab__bouquet {
+  font-size: 39px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 2px rgba(56, 65, 43, .11));
+}
+.hoa-contact-fab__main-image {
+  position: absolute;
+  width: 91%;
+  height: 91%;
+  inset: 4.5%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .15s ease;
+  pointer-events: none;
+}
+.hoa-contact-fab__main-image.is-loaded { opacity: 1; }
+.hoa-contact-fab__main:focus-visible,
+.hoa-contact-fab__item:focus-visible { outline: 3px solid #da8371; outline-offset: 4px; }
+.hoa-contact-fab__item {
+  --hoa-fan-x: 0px;
+  --hoa-fan-y: 0px;
+  --hoa-fan-delay: 0ms;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--hoa-contact-item-size);
+  height: var(--hoa-contact-item-size);
+  padding: 0;
+  border: 2px solid rgba(255,255,255,.96);
+  border-radius: 50%;
+  background: var(--hoa-contact-tint, #fff);
+  color: var(--hoa-contact-ink, #596d3c);
+  box-shadow: var(--hoa-contact-shadow);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(0, 0) scale(.32) rotate(18deg);
+  transition:
+    transform .46s cubic-bezier(.19, 1.25, .37, 1),
+    opacity .18s ease,
+    visibility 0s linear .46s,
+    box-shadow .2s ease;
+  z-index: 1;
+}
+.hoa-contact-fab.is-open .hoa-contact-fab__item {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(var(--hoa-fan-x), var(--hoa-fan-y)) scale(1) rotate(0deg);
+  transition-delay: var(--hoa-fan-delay), var(--hoa-fan-delay), 0s, 0s;
+}
+.hoa-contact-fab.is-open .hoa-contact-fab__item:hover {
+  transform: translate(var(--hoa-fan-x), var(--hoa-fan-y)) scale(1.12) rotate(0deg);
+  box-shadow: 0 11px 32px rgba(57, 65, 37, .24);
+}
+/* Anchored at the bottom-right bouquet; other icons open on an upward-left arc. */
+.hoa-contact-fab__item[data-channel="messenger"] {
+  --hoa-fan-x: -8px; --hoa-fan-y: -189px; --hoa-fan-delay: 0ms;
+  --hoa-contact-tint: #eaf1ff; --hoa-contact-ink: #1867ed;
+}
+.hoa-contact-fab__item[data-channel="zalo"] {
+  --hoa-fan-x: -97px; --hoa-fan-y: -169px; --hoa-fan-delay: 35ms;
+  --hoa-contact-tint: #e9f6ff; --hoa-contact-ink: #1473bc;
+}
+.hoa-contact-fab__item[data-channel="instagram"] {
+  --hoa-fan-x: -166px; --hoa-fan-y: -110px; --hoa-fan-delay: 70ms;
+  --hoa-contact-tint: #ffedf4; --hoa-contact-ink: #bd4b7a;
+}
+.hoa-contact-fab__item[data-channel="tiktok"] {
+  --hoa-fan-x: -194px; --hoa-fan-y: -21px; --hoa-fan-delay: 105ms;
+  --hoa-contact-tint: #e9e8ed; --hoa-contact-ink: #22212c;
+}
+.hoa-contact-fab__icon {
+  position: relative;
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+}
+.hoa-contact-fab__icon svg { display: block; width: 32px; height: 32px; }
+.hoa-contact-fab__wordmark { font-size: 14px; font-weight: 800; letter-spacing: -.6px; }
+.hoa-contact-fab__channel-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.hoa-contact-fab__channel-image.is-loaded { opacity: 1; }
+.hoa-contact-fab__tooltip {
+  position: absolute;
+  right: calc(100% + 9px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  border-radius: 99px;
+  padding: 7px 11px;
+  color: #4f5e39;
+  background: #fffaf3;
+  border: 1px solid #f0e9de;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  box-shadow: 0 3px 11px rgba(75, 66, 51, .08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.hoa-contact-fab__item:hover .hoa-contact-fab__tooltip,
+.hoa-contact-fab__item:focus-visible .hoa-contact-fab__tooltip { opacity: 1; }
+.hoa-contact-fab__status {
+  position: absolute;
+  right: 4px;
+  bottom: calc(100% + 16px);
+  width: max-content;
+  max-width: min(275px, calc(100vw - 40px));
+  border-radius: 14px;
+  padding: 11px 14px;
+  font: 600 13px/1.4 Arial, sans-serif;
+  background: #fffaf3;
+  border: 1px solid #f0d9c9;
+  color: #54643a;
+  box-shadow: 0 10px 26px rgba(66, 69, 43, .15);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.hoa-contact-fab__status.is-visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 600px) {
+  :root {
+    --hoa-contact-right: 14px;
+    --hoa-contact-bottom: 16px;
+    --hoa-contact-main-size: 68px;
+    --hoa-contact-item-size: 51px;
+  }
+  .hoa-contact-fab__bouquet { font-size: 34px; }
+  .hoa-contact-fab__item { right: 8px; bottom: 8px; }
+  .hoa-contact-fab__item[data-channel="messenger"] { --hoa-fan-x: -5px; --hoa-fan-y: -160px; }
+  .hoa-contact-fab__item[data-channel="zalo"] { --hoa-fan-x: -77px; --hoa-fan-y: -145px; }
+  .hoa-contact-fab__item[data-channel="instagram"] { --hoa-fan-x: -138px; --hoa-fan-y: -94px; }
+  .hoa-contact-fab__item[data-channel="tiktok"] { --hoa-fan-x: -160px; --hoa-fan-y: -19px; }
+  .hoa-contact-fab__icon { width: 30px; height: 30px; }
+  .hoa-contact-fab__icon svg { width: 28px; height: 28px; }
+  .hoa-contact-fab__tip { font-size: 11px; }
+  .hoa-contact-fab__tooltip { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoa-contact-fab__main, .hoa-contact-fab__item,
+  .hoa-contact-fab__status { transition: none !important; }
+}
+/* Đừng đặt nút liên hệ phía trên menu giỏ hàng / hộp thoại của Fiama. */
+body:has(.ltn__utilize.ltn__utilize-open) .hoa-contact-fab,
+body:has(.modal.show) .hoa-contact-fab {
+  opacity: 0;
+  pointer-events: none;
+}

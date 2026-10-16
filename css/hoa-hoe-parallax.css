@@ -1,0 +1,268 @@
+/* =====================================================================
+   HOA HOÈ · PARALLAX 5.0 — trang chủ (bổ sung, không thay file gốc)
+   - Không đụng navbar, carousel active/fade, button, giỏ hàng, Django.
+   - CSS variables được ghi bởi js/hoa-hoe-parallax.js theo scroll.
+   - Nếu JS tắt hoặc prefers-reduced-motion: nội dung vẫn hiển thị đầy đủ.
+   ===================================================================== */
+
+/* 1. Hero: KHÔNG biến đổi slide 1 vì đó là banner/logo gốc.
+   Slide 2 hoa văn và slide 3 ảnh có nhịp trôi khác nhau. */
+body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop {
+  transform: translate3d(0, var(--hoa-px-hero-pattern, 0px), 0) scale(1.13);
+  transform-origin: center center;
+  will-change: transform;
+}
+body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-photo .hoa-photo-cover img {
+  transform: translate3d(0, var(--hoa-px-hero-photo, 0px), 0) scale(1.12);
+  transform-origin: center center;
+  will-change: transform;
+}
+body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content {
+  transform: translate3d(0, var(--hoa-px-hero-copy, 0px), 0);
+  will-change: transform;
+}
+
+/* 2. Hoa nổi bật: chỉ trang trí nền, KHÔNG thay transform từng sản phẩm.
+   Reveal và hover card vẫn do hoa-hoe-motion.css quản lý. */
+body.hoa-hoe-home .hoa-parallax-products {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fffdf9 0%, #fff9f4 65%, #fffdf9 100%);
+}
+body.hoa-hoe-home .hoa-parallax-products::before,
+body.hoa-hoe-home .hoa-parallax-products::after {
+  content: '';
+  position: absolute;
+  display: block;
+  z-index: -1;
+  width: clamp(230px, 32vw, 590px);
+  height: clamp(230px, 32vw, 590px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+body.hoa-hoe-home .hoa-parallax-products::before {
+  top: 5%; left: -12%;
+  background: radial-gradient(circle, rgba(236, 157, 146, .14), rgba(236, 157, 146, 0) 70%);
+  transform: translate3d(0, var(--hoa-px-product-back, 0px), 0);
+}
+body.hoa-hoe-home .hoa-parallax-products::after {
+  right: -10%; bottom: 3%;
+  background: radial-gradient(circle, rgba(143, 162, 107, .19), rgba(143, 162, 107, 0) 72%);
+  transform: translate3d(0, var(--hoa-px-product-front, 0px), 0);
+}
+body.hoa-hoe-home .hoa-parallax-products > .container { position: relative; z-index: 1; }
+
+/* 3. Brand story — một đoạn cuộn nhiều lớp sử dụng chính ảnh sản phẩm có sẵn. */
+body.hoa-hoe-home .hoa-parallax-story {
+  --hoa-story-deep: 0px;
+  --hoa-story-near: 0px;
+  --hoa-story-flower: 0px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(78px, 10vw, 170px) 0;
+  background: #f5f1e8;
+  color: #43523a;
+}
+body.hoa-hoe-home .hoa-parallax-story__texture {
+  position: absolute;
+  inset: -12% -4%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: .11;
+  background: url('../img/slider/hoa-hoe-floral-pattern.png') center / cover no-repeat;
+  transform: translate3d(0, var(--hoa-story-deep), 0) scale(1.12);
+}
+body.hoa-hoe-home .hoa-parallax-story__bloom {
+  position: absolute;
+  z-index: -1;
+  color: rgba(219, 122, 111, .30);
+  font: 400 clamp(180px, 22vw, 380px)/1 Georgia, serif;
+  pointer-events: none;
+  transform: translate3d(0, var(--hoa-story-flower), 0) rotate(-18deg);
+}
+body.hoa-hoe-home .hoa-parallax-story__bloom--left { left: -5.4%; top: -10%; }
+body.hoa-hoe-home .hoa-parallax-story__bloom--right {
+  right: -4.5%; bottom: -12%;
+  color: rgba(138, 155, 102, .26);
+  transform: translate3d(0, calc(var(--hoa-story-flower) * -.6), 0) rotate(20deg);
+}
+body.hoa-hoe-home .hoa-parallax-story__layout {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 7vw, 110px);
+  align-items: center;
+  min-height: 580px;
+}
+body.hoa-hoe-home .hoa-parallax-story__copy { position: relative; z-index: 2; padding: 18px 0; }
+body.hoa-hoe-home .hoa-parallax-story__eyebrow {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: #b16c62;
+  font-family: 'Hoa Computer Says No', Arial, sans-serif;
+  font-size: clamp(21px, 2.1vw, 32px);
+  letter-spacing: .045em;
+}
+body.hoa-hoe-home .hoa-parallax-story__copy h2 {
+  margin: 0 0 28px;
+  color: #52613c;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  font-size: clamp(46px, 4.9vw, 85px);
+  line-height: 1.07;
+  letter-spacing: -.052em;
+}
+body.hoa-hoe-home .hoa-parallax-story__copy h2 em {
+  color: #d47b70;
+  font-weight: 400;
+  font-style: italic;
+}
+body.hoa-hoe-home .hoa-parallax-story__rule {
+  display: block; width: 68px; height: 2px; margin-bottom: 28px;
+  background: #d88b7f;
+}
+body.hoa-hoe-home .hoa-parallax-story__copy p {
+  max-width: 460px;
+  margin: 0 0 32px;
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1.85;
+  color: #59664f;
+}
+body.hoa-hoe-home .hoa-parallax-story__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 57px;
+  padding: 11px 28px;
+  border: 1px solid #6b7b50;
+  border-radius: 999px;
+  color: #52633c;
+  background: rgba(255, 255, 255, .55);
+  font-family: 'Hoa Computer Says No', Arial, sans-serif;
+  font-size: clamp(22px, 2vw, 29px);
+  letter-spacing: .02em;
+  text-decoration: none !important;
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+body.hoa-hoe-home .hoa-parallax-story__link:hover,
+body.hoa-hoe-home .hoa-parallax-story__link:focus-visible {
+  background: #52633c; border-color: #52633c; color: #fff;
+}
+body.hoa-hoe-home .hoa-parallax-story__link:focus-visible { outline: 3px solid #d47b70; outline-offset: 4px; }
+body.hoa-hoe-home .hoa-parallax-story__scene {
+  position: relative;
+  height: clamp(440px, 42vw, 640px);
+  min-width: 0;
+}
+body.hoa-hoe-home .hoa-parallax-story__halo {
+  position: absolute;
+  width: 79%; aspect-ratio: 1;
+  left: 13%; top: 10%;
+  border-radius: 50%;
+  background: #e9d8c5;
+  box-shadow: inset 0 0 0 30px rgba(255,255,255,.13);
+  transform: translate3d(0, calc(var(--hoa-story-deep) * .6), 0);
+}
+body.hoa-hoe-home .hoa-parallax-story__photo {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: clamp(7px, .8vw, 12px);
+  overflow: hidden;
+  background: #fffdf7;
+  box-shadow: 0 24px 65px rgba(69, 64, 46, .20);
+  border-radius: 4px;
+}
+body.hoa-hoe-home .hoa-parallax-story__photo img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+body.hoa-hoe-home .hoa-parallax-story__photo--back {
+  width: 49%; height: 71%;
+  top: 2%; right: 4%;
+  transform: translate3d(0, var(--hoa-story-deep), 0) rotate(9deg);
+}
+body.hoa-hoe-home .hoa-parallax-story__photo--front {
+  width: 55%; height: 76%;
+  bottom: 0; left: 4%;
+  transform: translate3d(0, var(--hoa-story-near), 0) rotate(-9deg);
+}
+body.hoa-hoe-home .hoa-parallax-story__stamp {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  right: 1%; bottom: 5%;
+  width: clamp(92px, 9vw, 140px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #849364;
+  color: #fff5ec;
+  font-family: 'Hoa Computer Says No', Arial, sans-serif;
+  font-size: clamp(26px, 2.5vw, 40px);
+  line-height: .83;
+  text-align: center;
+  transform: translate3d(0, calc(var(--hoa-story-near) * .5), 0) rotate(12deg);
+  box-shadow: 0 8px 28px rgba(55, 73, 40, .2);
+}
+body.hoa-hoe-home .hoa-parallax-story__stamp span { font: 24px/1 Georgia, serif; margin-top: 8px; }
+
+/* 4. Ba thẻ giao hàng hơi lệch pha khi cuộn (desktop), giữ nguyên nội dung. */
+@media (min-width: 992px) {
+  body.hoa-hoe-home.hoa-parallax-ready .flower-delivery-info .flower-info-card {
+    transform: translate3d(0, var(--hoa-px-card-offset, 0px), 0);
+    will-change: transform;
+  }
+}
+
+/* Tablet và điện thoại: giảm biên độ hình, bỏ parallax từng thẻ để không giật. */
+@media (max-width: 991px) {
+  body.hoa-hoe-home .hoa-parallax-story { padding: 85px 0; }
+  body.hoa-hoe-home .hoa-parallax-story__layout { grid-template-columns: 1fr; gap: 34px; min-height: 0; }
+  body.hoa-hoe-home .hoa-parallax-story__copy { max-width: 700px; text-align: center; margin: 0 auto; }
+  body.hoa-hoe-home .hoa-parallax-story__copy h2 { font-size: clamp(46px, 7vw, 70px); }
+  body.hoa-hoe-home .hoa-parallax-story__rule { margin-left: auto; margin-right: auto; }
+  body.hoa-hoe-home .hoa-parallax-story__copy p { margin-left: auto; margin-right: auto; }
+  body.hoa-hoe-home .hoa-parallax-story__scene { width: min(100%, 610px); margin: 0 auto; height: 520px; }
+}
+@media (max-width: 575px) {
+  body.hoa-hoe-home .hoa-parallax-story { padding: 64px 0 58px; }
+  body.hoa-hoe-home .hoa-parallax-story__layout { gap: 17px; }
+  body.hoa-hoe-home .hoa-parallax-story__eyebrow { margin-bottom: 15px; }
+  body.hoa-hoe-home .hoa-parallax-story__copy h2 { font-size: clamp(43px, 11vw, 64px); margin-bottom: 22px; }
+  body.hoa-hoe-home .hoa-parallax-story__copy p { line-height: 1.7; font-size: 16px; margin-bottom: 24px; }
+  body.hoa-hoe-home .hoa-parallax-story__scene { height: clamp(310px, 92vw, 430px); }
+  body.hoa-hoe-home .hoa-parallax-story__photo { padding: 6px; }
+  body.hoa-hoe-home .hoa-parallax-story__photo--back { right: 5%; }
+  body.hoa-hoe-home .hoa-parallax-story__photo--front { left: 6%; }
+  body.hoa-hoe-home .hoa-parallax-story__stamp { width: 87px; font-size: 25px; right: 0; bottom: 1%; }
+  body.hoa-hoe-home .hoa-parallax-story__bloom { font-size: 170px; }
+}
+
+/* Không ép scroll-snap, không chặn sự kiện cuộn và hỗ trợ giảm chuyển động. */
+@media (prefers-reduced-motion: reduce) {
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-photo .hoa-photo-cover img,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content,
+  body.hoa-hoe-home .hoa-parallax-products::before,
+  body.hoa-hoe-home .hoa-parallax-products::after,
+  body.hoa-hoe-home .hoa-parallax-story__texture,
+  body.hoa-hoe-home .hoa-parallax-story__bloom,
+  body.hoa-hoe-home .hoa-parallax-story__halo,
+  body.hoa-hoe-home .hoa-parallax-story__photo,
+  body.hoa-hoe-home .hoa-parallax-story__stamp,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-delivery-info .flower-info-card {
+    will-change: auto !important;
+    transition: none !important;
+  }
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-pattern-backdrop,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-photo .hoa-photo-cover img,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content,
+  body.hoa-hoe-home.hoa-parallax-ready .flower-delivery-info .flower-info-card {
+    transform: none !important;
+  }
+}

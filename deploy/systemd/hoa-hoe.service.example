@@ -1,0 +1,21 @@
+# BAN MAU CHO UBUNTU + SYSTEMD; thay user/paths theo server that.
+[Unit]
+Description=Hoa Hoe Django WSGI (Gunicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hoa-hoe
+Group=www-data
+WorkingDirectory=/srv/hoa-hoe/backend
+EnvironmentFile=/etc/hoa-hoe/production.env
+ExecStart=/srv/hoa-hoe/backend/.venv/bin/gunicorn --workers 3 --timeout 45 --bind 127.0.0.1:8001 config.wsgi:application
+Restart=on-failure
+RestartSec=5
+UMask=0027
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

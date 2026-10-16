@@ -1355,3 +1355,14 @@
 
   
 })(jQuery);
+
+/* Hoa Hoè 5.2: nạp nút liên hệ ở tất cả các trang dùng Fiama main.js.
+ * Không thay đổi bất kỳ hàm giỏ hàng/carousel nào phía trên. */
+(function () {
+    if (document.querySelector('script[data-hoa-contact-loader]')) return;
+    var script = document.createElement('script');
+    script.src = 'js/hoa-hoe-contact.js?v=5.2';
+    script.defer = true;
+    script.setAttribute('data-hoa-contact-loader', '');
+    document.head.appendChild(script);
+})();

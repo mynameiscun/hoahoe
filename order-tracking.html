@@ -19,7 +19,7 @@
 <!-- Font icon mappings for the supplied Fiama font files -->
 <link href="css/flower-font-fallback.css" rel="stylesheet"/>
 <link href="css/flower-cart-demo.css" rel="stylesheet"/>
-<link href="css/flower-custom.css" rel="stylesheet"/><link href="css/flower-pages.css" rel="stylesheet"/><link href="img/favicon.png" rel="icon"/><link href="css/hoa-hoe-products.css" rel="stylesheet"/><link href="css/hoa-hoe-motion.css" rel="stylesheet"/>
+<link href="css/flower-custom.css" rel="stylesheet"/><link href="css/flower-pages.css" rel="stylesheet"/><link href="img/favicon.png" rel="icon"/><link href="css/hoa-hoe-products.css" rel="stylesheet"/><link href="css/hoa-hoe-motion.css" rel="stylesheet"/><link href="css/hoa-hoe-tracking-live.css" rel="stylesheet"/>
 </head><body><div class="body-wrapper"><header class="ltn__header-area ltn__header-3 section-bg-6">
 <!-- ltn__header-middle-area start -->
 <div class="ltn__header-middle-area">
@@ -251,14 +251,15 @@
 <h2 id="tracking-title">Tra cứu đơn hoa</h2>
 <p>Nhập <strong>mã đơn hàng</strong> và <strong>số điện thoại người đặt</strong> để xác minh quyền xem trạng thái. Bạn không cần đăng ký tài khoản.</p>
 <form action="#" class="ltn__form-box contact-form-box flower-form" id="flower-order-lookup" method="post" novalidate="">
-<div class="flower-field"><label for="order-code">Mã đơn hàng <span aria-hidden="true">*</span></label><input autocomplete="off" id="order-code" maxlength="50" name="order_code" placeholder="Ví dụ: mã nhận được khi shop tiếp nhận đơn" required="" type="text"/></div>
-<div class="flower-field"><label for="buyer-phone">Số điện thoại người đặt <span aria-hidden="true">*</span></label><input autocomplete="tel" id="buyer-phone" inputmode="tel" maxlength="20" name="buyer_phone" placeholder="Số điện thoại đã dùng khi đặt hoa" required="" type="tel"/></div>
+<div class="flower-field"><label for="order-code">Mã đơn hàng <span aria-hidden="true">*</span></label><input autocomplete="off" id="order-code" maxlength="20" name="order_code" placeholder="Ví dụ: mã nhận được khi shop tiếp nhận đơn" required="" type="text"/></div>
+<div class="flower-field"><label for="buyer-phone">Số điện thoại người đặt <span aria-hidden="true">*</span></label><input autocomplete="off" id="buyer-phone" inputmode="tel" maxlength="20" name="buyer_phone" placeholder="Số điện thoại đã dùng khi đặt hoa" required="" type="tel"/></div>
 <div class="btn-wrapper mt-0 text-center"><button class="btn theme-btn-1 btn-effect-1 flower-main-button" type="submit">Tra cứu đơn hàng</button></div>
 </form>
 <div aria-live="polite" class="flower-notice flower-notice--neutral" hidden="" id="flower-lookup-notice" role="status"></div>
-<div class="flower-inline-info"><i aria-hidden="true" class="icon-lock"></i><p>Vì bảo vệ thông tin người đặt và người nhận, hệ thống chỉ hiển thị chi tiết đơn sau khi xác minh hợp lệ. Chức năng tra cứu dữ liệu thật sẽ hoạt động khi kết nối Django và MySQL.</p></div>
+<section id="hoa-track-result" class="hoa-track-result" tabindex="-1" aria-label="Kết quả tra cứu đơn" hidden></section>
+<div class="flower-inline-info"><i aria-hidden="true" class="icon-lock"></i><p>Vì bảo vệ thông tin người đặt và người nhận, hệ thống chỉ hiển thị chi tiết đơn sau khi xác minh hợp lệ. Tra cứu thử nghiệm chỉ hiển thị trạng thái đơn và tổng tiền sau khi xác minh. Không hiện thông tin người nhận hoặc địa chỉ giao.</p></div>
 </div>
-<div class="flower-page-bottom-help"><strong>Đơn đã được shop xác nhận?</strong> Hướng dẫn chuyển khoản và trạng thái thanh toán sẽ hiển thị trong thông tin đơn sau khi xác minh; không chuyển khoản trước khi shop xác nhận.</div>
+<div class="flower-page-bottom-help"><strong>Đơn đã được shop xác nhận?</strong> Trạng thái thanh toán hiển thị sau khi xác minh. Shop sẽ liên hệ trực tiếp để hướng dẫn chuyển khoản khi đơn được duyệt; không tự chuyển khoản trước khi shop xác nhận.</div>
 </div></div></div>
 </section><footer aria-label="Thông tin cửa hàng" class="flower-footer">
 <div class="container">
@@ -289,5 +290,5 @@
 </div>
 <div class="flower-footer-bottom">© Hoa Hoè Flower Shop · Giao diện đang hoàn thiện; giá hoa hiện là dự kiến.</div>
 </div>
-</footer></div><script src="js/plugins.js"></script><script src="js/main.js"></script><script src="js/flower-product-data.js"></script><script src="js/hoa-hoe-catalog-sync.js"></script><script src="js/flower-cart-demo.js"></script><script src="js/flower-step04-tracking.js"></script><script src="js/hoa-hoe-motion.js"></script>
+</footer></div><script src="js/plugins.js"></script><script src="js/main.js"></script><script src="js/flower-product-data.js"></script><script src="js/hoa-hoe-catalog-sync.js"></script><script src="js/flower-cart-demo.js"></script><script src="js/hoa-hoe-tracking-live.js"></script><script src="js/hoa-hoe-motion.js"></script>
 </body></html>

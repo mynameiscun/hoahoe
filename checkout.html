@@ -22,6 +22,8 @@
 <link href="css/flower-font-fallback.css" rel="stylesheet"/>
 <link href="css/flower-cart-demo.css" rel="stylesheet"/>
 <link href="css/hoa-hoe-products.css" rel="stylesheet"/><link href="css/hoa-hoe-motion.css" rel="stylesheet"/>
+<link href="css/hoa-hoe-checkout-v3.css" rel="stylesheet"/>
+<link href="css/hoa-hoe-checkout-area.css" rel="stylesheet"/>
 </head>
 <body>
 <!--[if lte IE 9]>
@@ -293,149 +295,85 @@
 </div>
 </div>
 <!-- BREADCRUMB AREA END -->
-<!-- WISHLIST AREA START -->
-<div class="ltn__checkout-area mb-100">
-<div class="container">
-<div class="row">
-<div class="col-lg-12">
-<div class="ltn__checkout-inner">
-<div class="ltn__checkout-single-content mt-50">
-<h4 class="title-2">Billing Details</h4>
-<div class="ltn__checkout-single-content-info">
-<form action="#">
-<h6>Personal Information</h6>
-<div class="row">
-<div class="col-md-6">
-<div class="input-item input-item-name ltn__custom-icon">
-<input name="ltn__name" placeholder="First name" type="text"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item input-item-name ltn__custom-icon">
-<input name="ltn__lastname" placeholder="Last name" type="text"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item input-item-email ltn__custom-icon">
-<input name="ltn__email" placeholder="email address" type="email"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item input-item-phone ltn__custom-icon">
-<input name="ltn__phone" placeholder="phone number" type="text"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item input-item-website ltn__custom-icon">
-<input name="ltn__company" placeholder="Company name (optional)" type="text"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item input-item-website ltn__custom-icon">
-<input name="ltn__phone" placeholder="Company address (optional)" type="text"/>
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-lg-4 col-md-6">
-<h6>Country</h6>
-<div class="input-item">
-<select class="nice-select">
-<option>Select Country</option>
-<option>Australia</option>
-<option>Canada</option>
-<option>China</option>
-<option>Morocco</option>
-<option>Saudi Arabia</option>
-<option>United Kingdom (UK)</option>
-<option>United States (US)</option>
-</select>
-</div>
-</div>
-<div class="col-lg-12 col-md-12">
-<h6>Address</h6>
-<div class="row">
-<div class="col-md-6">
-<div class="input-item">
-<input placeholder="House number and street name" type="text"/>
-</div>
-</div>
-<div class="col-md-6">
-<div class="input-item">
-<input placeholder="Apartment, suite, unit etc. (optional)" type="text"/>
-</div>
-</div>
-</div>
-</div>
-<div class="col-lg-4 col-md-6">
-<h6>Town / City</h6>
-<div class="input-item">
-<input placeholder="City" type="text"/>
-</div>
-</div>
-<div class="col-lg-4 col-md-6">
-<h6>State </h6>
-<div class="input-item">
-<input placeholder="State" type="text"/>
-</div>
-</div>
-<div class="col-lg-4 col-md-6">
-<h6>Zip</h6>
-<div class="input-item">
-<input placeholder="Zip" type="text"/>
-</div>
-</div>
-</div>
-<p><label class="input-info-save mb-0"><input name="agree" type="checkbox"/> Create an account?</label></p>
-<h6>Order Notes (optional)</h6>
-<div class="input-item input-item-textarea ltn__custom-icon">
-<textarea name="ltn__message" placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
-</div>
-</form>
-</div>
-</div>
-</div>
-</div>
-<div class="col-lg-6">
-<div class="ltn__checkout-payment-method mt-50"></div>
-</div>
-<div class="col-lg-6">
-<div class="shoping-cart-total mt-50">
-<h4 class="title-2">Cart Totals</h4>
-<table class="table">
-<tbody>
-<tr>
-<td>Brake Conversion Kit <strong>× 2</strong></td>
-<td>$298.00</td>
-</tr>
-<tr>
-<td>OE Replica Wheels <strong>× 2</strong></td>
-<td>$170.00</td>
-</tr>
-<tr>
-<td>Wheel Bearing Retainer <strong>× 2</strong></td>
-<td>$150.00</td>
-</tr>
-<tr>
-<td>Shipping and Handing</td>
-<td>$15.00</td>
-</tr>
-<tr>
-<td>Vat</td>
-<td>$00.00</td>
-</tr>
-<tr>
-<td><strong>Order Total</strong></td>
-<td><strong>$633.00</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- WISHLIST AREA START -->
+<!-- CHECKOUT AREA START — Hoa Hoè Step 09.3, local DEBUG only -->
+<section class="ltn__checkout-area hoa-hoe-checkout-v3 mb-100" aria-labelledby="hoa-checkout-title">
+  <div class="container">
+    <header class="hoa-checkout-heading">
+      <h2 id="hoa-checkout-title">Gửi yêu cầu đặt hoa</h2>
+      <p>Chọn ngày giao trước ít nhất một ngày, gửi yêu cầu để shop kiểm tra địa chỉ và xác nhận phí giao.</p>
+    </header>
+    <div id="hoa-checkout-mode" class="hoa-checkout-banner" role="status" aria-live="polite">Đang kiểm tra kết nối Django...</div>
+    <div class="row hoa-checkout-layout">
+      <div class="col-lg-7">
+        <form id="hoa-checkout-form" autocomplete="on" novalidate>
+          <fieldset>
+            <legend>Thông tin người đặt</legend>
+            <div class="row">
+              <div class="col-md-6"><label for="hoa-customer-name">Họ và tên <span aria-hidden="true">*</span></label><input id="hoa-customer-name" name="customer_name" required maxlength="150" autocomplete="name" placeholder="Nguyễn Văn A"/></div>
+              <div class="col-md-6"><label for="hoa-customer-phone">Số điện thoại <span aria-hidden="true">*</span></label><input id="hoa-customer-phone" name="customer_phone" type="tel" required maxlength="24" autocomplete="tel" placeholder="09xxxxxxxx"/></div>
+              <div class="col-12"><label for="hoa-customer-email">Email (không bắt buộc)</label><input id="hoa-customer-email" name="customer_email" type="email" maxlength="254" autocomplete="email" placeholder="email@example.com"/></div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Thông tin người nhận</legend>
+            <div class="row">
+              <div class="col-md-6"><label for="hoa-recipient-name">Tên người nhận <span aria-hidden="true">*</span></label><input id="hoa-recipient-name" name="recipient_name" required maxlength="150" placeholder="Tên người nhận"/></div>
+              <div class="col-md-6"><label for="hoa-recipient-phone">SĐT người nhận <span aria-hidden="true">*</span></label><input id="hoa-recipient-phone" name="recipient_phone" type="tel" required maxlength="24" placeholder="09xxxxxxxx"/></div>
+              <div class="col-12">
+                <label for="hoa-delivery-province">Tỉnh / Thành phố giao hoa</label>
+                <input id="hoa-delivery-province" value="TP. Hồ Chí Minh (phạm vi trước 01/07/2025)" readonly aria-describedby="hoa-area-scope" />
+                <small id="hoa-area-scope">Chỉ nhận yêu cầu trong địa bàn TP.HCM cũ, chưa bao gồm Bình Dương và Bà Rịa – Vũng Tàu cũ.</small>
+              </div>
+              <div class="col-md-6">
+                <label for="hoa-delivery-district">Quận / Huyện cũ <span aria-hidden="true">*</span></label>
+                <select id="hoa-delivery-district" name="delivery_district_code" required><option value="">Chọn quận / huyện</option></select>
+              </div>
+              <div class="col-md-6">
+                <label for="hoa-delivery-ward">Phường / Xã cũ <span aria-hidden="true">*</span></label>
+                <select id="hoa-delivery-ward" name="delivery_ward_code" required disabled><option value="">Chọn quận / huyện trước</option></select>
+                <div id="hoa-ward-manual-group" hidden>
+                  <label for="hoa-delivery-ward-manual">Tên phường / xã nhập tay</label>
+                  <input id="hoa-delivery-ward-manual" name="delivery_ward_manual" maxlength="100" placeholder="Ví dụ: Phường Bến Thành" disabled />
+                  <small>Danh mục đang tạm gián đoạn hoặc địa danh cần xác minh: shop sẽ đối chiếu trước khi duyệt.</small>
+                </div>
+              </div>
+              <div class="col-12">
+                <label for="hoa-delivery-street">Số nhà, tên đường và địa chỉ cụ thể <span aria-hidden="true">*</span></label>
+                <textarea id="hoa-delivery-street" name="delivery_street" required minlength="5" maxlength="220" rows="2" placeholder="Ví dụ: 15 Nguyễn Huệ, tòa nhà A, tầng 2"></textarea>
+                <small>Thông tin khu vực sẽ được lưu cùng địa chỉ vào đơn hàng; phí giao do Admin kiểm tra và nhập sau.</small>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Lịch giao và lời nhắn</legend>
+            <div class="row">
+              <div class="col-md-6"><label for="hoa-delivery-date">Ngày giao <span aria-hidden="true">*</span></label><input id="hoa-delivery-date" name="delivery_date" type="date" required/><small>Không giao trong ngày. Đặt trước 17:00 ngày hôm trước.</small></div>
+              <div class="col-md-6"><label for="hoa-delivery-slot">Khung giờ giao <span aria-hidden="true">*</span></label><select id="hoa-delivery-slot" name="delivery_slot" required><option value="">Chọn khung giờ</option><option value="09-12">09:00 – 12:00</option><option value="13-17">13:00 – 17:00</option><option value="18-20">18:00 – 20:00</option></select></div>
+              <div class="col-12"><label for="hoa-order-note">Lời nhắn / ghi chú (không bắt buộc)</label><textarea id="hoa-order-note" name="note" maxlength="1000" rows="3" placeholder="Nội dung thiệp hoặc hướng dẫn giao hoa..."></textarea></div>
+            </div>
+          </fieldset>
+          <div class="hoa-checkout-actions">
+            <button class="theme-btn-1 btn btn-effect-1" id="hoa-preview-order" type="button" disabled>Kiểm tra yêu cầu</button>
+            <label class="hoa-checkout-consent"><input id="hoa-checkout-test-consent" type="checkbox"/> Tôi hiểu đây là <strong>đơn thử nghiệm trên máy cá nhân</strong>, được lưu vào MySQL và không phải đơn giao hoa thật.</label>
+            <button class="theme-btn-1 btn btn-effect-1" id="hoa-submit-order" type="button" disabled>Gửi yêu cầu thử nghiệm</button>
+          </div>
+          <div id="hoa-checkout-status" class="hoa-checkout-status" role="status" aria-live="polite">Đang tải giỏ hàng...</div>
+          <div id="hoa-checkout-success" class="hoa-checkout-success" hidden tabindex="-1"></div>
+        </form>
+      </div>
+      <div class="col-lg-5">
+        <aside class="hoa-checkout-summary" aria-label="Tóm tắt yêu cầu">
+          <h3>Giỏ hoa của bạn</h3>
+          <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Thành tiền</th></tr></thead><tbody id="hoa-checkout-items"><tr><td colspan="2">Đang xác minh giá...</td></tr></tbody><tfoot><tr><th>Tạm tính tiền hoa</th><td id="hoa-checkout-subtotal">—</td></tr><tr><th>Phí giao</th><td>Shop xác nhận sau</td></tr></tfoot></table></div>
+          <p>Phí giao sẽ được Admin kiểm tra và nhập sau. <strong>Chưa chuyển khoản ở bước này.</strong></p>
+          <p>Đơn được gửi ở trạng thái <strong>Chờ xác nhận</strong>. Chỉ thanh toán sau khi shop duyệt và hướng dẫn.</p>
+          <a href="cart.html">← Quay lại giỏ hàng</a>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- CHECKOUT AREA END -->
 <!-- BRAND LOGO AREA START -->
 <!-- BRAND LOGO AREA END -->
 <!-- FOOTER AREA START -->
@@ -472,11 +410,40 @@
 <!-- FOOTER AREA END -->
 </div>
 <!-- Body main wrapper end -->
+<!-- Step 09.7 — Xác nhận đã tiếp nhận yêu cầu, chỉ hiển thị khi Django lưu thành công. -->
+<div id="hoa-order-success-modal" class="hoa-order-modal" hidden>
+  <div class="hoa-order-modal__backdrop" data-hoa-close-modal="true"></div>
+  <section class="hoa-order-modal__panel" role="dialog" aria-modal="true" aria-labelledby="hoa-order-modal-title" aria-describedby="hoa-order-modal-description" tabindex="-1">
+    <button type="button" class="hoa-order-modal__close" data-hoa-close-modal="true" aria-label="Đóng thông báo">&times;</button>
+    <div class="hoa-order-modal__flower" aria-hidden="true">✿</div>
+    <h2 id="hoa-order-modal-title">Hoa Hoè đã nhận yêu cầu!</h2>
+    <p id="hoa-order-modal-description">Yêu cầu đặt hoa đã được lưu. Shop sẽ kiểm tra lịch giao và thông báo phí giao sau khi duyệt.</p>
+    <div class="hoa-order-modal__codebox">
+      <span class="hoa-order-modal__eyebrow">MÃ ĐƠN CỦA BẠN</span>
+      <output id="hoa-order-modal-code" class="hoa-order-modal__code" aria-label="Mã đơn hàng">—</output>
+      <button id="hoa-order-modal-copy" class="hoa-order-modal__copy" type="button">Sao chép mã đơn</button>
+      <span id="hoa-order-modal-copy-status" class="hoa-order-modal__copy-status" role="status" aria-live="polite"></span>
+    </div>
+    <p class="hoa-order-modal__reminder"><strong>Lưu ý:</strong> Hãy lưu lại mã đơn và dùng số điện thoại người đặt để tra cứu sau này.</p>
+    <p class="hoa-order-modal__pending">Trạng thái: <strong>Chờ xác nhận</strong> · <strong>Chưa chuyển khoản</strong></p>
+    <p class="hoa-order-modal__test">ĐÂY LÀ ĐƠN THỬ NGHIỆM TRÊN MÁY LOCAL — KHÔNG GIAO HOA THẬT.</p>
+    <div class="hoa-order-modal__actions">
+      <a href="order-tracking.html" class="hoa-order-modal__tracking">Tra cứu đơn hàng</a>
+      <button type="button" id="hoa-order-modal-shop" class="hoa-order-modal__shop" disabled>Xem thêm hoa xinh (5s)</button>
+    </div>
+    <span class="hoa-order-modal__hint">Bạn có thể đóng thông báo bất cứ lúc nào. Mã đơn vẫn hiển thị bên dưới Checkout.</span>
+  </section>
+</div>
+
 <!-- All JS Plugins -->
 <script src="js/plugins.js"></script>
 <!-- Main JS -->
 <script src="js/main.js"></script>
-<script src="js/flower-product-data.js"></script><script src="js/hoa-hoe-catalog-sync.js"></script><script src="js/flower-cart-demo.js"></script>
+<script src="js/flower-product-data.js"></script>
+<script src="js/hoa-hoe-product-api-sync.js"></script>
+<script src="js/hoa-hoe-catalog-sync.js"></script>
+<script src="js/flower-cart-demo.js"></script>
+<script src="js/hoa-hoe-checkout-v3.js"></script>
 <script src="js/hoa-hoe-motion.js"></script>
 </body>
 </html>

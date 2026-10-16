@@ -1,0 +1,30 @@
+/* Hoa Hoè 09.3 — chi áp dụng cho biểu mẫu Checkout; không chỉnh navbar/Fiama. */
+.hoa-hoe-checkout-v3 {padding-top: 18px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-heading {margin-bottom: 24px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-heading h2 {font-size: clamp(28px, 3vw, 38px); margin-bottom: 10px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-heading p {margin: 0;}
+.hoa-hoe-checkout-v3 .hoa-checkout-banner {border: 1px solid #cbd9cb;background: #f4f8f3; border-radius: 8px; padding: 12px 16px; margin: 14px 0 26px; font-weight: 600;}
+.hoa-hoe-checkout-v3 fieldset {min-width:0; border: 1px solid #e7e7e2; border-radius: 12px; padding: 19px 21px 14px; margin: 0 0 19px;}
+.hoa-hoe-checkout-v3 legend {width: auto; padding: 0 8px; font-size: 21px; font-weight: 600; color: #354329;}
+.hoa-hoe-checkout-v3 label:not(.hoa-checkout-consent) {display: block; font-size: 15px; font-weight: 600; margin: 0 0 7px;}
+.hoa-hoe-checkout-v3 input:not([type="checkbox"]),.hoa-hoe-checkout-v3 select,.hoa-hoe-checkout-v3 textarea {width:100%; height:auto; min-height: 47px; padding: 11px 13px; margin: 0 0 15px; border:1px solid #d8ddd3; border-radius: 6px; background: #fff; font-size:15px; font-family: inherit; color:#252525;}
+.hoa-hoe-checkout-v3 textarea {resize:vertical;}
+.hoa-hoe-checkout-v3 small {display:block; font-size:13px; line-height:1.45; margin:-7px 0 15px; color: #666;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary {padding: 22px 20px; border:1px solid #e7e7e2; background:#fafbf9; border-radius:12px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary h3 {font-size:22px; margin-bottom:20px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary table {width:100%;font-size:14px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary th,.hoa-hoe-checkout-v3 .hoa-checkout-summary td {padding: 11px 6px; vertical-align: top;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary td:last-child {text-align:right;white-space:nowrap;}
+.hoa-hoe-checkout-v3 .hoa-checkout-summary p {font-size:14px; line-height:1.55;}
+.hoa-hoe-checkout-v3 .hoa-checkout-actions {display:flex;flex-direction:column;gap:14px;align-items:flex-start;margin: 18px 0;}
+.hoa-hoe-checkout-v3 .hoa-checkout-actions button {min-width:240px;max-width:100%;}
+.hoa-hoe-checkout-v3 .hoa-checkout-actions button:disabled {opacity:.5;cursor:not-allowed;pointer-events:none;}
+.hoa-hoe-checkout-v3 .hoa-checkout-consent {display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6;}
+.hoa-hoe-checkout-v3 .hoa-checkout-consent input {width:18px;height:18px;margin-top:4px;flex:0 0 18px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-status {border-left:3px solid #819773;padding:12px 14px;background:#f4f8f3;line-height:1.55;}
+.hoa-hoe-checkout-v3 .hoa-checkout-status.is-error {border-color:#c34a4a;background:#fff4f2;}
+.hoa-hoe-checkout-v3 .hoa-checkout-success {margin-top:24px;padding:21px;background:#f5faf4;border:1px solid #bfd6bf;border-radius:9px;}
+.hoa-hoe-checkout-v3 .hoa-checkout-success[hidden] {display:none;}
+.hoa-hoe-checkout-v3 .hoa-checkout-success h3 {font-size:21px;}
+@media(max-width:991px){.hoa-hoe-checkout-v3 .hoa-checkout-summary{margin-top:22px;}}
+@media(max-width:575px){.hoa-hoe-checkout-v3 fieldset{padding:16px 13px 11px;}}

@@ -1,0 +1,23 @@
+HOA HOE - PYTHONANYWHERE / Web tab / STATIC FILES mappings
+==========================================================
+Replace YOUR_USERNAME and verify files/folders exist before adding.
+Use EACH URL prefix exactly as written. Do NOT map '/' to the frontend
+because it would intercept /api/ and /admin/.
+
+URL prefix         Physical directory
+/css/              /home/YOUR_USERNAME/HoaHoe_deploy_public/css
+/js/               /home/YOUR_USERNAME/HoaHoe_deploy_public/js
+/img/              /home/YOUR_USERNAME/HoaHoe_deploy_public/img
+/fonts/            /home/YOUR_USERNAME/HoaHoe_deploy_public/fonts
+/webfonts/         /home/YOUR_USERNAME/HoaHoe_deploy_public/webfonts
+/static/           /home/YOUR_USERNAME/HoaHoe/backend/staticfiles
+/media/products/   /home/YOUR_USERNAME/HoaHoe/backend/media/products
+
+NOTE:
+- /media/products/ is public product photos only. Never put customer
+  information or private order uploads in this directory.
+- The PythonAnywhere host serves these directly, outside Django URLs.
+- Only add a mapping for an asset directory that actually exists.
+- Run `python manage.py collectstatic --noinput` for Django Admin assets.
+- Test sample /css/style.css, /js/main.js, /img/logo.png,
+  /static/admin/css/base.css, /media/products/hoa-01.webp (if present).

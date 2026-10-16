@@ -7,14 +7,8 @@
   --hoa-motion-olive: #52631b;
 }
 
-/* NAV: cha giữ vị trí liên tục, không còn nhảy từ static sang fixed
-   khi main.js thêm sticky-active ở mốc 445px. */
-body.hoa-motion-ready:not(.hoa-hoe-home) .ltn__header-area {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  transition: transform .52s var(--hoa-motion-ease);
-}
+/* Trang Shop và các trang phụ: không ghi đè sticky header của Fiama.
+   Chỉ trang chủ sử dụng điều khiển navbar của Hoa Hoè Motion. */
 body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav {
   position: fixed;
   top: 0;
@@ -24,18 +18,18 @@ body.hoa-motion-ready.hoa-hoe-home .hoa-hoe-nav {
   z-index: 999;
   transition: transform .52s var(--hoa-motion-ease);
 }
-body.hoa-motion-ready .ltn__header-sticky.sticky-active {
+body.hoa-motion-ready.hoa-hoe-home .ltn__header-sticky.sticky-active {
   position: relative !important;
   top: auto !important;
   left: auto !important;
   animation: none !important;
   -webkit-animation: none !important;
 }
-body.hoa-motion-ready .ltn__header-area.hoa-nav-hidden {
+body.hoa-motion-ready.hoa-hoe-home .ltn__header-area.hoa-nav-hidden {
   transform: translate3d(0, -110%, 0);
   pointer-events: none;
 }
-body.hoa-motion-ready .ltn__header-middle-area.ltn__header-sticky {
+body.hoa-motion-ready.hoa-hoe-home .ltn__header-middle-area.ltn__header-sticky {
   transition: background-color .48s ease, box-shadow .48s ease,
               border-color .48s ease, backdrop-filter .48s ease,
               -webkit-backdrop-filter .48s ease;
@@ -240,7 +234,7 @@ body.hoa-motion-ready button:focus-visible {
     transition: none !important;
     animation: none !important;
   }
-  body.hoa-motion-ready .ltn__header-area.hoa-nav-hidden { transform: none !important; }
+  body.hoa-motion-ready.hoa-hoe-home .ltn__header-area.hoa-nav-hidden { transform: none !important; }
   body.hoa-motion-ready .ltn__main-menu > ul > li > a::after { transition: none; }
 }
 

@@ -1,0 +1,14 @@
+# TEMPLATE ONLY: replace the contents of the WSGI file linked on the Web tab.
+# NOT backend/config/wsgi.py, and NOT a script to run with `python`.
+# Replace YOUR_USERNAME and project directory with actual paths.
+import os
+import sys
+
+backend_dir = '/home/YOUR_USERNAME/HoaHoe/backend'
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+# config/settings.py reads backend/.env through python-dotenv.
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()

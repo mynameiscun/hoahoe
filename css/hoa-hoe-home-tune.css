@@ -1,0 +1,374 @@
+/* ============================================================================
+   HOA HOÈ | Trang chủ — CSS hiệu chỉnh (bản chuẩn hóa 4.5)
+   ---------------------------------------------------------------------------
+   Chỉ dùng ở index.html, được nạp SAU home-v2.css, home-v4.css và motion.css.
+   Giữ giao diện Fiama, các hiệu ứng carousel, giỏ hàng và API hiện hành.
+
+   CHỈNH NHANH tại các biến --hoa-* ngay bên dưới.
+   Font: Computer Says No (menu / button), Piquant (slogan), Danh Da (mô tả).
+   ============================================================================ */
+
+body.hoa-hoe-home {
+  /* Chữ slide 2 */
+  --hoa-kicker-size: 48px;
+  --hoa-slogan-size: 96px;
+  --hoa-slogan-leading: 1.15;
+  --hoa-slogan-gap: 12px;
+  --hoa-slogan-indent: 120px;
+  --hoa-slogan-stroke: 1px;
+  --hoa-desc-size: 46px;
+  --hoa-slide-button-size: 44px;
+
+  /* Menu, logo, button trang chủ */
+  --hoa-menu-size: clamp(31px, 2.25vw, 38px);
+  --hoa-submenu-size: clamp(30px, 2.15vw, 36px);
+  --hoa-logo-width: clamp(160px, 11.1vw, 192px);
+  --hoa-button-size: 32px;
+
+  --hoa-coral-text: #eb806e;
+  --hoa-coral-outline: #be5849;
+  --hoa-green-text: #5b6d30;
+  --hoa-green-outline: #506029;
+}
+
+/* 1. CAROUSEL: đúng 1 cấu hình full viewport cho section và 3 slide. */
+body.hoa-hoe-home .flower-hero-fullscreen,
+body.hoa-hoe-home .flower-hero-fullscreen #flowerHeroCarousel,
+body.hoa-hoe-home .flower-hero-fullscreen .carousel-inner,
+body.hoa-hoe-home .flower-hero-fullscreen .carousel-item,
+body.hoa-hoe-home .flower-hero-fullscreen .flower-hero-slide {
+  height: 100vh !important;
+  height: 100svh !important;
+  min-height: 0 !important;
+}
+
+/* 2. NAVBAR: giữ thanh cuộn/sticky của Hoa Hoè Motion. */
+@media (min-width: 1200px) {
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+    padding-top: 16px !important;
+    padding-bottom: 10px !important;
+  }
+
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    width: var(--hoa-logo-width) !important;
+    max-width: 100% !important;
+    max-height: 84px !important;
+    height: auto !important;
+    object-fit: contain;
+  }
+
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > a {
+    font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+    font-size: var(--hoa-menu-size) !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Dropdown Giỏ hàng / Đặt hoa / Thông tin: font display có thân chữ nhỏ,
+     nên dùng cỡ riêng lớn hơn cỡ mặc định 20px của Hoa Hoe Motion. */
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu li > ul li > a,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu .sub-menu li > a {
+    font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+    font-size: var(--hoa-submenu-size) !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+    letter-spacing: .018em !important;
+    text-transform: none !important;
+  }
+
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > ul,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > .sub-menu {
+    min-width: 292px;
+    padding: 10px 0;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > ul > li,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__main-menu > ul > li > .sub-menu > li {
+    padding: 8px 22px;
+  }
+
+  /* Cart cùng font menu. Tiền giỏ nhỏ hơn tên mục. */
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a h6,
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a h6 > span:first-child {
+    font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+    font-size: var(--hoa-menu-size) !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+    letter-spacing: .018em;
+    text-transform: none !important;
+  }
+
+  body.hoa-hoe-home .hoa-hoe-nav .mini-cart-icon-2 > a h6 > span.ltn__secondary-color {
+    font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+    font-size: 20px !important;
+    line-height: 1.05 !important;
+  }
+}
+
+@media (min-width: 1500px) {
+  body.hoa-hoe-home { --hoa-menu-size: clamp(36px, 2.45vw, 41px); }
+}
+
+/* 3. SLIDE 2: căn chữ, chỉ để nền ảnh, không tạo dải trắng ở nút CTA. */
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 90px clamp(28px, 6vw, 96px) 36px !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  width: min(100%, 1260px);
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content::before,
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content::after {
+  content: none !important;
+}
+
+/* Dòng giới thiệu: Computer Says No */
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+  margin: 0 0 24px !important;
+  color: #596b32 !important;
+  font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+  font-size: var(--hoa-kicker-size) !important;
+  font-weight: 400 !important;
+  line-height: 1.1 !important;
+  letter-spacing: .02em;
+  text-transform: none !important;
+}
+
+/* Hai dòng slogan: cùng 1 font + kích thước. */
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title {
+  max-width: 100% !important;
+  margin: 0 !important;
+  font-family: 'Hoa Piquant', Georgia, cursive !important;
+  font-size: var(--hoa-slogan-size) !important;
+  font-weight: 400 !important;
+  line-height: var(--hoa-slogan-leading) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title span {
+  display: block;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  white-space: nowrap;
+  letter-spacing: inherit !important;
+  text-transform: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title .hoa-editorial-coral {
+  margin-bottom: var(--hoa-slogan-gap) !important;
+  color: var(--hoa-coral-text) !important;
+  -webkit-text-stroke: var(--hoa-slogan-stroke) var(--hoa-coral-outline) !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title .hoa-editorial-green {
+  margin-left: var(--hoa-slogan-indent) !important;
+  color: var(--hoa-green-text) !important;
+  -webkit-text-stroke: var(--hoa-slogan-stroke) var(--hoa-green-outline) !important;
+}
+
+/* Dòng mô tả: Danh Da; nền trắng chỉ bọc đúng phần chữ. */
+body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+  display: inline-block;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  margin: 25px 0 32px !important;
+  padding: 8px 18px 12px !important;
+  border-radius: 24px;
+  background: rgba(255,255,255,.9) !important;
+  box-shadow: 0 10px 30px rgba(86,90,59,.08);
+  color: #38460f !important;
+  font-family: 'Hoa Danh Da', Impact, sans-serif !important;
+  font-size: var(--hoa-desc-size) !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.01em;
+}
+
+/* 4. Font button: chỉ các nút có chữ của trang chủ, KHÔNG áp lên arrow carousel. */
+body.hoa-hoe-home :is(a.btn, button.btn, input[type='button'], input[type='submit'], .flower-more-btn) {
+  font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+  font-size: var(--hoa-button-size) !important;
+  letter-spacing: .035em !important;
+  text-transform: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen [data-hoa-slide='2'] .hoa-editorial-cta {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-self: flex-start !important;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: fit-content !important;
+  min-width: clamp(230px, 23vw, 420px);
+  max-width: 100% !important;
+  min-height: 78px;
+  margin: 0 !important;
+  padding: 16px 34px !important;
+  border-radius: 999px !important;
+  background: #98a066 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #f9e1d8 !important;
+  font-family: 'Hoa Computer Says No', Arial, sans-serif !important;
+  font-size: var(--hoa-slide-button-size) !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  letter-spacing: .035em !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen [data-hoa-slide='2'] .hoa-editorial-cta::before,
+body.hoa-hoe-home .flower-hero-fullscreen [data-hoa-slide='2'] .hoa-editorial-cta::after {
+  content: none !important;
+}
+
+body.hoa-hoe-home .flower-hero-fullscreen [data-hoa-slide='2'] .hoa-editorial-cta:is(:hover, :focus-visible) {
+  background: #86904f !important;
+  color: #fff0ea !important;
+}
+
+/* 5. KÍCH THƯỚC MÀN HÌNH: chỉ ghi các giá trị thực sự thay đổi. */
+@media (max-width: 1199px) {
+  body.hoa-hoe-home {
+    --hoa-slogan-size: clamp(45px, 6vw, 75px);
+    --hoa-slogan-indent: 5vw;
+    --hoa-desc-size: clamp(22px, 3vw, 35px);
+    --hoa-kicker-size: clamp(26px, 2.9vw, 42px);
+    --hoa-slide-button-size: clamp(24px, 3vw, 36px);
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial {
+    padding-top: 76px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    width: 142px !important;
+    max-width: 142px !important;
+    max-height: 58px !important;
+    height: auto !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body.hoa-hoe-home {
+    --hoa-kicker-size: 24px;
+    --hoa-slogan-size: clamp(30px, 8vw, 44px);
+    --hoa-slogan-indent: 0px;
+    --hoa-slogan-gap: 7px;
+    --hoa-slogan-stroke: .6px;
+    --hoa-desc-size: 20px;
+    --hoa-slide-button-size: 26px;
+    --hoa-button-size: 24px;
+  }
+
+  /* Trên máy thấp, carousel có thể cao hơn một chút để không cắt text. */
+  body.hoa-hoe-home .flower-hero-fullscreen,
+  body.hoa-hoe-home .flower-hero-fullscreen #flowerHeroCarousel,
+  body.hoa-hoe-home .flower-hero-fullscreen .carousel-inner,
+  body.hoa-hoe-home .flower-hero-fullscreen .carousel-item,
+  body.hoa-hoe-home .flower-hero-fullscreen .flower-hero-slide {
+    height: max(100svh, 560px) !important;
+  }
+
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area .site-logo img,
+  body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area.sticky-active .site-logo img {
+    width: clamp(104px, 26vw, 133px) !important;
+    max-width: 133px !important;
+    max-height: 60px !important;
+    height: auto !important;
+  }
+
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial {
+    align-items: center;
+    padding: 74px 18px 26px !important;
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial .hoa-editorial-content {
+    width: 100%;
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-kicker {
+    margin-bottom: 15px !important;
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial h1.hoa-editorial-title span {
+    white-space: normal;
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen .hoa-banner-editorial p.hoa-editorial-desc {
+    margin: 16px 0 !important;
+    padding: 7px 12px 9px !important;
+    border-radius: 18px;
+  }
+  body.hoa-hoe-home .flower-hero-fullscreen [data-hoa-slide='2'] .hoa-editorial-cta {
+    width: fit-content !important;
+    min-width: 0;
+    max-width: calc(100vw - 40px) !important;
+    min-height: 56px;
+    padding: 13px 22px !important;
+  }
+}
+
+/* Slide 2: navbar nền trắng */
+body.hoa-hoe-home.hoa-motion-ready.hoa-hero-slide-2
+.hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Slide 1 và 3: navbar trong suốt */
+body.hoa-hoe-home.hoa-motion-ready:is(
+    .hoa-hero-slide-1,
+    .hoa-hero-slide-3
+)
+.hoa-hoe-nav .ltn__header-middle-area:not(.sticky-active) {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Đổi nền và màu chữ nhanh */
+body.hoa-hoe-home .hoa-hoe-nav .ltn__header-middle-area {
+    transition: background-color 0.12s ease,
+                box-shadow 0.12s ease !important;
+}
+
+body.hoa-hoe-home .hoa-hoe-nav
+.ltn__main-menu > ul > li > a,
+body.hoa-hoe-home .hoa-hoe-nav
+.mini-cart-icon-2 > a,
+body.hoa-hoe-home .hoa-hoe-nav
+.mini-cart-icon-2 > a h6,
+body.hoa-hoe-home .hoa-hoe-nav
+.mini-cart-icon-2 > a h6 span {
+    transition: color 0.12s ease !important;
+}
+
+
