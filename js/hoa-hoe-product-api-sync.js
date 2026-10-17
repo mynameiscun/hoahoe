@@ -16,10 +16,7 @@
     return;
   }
 
-  var controller = new AbortController();
-  var timeout = setTimeout(function () { controller.abort(); }, 22000);
   window.HOA_HOE_CATALOG_READY = fetch('/api/products/', {
-    signal: controller.signal,
     credentials: 'same-origin',
     cache: 'no-store',
     headers: { Accept: 'application/json' }
@@ -27,7 +24,7 @@
     if (!response.ok) throw new Error('HTTP ' + response.status);
     return response.json();
   }).then(function (data) {
-    if (!data || data.ok === false || !Array.isArray(data.products)) throw new Error(data && data.error || 'Dữ liệu API không hợp lệ');
+    if (!data || !Array.isArray(data.products)) throw new Error('Dữ liệu API không hợp lệ');
 
     var next = {};
     data.products.forEach(function (item) {
@@ -63,8 +60,34 @@
   }).catch(function (error) {
     console.error('Hoa Hoè: Không thể lấy giá sản phẩm từ API:', error);
     window.HOA_HOE_CATALOG_SYNC_STATE = 'error';
-    // Không xóa snapshot giỏ hoặc catalog giao diện khi API lỗi. Chức năng mua vẫn khóa.
+    // Không dùng giá demo để bán khi API lỗi.
+    Object.keys(catalog).forEach(function (id) { delete catalog[id]; });
     document.dispatchEvent(new CustomEvent('hoa-hoe:catalog-error'));
     return 'error';
-  }).finally(function () { clearTimeout(timeout); });
+  });
 }());
+
+
+/* Step 12.5B — Bảng phí ship ở chi tiết hoa; đợi source giá riêng của sản phẩm. */
+(function () {
+  'use strict';
+  if (!/\/product-details\.html$/i.test(location.pathname)) return;
+  function install() {
+    const info = document.querySelector('.ltn__shop-details-inner .shop-details-info');
+    if (!info || document.getElementById('hoa-product-shipping-guide')) return;
+    function mount() {
+      if (!window.HOA_HOE_PAYMENT_UI) return;
+      const guide = window.HOA_HOE_PAYMENT_UI.guide({open:false});
+      guide.id='hoa-product-shipping-guide';
+      const anchor=info.querySelector('.product-price') || info.querySelector('h3');
+      if (anchor) anchor.insertAdjacentElement('afterend',guide);
+      else info.appendChild(guide);
+    }
+    if (window.HOA_HOE_PAYMENT_UI) { mount();return; }
+    const tag=document.createElement('script');tag.src='js/hoa-hoe-shipping-ui.js';tag.onload=mount;
+    tag.onerror=function(){console.warn('Không tải được hướng dẫn phí giao Hoa Hoè.');};
+    document.head.appendChild(tag);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);
+  else install();
+})();

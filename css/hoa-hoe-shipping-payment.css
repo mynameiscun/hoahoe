@@ -1,0 +1,104 @@
+/* Hoa Hoè Step 12.5B — Chỉ phí giao, thanh toán và loading; không sửa navbar. */
+.hoa-ship-guide {border:1px solid #e5e8df;border-radius:13px;background:#fffdf9;padding:17px;margin:16px 0;color:#35422d;}
+.hoa-ship-guide h3 {font-size:19px;line-height:1.4;margin:0 0 10px;}
+.hoa-ship-warning {padding:11px 13px;border-left:3px solid #c18974;background:#fff6f0;font-size:14px;line-height:1.6;margin:0 0 13px;}
+.hoa-ship-rates {margin:10px 0 14px;}
+.hoa-ship-rates summary {cursor:pointer;font-size:14px;font-weight:650;padding:10px 0;}
+.hoa-ship-table {width:100%;border-collapse:collapse;font-size:13px;line-height:1.5;margin:7px 0;}
+.hoa-ship-table td,.hoa-ship-table th {border-bottom:1px solid #e5e8df;padding:10px 8px;text-align:left;vertical-align:top;}
+.hoa-ship-table th:last-child,.hoa-ship-table td:last-child {text-align:right;min-width:105px;}
+.hoa-ship-note {font-size:12px;color:#626e5d;line-height:1.55;margin:9px 0;}
+.hoa-ship-contact {display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:7px;padding:10px 15px;border-radius:8px;background:#466446;color:#fff !important;text-decoration:none;font:600 14px/1.5 inherit;cursor:pointer;}
+.hoa-ship-contact--missing {cursor:not-allowed;background:#e6e8e3;color:#586453 !important;opacity:1;}
+.hoa-pay-card {margin-top:20px;border:1px solid #d6e0d1;background:#fafcf8;padding:20px;border-radius:13px;}
+.hoa-pay-card h3 {font-size:21px;margin:0 0 13px;}
+.hoa-pay-card .hoa-pay-row {display:flex;justify-content:space-between;gap:15px;padding:8px 0;line-height:1.45;font-size:15px;}
+.hoa-pay-card .hoa-pay-row strong {white-space:nowrap;}
+.hoa-pay-card .hoa-pay-total {font-weight:700;border-top:1px solid #d6e0d1;margin-top:5px;font-size:18px;}
+.hoa-pay-card .hoa-pay-check {display:flex;align-items:flex-start;gap:10px;margin:15px 0;cursor:pointer;font-size:14px;line-height:1.65;}
+.hoa-pay-card .hoa-pay-check input {width:18px;height:18px;flex-shrink:0;margin:3px 0 0;}
+.hoa-pay-primary {border:0;background:#426841;color:white;padding:12px 18px;border-radius:8px;cursor:pointer;font-size:15px;}
+.hoa-pay-primary:disabled {background:#adb7a8;cursor:not-allowed;}
+.hoa-pay-qr {border-top:1px solid #d6e0d1;margin-top:19px;padding-top:18px;}
+.hoa-pay-qr[hidden] {display:none!important;}
+.hoa-pay-qr img {width:100%;max-width:300px;display:block;margin:12px auto;border:1px solid #e5e5e0;border-radius:12px;}
+.hoa-pay-qr strong {overflow-wrap:anywhere;}
+.hoa-pay-qr p {margin:8px 0;font-size:14px;line-height:1.6;}
+.hoa-pay-muted {color:#687663;font-size:13px;line-height:1.6;}
+.hoa-pay-loading[hidden] {display:none!important;}
+.hoa-pay-loading {position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(32,40,31,.46);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);cursor:progress;}
+.hoa-pay-loading__panel {width:min(350px,100%);padding:30px 24px;text-align:center;background:#fffdf9;border-radius:18px;color:#34432f;box-shadow:0 17px 55px rgba(20,35,20,.2);}
+.hoa-pay-loading__flower {width:76px;height:76px;position:relative;margin:0 auto 16px;animation:hoa-pay-spin 2.4s linear infinite;}
+.hoa-pay-loading__petal {position:absolute;width:15px;height:24px;left:calc(50% - 7.5px);top:calc(50% - 12px);border-radius:80% 80% 60% 60%;background:#e6a9a3;transform:rotate(calc(var(--i)*45deg)) translateY(-24px);}
+.hoa-pay-loading__petal:nth-child(even) {background:#f0c3b8;}
+.hoa-pay-loading__center {position:absolute;width:20px;height:20px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#f1d597;}
+.hoa-pay-loading__text {font-size:18px;font-weight:650;margin:0 0 7px;}
+.hoa-pay-loading__panel small {color:#6b7765;}
+@keyframes hoa-pay-spin {to{transform:rotate(360deg);}}
+@media(prefers-reduced-motion:reduce){.hoa-pay-loading__flower {animation:hoa-pay-fade 1.5s ease-in-out infinite;}@keyframes hoa-pay-fade{50%{opacity:.65}}}
+@media(max-width:575px){.hoa-ship-guide,.hoa-pay-card{padding:14px;}.hoa-pay-card .hoa-pay-row{font-size:14px;}.hoa-ship-table{font-size:12px;}.hoa-ship-table td,.hoa-ship-table th{padding:9px 5px;}}
+
+
+/* Hoa Hoè Step 12.5C — Khung QR riêng của shop, không dùng QR tự sinh. */
+.hoa-pay-qr {border-top:0;margin-top:19px;padding-top:5px;}
+.hoa-pay-shop {
+  --hoa-rose:#ac696f; --hoa-ink:#4a3437; --hoa-sage:#62745e;
+  position:relative;isolation:isolate;overflow:hidden;
+  max-width:610px;margin:12px auto 0;padding:28px clamp(15px,4vw,34px) 25px;
+  border:1px solid #ead7d2;border-radius:22px;
+  background:linear-gradient(155deg,#fffefa 0%,#fff9f6 52%,#fdf8f3 100%);
+  box-shadow:0 12px 36px rgba(119,75,64,.08);
+  color:var(--hoa-ink);text-align:center;
+}
+.hoa-pay-shop:before,.hoa-pay-shop:after {
+  content:'✿';position:absolute;z-index:-1;pointer-events:none;
+  font-size:108px;line-height:1;color:rgba(220,172,165,.19);
+}
+.hoa-pay-shop:before{top:20px;left:-43px;transform:rotate(-22deg);}
+.hoa-pay-shop:after{bottom:18px;right:-38px;transform:rotate(23deg);}
+.hoa-pay-shop__brand{font-size:11px!important;letter-spacing:.22em;font-weight:700;color:var(--hoa-sage);margin:0 0 6px!important;}
+.hoa-pay-shop__title {font:600 clamp(23px,4.6vw,30px)/1.28 Georgia, 'Times New Roman', serif!important;color:#82464c;margin:3px 0 7px!important;}
+.hoa-pay-shop__subtitle {font-size:13px!important;color:#756d69;margin:0 auto 17px!important;max-width:355px;}
+.hoa-pay-shop__qr-frame {
+  box-sizing:border-box;position:relative;width:min(100%,288px);aspect-ratio:1;margin:0 auto;
+  padding:9px;border:1px solid #ecd6d0;border-radius:19px;background:#fff;
+  box-shadow:0 8px 23px rgba(109,74,69,.09);
+}
+.hoa-pay-shop__placeholder {
+  box-sizing:border-box;width:100%;height:100%;min-height:0;
+  border:2px dashed #d6a9a7;border-radius:11px;background:#fffdfa;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  gap:7px;padding:16px;color:#957d7e;line-height:1.5;
+}
+.hoa-pay-shop__placeholder[hidden],.hoa-pay-shop__qr-img[hidden]{display:none!important;}
+.hoa-pay-shop__placeholder-icon{font-size:48px;line-height:1;color:#dab2ae;}
+.hoa-pay-shop__placeholder strong{font-size:15px;color:#9a696f;}
+.hoa-pay-shop__placeholder small{font-size:11px;color:#807576;max-width:225px;}
+.hoa-pay-shop .hoa-pay-shop__qr-img {
+  display:block;position:absolute;inset:9px;width:calc(100% - 18px);height:calc(100% - 18px);
+  max-width:none;margin:0;object-fit:contain;background:white;border:none;border-radius:9px;
+}
+.hoa-pay-shop__caption{max-width:350px;margin:15px auto 18px!important;font-size:12px!important;line-height:1.6!important;color:#806c6c;}
+.hoa-pay-shop__summary {
+  border:1px solid #eee1dc;border-radius:14px;
+  padding:12px 16px;background:rgba(255,255,255,.82);text-align:left;
+}
+.hoa-pay-shop .hoa-pay-shop__summary .hoa-pay-row {font-size:14px;padding:8px 0;border-bottom:1px solid #f3ece8;}
+.hoa-pay-shop .hoa-pay-shop__summary .hoa-pay-row:last-child{border-bottom:0;}
+.hoa-pay-shop .hoa-pay-shop__summary .hoa-pay-shop__sum {
+  border-top:0;background:#faeae7;border-radius:9px;
+  padding:12px 13px;margin:6px -4px -3px;color:#973f56;font-weight:750;font-size:17px;
+}
+.hoa-pay-shop__bank {text-align:left;margin:15px 0 0;padding:15px 16px;border:1px solid #eee1dc;border-radius:14px;background:#fffefc;}
+.hoa-pay-shop__bank h5{font-size:15px;color:#765351;margin:0 0 7px;line-height:1.4;}
+.hoa-pay-shop .hoa-pay-shop__bank .hoa-pay-row{padding:7px 0;font-size:13px;border-bottom:1px solid #f4eeea;gap:14px;}
+.hoa-pay-shop .hoa-pay-shop__bank .hoa-pay-row:last-child{border-bottom:0;}
+.hoa-pay-shop .hoa-pay-row strong{overflow-wrap:anywhere;word-break:normal;text-align:right;white-space:normal;}
+.hoa-pay-shop__note {text-align:left;margin:15px 0 0!important;border-left:3px solid #cb9a91;background:#fbede9;border-radius:7px;padding:10px 13px;color:#735b5a;font-size:12px!important;line-height:1.7!important;}
+@media(max-width:575px) {
+  .hoa-pay-shop{padding:19px 12px 17px;border-radius:16px;}
+  .hoa-pay-shop__qr-frame{width:min(100%,250px);}
+  .hoa-pay-shop__summary,.hoa-pay-shop__bank{padding:11px 12px;}
+  .hoa-pay-shop .hoa-pay-shop__bank .hoa-pay-row{flex-wrap:wrap;gap:1px;}
+  .hoa-pay-shop .hoa-pay-shop__bank .hoa-pay-row strong{text-align:left;width:100%;}
+}

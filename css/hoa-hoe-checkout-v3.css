@@ -65,3 +65,47 @@
   .hoa-hoe-checkout-v3 .hoa-checkout-summary th,
   .hoa-hoe-checkout-v3 .hoa-checkout-summary td { padding: 10px 3px; }
 }
+
+/* Step 12.5A — Overlay canh hoa, khoa thao tac khi dang kiem tra/gui yeu cau. */
+.hoa-action-loading[hidden] {display: none !important;}
+.hoa-action-loading {
+  position: fixed; inset: 0; z-index: 2147483000;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(30, 37, 30, .46); backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); padding: 20px; cursor: progress;
+}
+.hoa-action-loading__panel {
+  width: min(360px, 100%); padding: 29px 25px 24px;
+  border-radius: 18px; text-align: center;
+  background: #fffdf9; box-shadow: 0 16px 60px rgba(25, 40, 23, .18);
+  border: 1px solid rgba(216, 224, 205, .85); color: #34432f;
+}
+.hoa-action-loading__flower {
+  width: 76px; height: 76px; position: relative; margin: 0 auto 18px;
+  animation: hoa-petal-rotate 2.4s linear infinite;
+}
+.hoa-action-loading__petal {
+  width: 15px; height: 25px; background: #e6a9a3; border-radius: 80% 80% 60% 60%;
+  position: absolute; left: calc(50% - 7.5px); top: calc(50% - 12.5px);
+  transform: rotate(calc(var(--petal) * 45deg)) translateY(-24px);
+  transform-origin: center center;
+  box-shadow: inset 0 -4px 7px rgba(183, 93, 89, .09);
+}
+.hoa-action-loading__petal:nth-child(2n) {background: #f0c3b8;}
+.hoa-action-loading__center {
+  width: 20px; height: 20px; border-radius: 50%; position: absolute;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  background: #f1d597; box-shadow: inset 0 0 0 4px rgba(255, 245, 217, .6);
+}
+.hoa-action-loading__text {
+  margin: 0 0 7px; font-size: 17px; font-weight: 650; line-height: 1.45;
+  color: #34432f;
+}
+.hoa-action-loading__panel small {display:block;margin:0;font-size:12px;line-height:1.55;color:#71816b;}
+@keyframes hoa-petal-rotate {from {transform:rotate(0deg);} to {transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce) {
+  .hoa-action-loading__flower {animation:hoa-petal-pulse 1.5s ease-in-out infinite;}
+  @keyframes hoa-petal-pulse {0%,100%{opacity:.75}50%{opacity:1}}
+}
+
+.hoa-hoe-checkout-v3 .hoa-checkout-fee-disclaimer {padding:12px 14px;margin:18px 0 0;border:1px solid #efd5c8;border-radius:9px;background:#fff6f0;color:#634a3d;line-height:1.55;font-size:14px;}
