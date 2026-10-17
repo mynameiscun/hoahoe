@@ -75,6 +75,7 @@ const ROUTES = {
   'orders/areas': ['GET', 'areas'],
   'products': ['GET', 'products'],
   'orders/health': ['GET', 'health'],
+  'payments/config': ['GET', 'payment_config'],
   'orders/preview': ['POST', 'preview'],
   'orders/submit': ['POST', 'submit'],
   'orders/paid-submit': ['POST', 'paid_submit'],
@@ -107,6 +108,20 @@ export async function onRequest({ request, env, ctx }) {
   // Phuong/xa cu: du lieu dia gioi cong khai, khong truy cap Sheets/khong mo nhan don.
   if (route === 'orders/areas') return getLegacyWards(request, ctx);
   if (route === 'orders/submit') return fail('Endpoint dat don cu da tam khoa. Vui long cap nhat Checkout.', 410);
+  // HOAHOE_DYNAMIC_QR_12_5F: public receiving account only (NO secrets or customer data).
+  // The browser uses it to render VietQR with the current checkout total.
+  if (route === 'payments/config') {
+    if (env.PUBLIC_ORDERS_ENABLED !== 'true')
+      return fail('Cửa hàng chưa mở nhận đơn trực tuyến.', 503);
+    const bankId = String(env.PAYMENT_BANK_BIN || '').trim();
+    const account = String(env.PAYMENT_BANK_ACCOUNT || '').trim();
+    const accountName = String(env.PAYMENT_BANK_NAME || '').trim();
+    if (!/^\d{6}$/.test(bankId) || !/^\d{6,19}$/.test(account) ||
+        accountName.length < 3 || accountName.length > 80 ||
+        /[\x00-\x1f]/.test(accountName))
+      return fail('Shop chưa cấu hình thông tin ngân hàng nhận tiền.', 503);
+    return send({ok:true,bank_bin:bankId,account_number:account,account_name:accountName});
+  }
   const isReady = Boolean(env.GAS_URL && env.GAS_API_KEY && env.TURNSTILE_SECRET_KEY && env.TURNSTILE_SITE_KEY);
   const enabled = isReady && env.PUBLIC_ORDERS_ENABLED === 'true';
   if (route === 'orders/health') return send({

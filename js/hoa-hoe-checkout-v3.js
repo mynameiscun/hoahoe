@@ -556,7 +556,6 @@
     }
     // Step 12.5E: Quy trình gồm 3 bước. Trước nút "Tôi đã chuyển khoản" chỉ
     // gọi /preview để đọc giá thực, KHÔNG gọi API ghi đơn và không sinh mã đơn.
-    const PAYMENT_QR = 'img/payment/hoa-hoe-qr.png';
     let inProgressPayment = false;
     let feeClaimed = null;
     let checkoutReference = null;
@@ -666,18 +665,71 @@
       const card=showPaymentStep('qr');
       card.appendChild(node('p','hoa-e-hint','Hãy quét QR ngân hàng của shop rồi chuyển đúng tổng tiền và nội dung dưới đây. Mã đối soát KHÔNG phải mã đơn hàng.'));
       const qrFrame=node('div','hoa-e-qr');
-      const placeholder=node('div','hoa-e-qr-empty','✿  Đang chờ ảnh QR chính thức của shop');
-      const qr=node('img','hoa-e-qr-image');qr.alt='QR chuyển khoản của Hoa Hoè';qr.hidden=true;
+      // HOAHOE_DYNAMIC_QR_12_5F: QR động theo tổng tiền đã xác nhận với shop.
+      const placeholder=node('div','hoa-e-qr-empty','Đang tạo QR chuyển khoản...');
+      const qr=node('img','hoa-e-qr-image');
+      qr.alt='QR VietQR của Hoa Hoè, gồm tổng tiền và mã đối soát';
+      qr.hidden=true;
       let qrReady=false;
-      qr.onload=()=>{qrReady=true;placeholder.hidden=true;qr.hidden=false;refreshButton();};
-      qr.onerror=()=>{qrReady=false;placeholder.hidden=false;qr.hidden=true;refreshButton();};
-      qr.src=PAYMENT_QR;
-      qrFrame.append(placeholder,qr);card.appendChild(qrFrame);
+      const currentPaymentStage=paymentStage;
+      const amount=previewed.subtotal + feeClaimed;
+      const bankBox=node('div','hoa-e-bank-info');
+      qrFrame.append(placeholder,qr);
+      card.append(qrFrame,bankBox);
+      const validAccount=(bank) => bank && /^\d{6}$/.test(bank.bank_bin) &&
+        /^\d{6,19}$/.test(bank.account_number) &&
+        typeof bank.account_name === 'string' && bank.account_name.length >= 3 && bank.account_name.length <= 80;
+      qr.onload=()=>{
+        if(paymentStage!==currentPaymentStage)return;
+        qrReady=true;placeholder.hidden=true;qr.hidden=false;
+        error.textContent='';refreshButton();
+      };
+      qr.onerror=()=>{
+        if(paymentStage!==currentPaymentStage)return;
+        qrReady=false;placeholder.hidden=false;qr.hidden=true;
+        placeholder.textContent='Không tải được QR. Vui lòng liên hệ shop, chưa chuyển khoản.';
+        error.textContent='QR không khả dụng. Không xác nhận thanh toán trên trang này.';
+        refreshButton();
+      };
+      async function loadDynamicQR(){
+        try {
+          if(!Number.isSafeInteger(amount) || amount <= 0 || amount > 2147483647 ||
+              !/^HHCK[0-9A-F]{12}$/.test(checkoutReference))
+            throw new Error('Tổng tiền hoặc mã đối soát chưa hợp lệ.');
+          const response=await fetch('/api/payments/config/', {
+            method:'GET',credentials:'same-origin',cache:'no-store',
+            headers:{'Accept':'application/json'}
+          });
+          const bank=await response.json();
+          if(!response.ok || bank.ok !== true || !validAccount(bank))
+            throw new Error(bank && bank.error || 'Shop chưa cấu hình tài khoản nhận tiền.');
+          if(paymentStage!==currentPaymentStage)return;
+          bankBox.replaceChildren(
+            textLine('Ngân hàng (BIN)',bank.bank_bin),
+            textLine('Số tài khoản nhận',bank.account_number),
+            textLine('Chủ tài khoản',bank.account_name)
+          );
+          // VietQR Quick Link: QR chứa sẵn tiền + mã đối soát, KHÔNG sinh mã đơn.
+          const query=new URLSearchParams({amount:String(amount),
+            addInfo:checkoutReference,accountName:bank.account_name});
+          const imageUrl='https://img.vietqr.io/image/' +
+            bank.bank_bin + '-' + bank.account_number + '-qr_only.png?' + query.toString();
+          qr.src=imageUrl;
+        } catch(err) {
+          if(paymentStage!==currentPaymentStage)return;
+          qrReady=false;
+          placeholder.textContent='Chưa tạo được QR chuyển khoản.';
+          error.textContent=(err && err.message ? err.message : 'Không kết nối được ngân hàng nhận tiền.')+
+            ' Vui lòng liên hệ shop và chưa báo đã chuyển khoản.';
+          refreshButton();
+        }
+      }
+
       card.append(textLine('Tiền hoa',money(previewed.subtotal)),
         textLine('Phí giao bạn đã thống nhất',money(feeClaimed)),
         textLine('Tổng thanh toán',money(previewed.subtotal + feeClaimed),true),
         textLine('Nội dung chuyển khoản',checkoutReference));
-      const caution=node('p','hoa-e-hint','Ảnh QR tĩnh không tự điền số tiền hoặc nội dung. Hãy nhập đúng khi chuyển khoản. Admin sẽ đối soát tiền thực nhận và phí giao trước khi chấp nhận đơn.');
+      const caution=node('p','hoa-e-hint','QR đã điền sẵn tổng tiền và mã đối soát. Hãy đối chiếu tên chủ tài khoản trước khi xác nhận trên ứng dụng ngân hàng. Admin vẫn phải kiểm tra giao dịch thực nhận.');
       card.appendChild(caution);
       const confirm=node('label','hoa-e-agree');const checked=node('input');checked.type='checkbox';
       confirm.append(checked,document.createTextNode(' Tôi đã chuyển khoản đúng tổng tiền và nội dung trên.'));
@@ -689,7 +741,7 @@
       contactArea(card);
       function refreshButton(){send.disabled=!qrReady || !checked.checked || inProgressPayment;}
       checked.addEventListener('change',refreshButton);refreshButton();
-      if (!qrReady) error.textContent='Chưa có ảnh QR chính thức: bạn chưa thể xác nhận đã chuyển khoản từ màn hình này.';
+      loadDynamicQR();
       send.addEventListener('click',async()=>{
         if (!qrReady || !checked.checked || inProgressPayment) return;
         if (sheetsWebsite && !captchaToken) {

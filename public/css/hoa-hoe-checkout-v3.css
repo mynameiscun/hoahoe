@@ -150,3 +150,11 @@ body.hoa-e-lock {overflow:hidden !important;}
 .hoa-e-qr-image[hidden],.hoa-e-qr-empty[hidden],.hoa-e-later[hidden],.hoa-e-confirmed[hidden] {display:none!important;}
 @media(max-width:500px){.hoa-e-shade{padding:8px;}.hoa-e-card{max-height:calc(100dvh - 16px);padding:20px 15px}.hoa-e-head h2{font-size:21px;}.hoa-e-qr{width:min(245px,100%);}}
 @media(prefers-reduced-motion:reduce){.hoa-e-shade {scroll-behavior:auto;}}
+
+/* HOAHOE_DYNAMIC_QR_12_5F — thông tin nhận tiền bên dưới mã QR động */
+.hoa-e-bank-info {margin:0 0 13px;padding:10px 14px;border:1px solid #ecd9d4;
+  background:#fff9f8;border-radius:12px;}
+.hoa-e-bank-info .hoa-e-row {font-size:13px;padding:9px 0;}
+.hoa-e-bank-info .hoa-e-row:last-child {border-bottom:0;}
+.hoa-e-qr {background:#fff;}
+.hoa-e-qr-image {max-width:100%;max-height:100%;}
