@@ -109,3 +109,44 @@
 }
 
 .hoa-hoe-checkout-v3 .hoa-checkout-fee-disclaimer {padding:12px 14px;margin:18px 0 0;border:1px solid #efd5c8;border-radius:9px;background:#fff6f0;color:#634a3d;line-height:1.55;font-size:14px;}
+
+/* Step 12.5E — 3 buoc dat hoa; QR cua shop, KHONG tao don truoc thanh toan. */
+body.hoa-e-lock {overflow:hidden !important;}
+.hoa-e-shade {position:fixed;inset:0;z-index:2147482000;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,7vh,70px) 16px;background:rgba(34,40,35,.56);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);}
+.hoa-e-card {position:relative;width:min(540px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#fffdfb;border:1px solid #efd9da;border-radius:21px;padding:28px clamp(18px,4vw,34px);box-shadow:0 20px 80px rgba(36,29,32,.24);font-size:15px;color:#4a3e43;}
+.hoa-e-head {position:relative;text-align:center;padding:4px 32px 12px;}
+.hoa-e-brand {display:block;font-size:13px;letter-spacing:.14em;color:#a95b74;font-weight:750;margin-bottom:7px;}
+.hoa-e-head h2 {color:#874456;font-size:25px;line-height:1.25;margin:0 0 8px;}
+.hoa-e-step {color:#8b7c82;font-size:13px;margin:0;}
+.hoa-e-close {position:absolute;right:-12px;top:-14px;border:0;background:transparent;color:#745d64;font-size:29px;line-height:1;cursor:pointer;width:38px;height:38px;}
+.hoa-e-hint {background:#fbf1f1;padding:12px 14px;border-radius:9px;color:#78535f;font-size:13px;line-height:1.7;margin:13px 0;}
+.hoa-e-row {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #f0e6e4;font-size:14px;}
+.hoa-e-row strong {color:#764352;text-align:right;overflow-wrap:anywhere;}
+.hoa-e-row--total {border:0;border-radius:10px;padding:15px 12px;margin:14px 0;background:#fce7e8;color:#833b57;font-weight:700;}
+.hoa-e-row--total strong {font-size:19px;color:#963853;}
+.hoa-e-choice {padding:16px 14px 9px;margin:15px 0;border:1px solid #ead9d5;border-radius:12px;}
+.hoa-e-choice legend {font-size:14px;color:#503c42;font-weight:700;width:auto;padding:0 6px;margin:0;}
+.hoa-e-radio {display:flex;gap:9px;align-items:flex-start;margin:8px 0 13px;font-size:14px;cursor:pointer;}
+.hoa-e-radio input,.hoa-e-agree input {width:18px;height:18px;min-width:18px;margin:2px 2px 0 0;accent-color:#a64c6a;}
+.hoa-e-confirmed>label:first-child {display:block;font-size:14px;font-weight:700;color:#674652;}
+.hoa-e-input {display:block;width:100%;min-height:46px;border:1px solid #e3c6ce;border-radius:9px;padding:9px 14px;margin:8px 0 6px;font-size:17px;color:#643e48;background:#fff;}
+.hoa-e-confirmed small {display:block;line-height:1.6;font-size:12px;margin:7px 0 12px;}
+.hoa-e-agree {display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.55;cursor:pointer;margin:14px 0;}
+.hoa-e-primary,.hoa-e-secondary {display:block;width:100%;border-radius:11px;text-align:center;padding:13px 18px;min-height:47px;font-weight:750;font-size:14px;line-height:1.45;text-decoration:none!important;margin:12px 0;cursor:pointer;}
+.hoa-e-primary {border:1px solid #aa5974;background:#aa5974;color:#fff!important;}
+.hoa-e-primary:not(:disabled):hover {background:#924761;}
+.hoa-e-primary:disabled {opacity:.5;cursor:not-allowed;}
+.hoa-e-secondary {border:1px solid #ce9dad;background:#fffdfa;color:#9a4766!important;}
+.hoa-e-later {border-top:1px solid #f0e6e4;padding:13px 0 0;line-height:1.65;}
+.hoa-e-contact {margin-top:17px;border:1px solid #eddcdf;background:#fff9f9;border-radius:10px;padding:13px;font-size:13px;line-height:1.5;}
+.hoa-e-contact p {margin:0 0 10px;}
+.hoa-e-contact .hoa-ship-contact {margin-top:0;}
+.hoa-e-contact .hoa-e-secondary {margin:10px 0 0;font-size:12px;padding:9px;min-height:38px;}
+.hoa-e-error {color:#a02040;font-size:13px;line-height:1.5;margin:9px 0;}
+.hoa-e-error:empty {display:none;}
+.hoa-e-qr {margin:19px auto 21px;width:min(285px,100%);aspect-ratio:1;border:2px dashed #d5a2af;border-radius:16px;background:#fffcfb;padding:12px;display:grid;place-items:center;}
+.hoa-e-qr-empty {text-align:center;color:#987787;line-height:1.7;font-size:14px;padding:22px;}
+.hoa-e-qr-image {width:100%;height:100%;object-fit:contain;image-rendering:auto;}
+.hoa-e-qr-image[hidden],.hoa-e-qr-empty[hidden],.hoa-e-later[hidden],.hoa-e-confirmed[hidden] {display:none!important;}
+@media(max-width:500px){.hoa-e-shade{padding:8px;}.hoa-e-card{max-height:calc(100dvh - 16px);padding:20px 15px}.hoa-e-head h2{font-size:21px;}.hoa-e-qr{width:min(245px,100%);}}
+@media(prefers-reduced-motion:reduce){.hoa-e-shade {scroll-behavior:auto;}}

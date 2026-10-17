@@ -77,6 +77,7 @@ const ROUTES = {
   'orders/health': ['GET', 'health'],
   'orders/preview': ['POST', 'preview'],
   'orders/submit': ['POST', 'submit'],
+  'orders/paid-submit': ['POST', 'paid_submit'],
   'orders/lookup': ['POST', 'lookup']
 };
 async function verifyTurnstile(request, secret, token) {
@@ -105,6 +106,7 @@ export async function onRequest({ request, env, ctx }) {
   if (request.method !== entry[0]) return fail('Phương thức không được hỗ trợ.', 405);
   // Phuong/xa cu: du lieu dia gioi cong khai, khong truy cap Sheets/khong mo nhan don.
   if (route === 'orders/areas') return getLegacyWards(request, ctx);
+  if (route === 'orders/submit') return fail('Endpoint dat don cu da tam khoa. Vui long cap nhat Checkout.', 410);
   const isReady = Boolean(env.GAS_URL && env.GAS_API_KEY && env.TURNSTILE_SECRET_KEY && env.TURNSTILE_SITE_KEY);
   const enabled = isReady && env.PUBLIC_ORDERS_ENABLED === 'true';
   if (route === 'orders/health') return send({
@@ -140,7 +142,7 @@ export async function onRequest({ request, env, ctx }) {
     if (body.length > 20000) return fail('Dữ liệu vượt giới hạn.', 413);
     try { payload = JSON.parse(body); } catch (_) { return fail('JSON không hợp lệ.', 400); }
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return fail('Dữ liệu không hợp lệ.', 400);
-    if (route === 'orders/submit' || route === 'orders/lookup') {
+    if (route === 'orders/submit' || route === 'orders/paid-submit' || route === 'orders/lookup') {
       const token = payload.turnstile_token;
       if (!await verifyTurnstile(request, env.TURNSTILE_SECRET_KEY, token))
         return fail('Vui lòng xác minh bạn không phải robot rồi thử lại.', 403);
@@ -166,6 +168,7 @@ export async function onRequest({ request, env, ctx }) {
     // Admin xác nhận phí và chuyển sang Chờ chuyển khoản.
     if (route === 'orders/lookup' && output.ok === true &&
         output.status === 'confirmed' && output.payment_status === 'awaiting_transfer' &&
+        output.payment_reported !== true &&
         output.fee_pending === false && Number.isSafeInteger(output.delivery_fee) && output.delivery_fee >= 0 &&
         Number.isSafeInteger(output.subtotal) && output.subtotal > 0 &&
         Number.isSafeInteger(output.total) && output.total === output.subtotal + output.delivery_fee &&

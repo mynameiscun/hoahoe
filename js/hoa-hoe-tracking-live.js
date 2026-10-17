@@ -181,6 +181,18 @@
         instructions.textContent='Shop đã ghi nhận thanh toán. Nếu cần đối chiếu, vui lòng liên hệ trực tiếp với shop.';
         panel.appendChild(instructions);container.appendChild(panel);return container;
       }
+      // Step 12.5E payment_reported â€” Khach da BAO chuyen khoan; khong mo QR lan hai.
+      if (order.payment_reported === true) {
+        instructions.textContent = 'Ban da bao chuyen khoan cho don nay. Hoa Hoe dang cho Admin doi soat so tien thuc nhan va phi giao da thong nhat. KHONG chuyen khoan lan nua.';
+        panel.appendChild(instructions);
+        panel.append(makeRow('Tien hoa', ui.money(order.subtotal)));
+        if (Number.isSafeInteger(order.delivery_fee))
+          panel.append(makeRow('Phi giao khach da khai', ui.money(order.delivery_fee)));
+        if (Number.isSafeInteger(order.total))
+          panel.append(makeRow('Tong da bao chuyen', ui.money(order.total)));
+        container.appendChild(panel);
+        return container;
+      }
       const allowed = order.status === 'confirmed' && order.payment_status === 'awaiting_transfer' &&
         order.fee_pending === false && Number.isSafeInteger(order.delivery_fee) && order.delivery_fee >= 0 &&
         Number.isSafeInteger(order.subtotal) && order.subtotal > 0 &&
