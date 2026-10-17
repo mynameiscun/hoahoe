@@ -22,12 +22,86 @@
     const banner = byId('hoa-checkout-mode');
     const rows = byId('hoa-checkout-items');
     const total = byId('hoa-checkout-subtotal');
+    // Khách chưa chuyển khoản tại Checkout. Phí ship được chốt qua Instagram;
+    // Admin nhập phí cuối cùng trước khi mở QR ở trang Tra cứu đơn.
+    const checkoutSummary = document.querySelector('.hoa-checkout-summary');
+    if (checkoutSummary && !byId('hoa-checkout-fee-disclaimer')) {
+      const note = document.createElement('p');
+      note.id = 'hoa-checkout-fee-disclaimer';
+      note.className = 'hoa-checkout-fee-disclaimer';
+      note.textContent = 'LƯU Ý: Giá hoa chưa bao gồm phí giao. Bạn cần liên hệ shop để thống nhất phí giao trước khi thanh toán. QR chuyển khoản sẽ chỉ hiển thị sau khi shop xác nhận phí giao trên đơn.';
+      checkoutSummary.appendChild(note);
+    }
     const modal = byId('hoa-order-success-modal');
     const modalPanel = modal.querySelector('.hoa-order-modal__panel');
     const modalCode = byId('hoa-order-modal-code');
     const modalCopyStatus = byId('hoa-order-modal-copy-status');
     const modalShopButton = byId('hoa-order-modal-shop');
     const pageWrapper = document.querySelector('.body-wrapper');
+    // Step 12.5A: loading overlay rieng cua Checkout; khong can sua HTML hay API.
+    // Chi hien sau khi form hop le va sap thuc hien request; khong bao gio che thong bao loi.
+    const hoaLoading = document.createElement('div');
+    hoaLoading.className = 'hoa-action-loading';
+    hoaLoading.id = 'hoa-action-loading';
+    hoaLoading.hidden = true;
+    hoaLoading.tabIndex = -1;
+    hoaLoading.setAttribute('role', 'dialog');
+    hoaLoading.setAttribute('aria-modal', 'true');
+    hoaLoading.setAttribute('aria-labelledby', 'hoa-loading-title');
+    const hoaLoadingPanel = document.createElement('div');
+    hoaLoadingPanel.className = 'hoa-action-loading__panel';
+    const hoaFlower = document.createElement('div');
+    hoaFlower.className = 'hoa-action-loading__flower';
+    hoaFlower.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 8; i++) {
+      const petal = document.createElement('span');
+      petal.className = 'hoa-action-loading__petal';
+      petal.style.setProperty('--petal', String(i));
+      hoaFlower.appendChild(petal);
+    }
+    const hoaCenter = document.createElement('span');
+    hoaCenter.className = 'hoa-action-loading__center';
+    hoaFlower.appendChild(hoaCenter);
+    const hoaLoadingText = document.createElement('p');
+    hoaLoadingText.id = 'hoa-loading-title';
+    hoaLoadingText.className = 'hoa-action-loading__text';
+    hoaLoadingText.textContent = 'Hoa Hoè đang xử lý...';
+    const hoaLoadingNote = document.createElement('small');
+    hoaLoadingNote.textContent = 'Vui lòng giữ trang này mở và không gửi lại yêu cầu.';
+    hoaLoadingPanel.append(hoaFlower, hoaLoadingText, hoaLoadingNote);
+    hoaLoading.appendChild(hoaLoadingPanel);
+    document.body.appendChild(hoaLoading);
+    let hoaLoadingOldOverflow = '';
+    let hoaLoadingFocus = null;
+    function hoaShowLoading(text) {
+      if (hoaLoading.hidden) {
+        hoaLoadingFocus = document.activeElement;
+        hoaLoadingOldOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        document.body.setAttribute('aria-busy', 'true');
+        hoaLoading.hidden = false;
+      }
+      hoaLoadingText.textContent = text || 'Hoa Hoè đang xử lý...';
+      hoaLoading.focus({preventScroll:true});
+    }
+    function hoaHideLoading() {
+      if (hoaLoading.hidden) return;
+      hoaLoading.hidden = true;
+      document.body.style.overflow = hoaLoadingOldOverflow;
+      document.body.removeAttribute('aria-busy');
+      // Khong cuop focus cua modal xac nhan da hien sau khi gui thanh cong.
+      if (modal.hidden && hoaLoadingFocus && typeof hoaLoadingFocus.focus === 'function' &&
+          hoaLoadingFocus.isConnected && !hoaLoadingFocus.disabled) {
+        hoaLoadingFocus.focus({preventScroll:true});
+      }
+      hoaLoadingFocus = null;
+    }
+    document.addEventListener('keydown', event => {
+      if (!hoaLoading.hidden && (event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
     let submittedCode = '';
     let countdownTimer = null;
     let countdownSeconds = 0;
@@ -435,6 +509,7 @@
       previewed = null;
       disableActions();
       message('Đang kiểm tra lịch giao, sản phẩm và giá từ cửa hàng...', false);
+      hoaShowLoading('Đang xác nhận thông tin đặt hoa...');
       try {
         const result = await withCsrf('/api/orders/preview/', payload());
         if (!Number.isSafeInteger(result.subtotal) || !Array.isArray(result.items))
@@ -443,16 +518,17 @@
         renderItems(result.items);
         const areaResult = result.delivery_area;
         const pendingWardReview = areaResult && areaResult.ward_reference_checked === false;
-        message('Yêu cầu hợp lệ. Tiền hoa ' + money(result.subtotal) + '. Phí giao được Admin xác nhận sau.' + (pendingWardReview ? ' Phường/xã nhập tay cần được shop đối chiếu.' : '') + ' Chưa thanh toán.', false);
+        message('Yêu cầu hợp lệ. Tiền hoa ' + money(result.subtotal) + '. Giá chưa bao gồm phí giao; vui lòng xác nhận phí giao với shop trước khi thanh toán.' + (pendingWardReview ? ' Phường/xã nhập tay cần được shop đối chiếu.' : '') + ' Chưa thanh toán.', false);
       } catch (error) {
         message('Không thể kiểm tra: ' + error.message, true);
-      } finally {busy = false; disableActions();}
+      } finally {hoaHideLoading(); busy = false; disableActions();}
     }
     async function doSubmit() {
       if (!ordersEnabled || !active || busy || !previewed || !consent.checked || !validForm()) return;
       busy = true;
       disableActions();
       message('Đang kiểm tra giá lần cuối...', false);
+      hoaShowLoading('Đang kiểm tra giá và thông tin lần cuối...');
       let orderSaved = false;
       try {
         // Bắt buộc preview lại ngay trước khi gửi để phát hiện giá đổi giữa 2 thao tác.
@@ -468,6 +544,7 @@
         }
         const body = {...payload(), submission_id:submissionId};
         if (sheetsWebsite) body.turnstile_token = captchaToken;
+        hoaShowLoading('Đang gửi yêu cầu đặt hoa...');
         const result = await withCsrf('/api/orders/submit/', body);
         if (!result.ok || typeof result.order_code !== 'string' || !result.order_code.trim())
           throw new Error('Phản hồi tạo yêu cầu không hợp lệ.');
@@ -496,14 +573,14 @@
         copyFeedback.setAttribute('role', 'status');
         copyButton.addEventListener('click', () => copyCode(actualCode, copyFeedback));
         const cost = document.createElement('p');
-        cost.textContent = 'Tiền hoa: ' + money(result.subtotal) + '. Phí giao: chờ Admin xác nhận.';
+        cost.textContent = 'Tiền hoa: ' + money(result.subtotal) + '. Chưa bao gồm phí giao. Sau khi liên hệ shop, vui lòng tra cứu đơn để xem tổng tiền chính thức và thanh toán một lần.';
         const note = document.createElement('p');
         note.textContent = sheetsWebsite
-          ? 'Trạng thái: Chờ xác nhận. Shop sẽ liên hệ để xác nhận khu vực, phí giao và hướng dẫn thanh toán.'
+          ? 'Trạng thái: Chờ shop xác nhận phí giao. KHÔNG chuyển khoản tiền hoa riêng lẻ. Hãy thanh toán một lần theo tổng tiền sau khi shop chốt.'
           : 'Trạng thái: Chờ xác nhận. Đơn đang chạy thử trên máy local, không giao hoa và không chuyển khoản.';
         const tracking = document.createElement('a');
         tracking.href = 'order-tracking.html';
-        tracking.textContent = 'Tra cứu đơn hàng';
+        tracking.textContent = 'Tra cứu đơn và thanh toán sau khi shop chốt phí giao';
         success.append(title, code, reminder, copyButton, copyFeedback, cost, note, tracking);
         // Sau khi lưu thành công, khóa hẳn luồng gửi để không thể bấm tạo lại.
         active = false;
@@ -522,6 +599,7 @@
       } catch (error) {
         message('Chưa thể gửi yêu cầu: ' + error.message, true);
       } finally {
+        hoaHideLoading();
         busy = false;
         if (sheetsWebsite && !orderSaved && captcha) captcha.reset();
         disableActions();
@@ -584,7 +662,7 @@
           }
         }
         message(!items.length ? 'Giỏ hàng trống. Vui lòng quay về trang Shop chọn hoa.'
-          : ordersEnabled ? 'Điền thông tin rồi chọn “Kiểm tra yêu cầu”. Chưa thanh toán trước khi shop xác nhận.'
+          : ordersEnabled ? 'Điền thông tin để gửi yêu cầu. Giá hoa chưa gồm phí giao; thanh toán một lần sau khi shop xác nhận tổng tiền.'
           : 'Bạn có thể nhập thông tin và bấm “Kiểm tra thông tin (không gửi đơn)”. Shop chưa bật nhận đơn nên nút Gửi yêu cầu vẫn khóa.', !items.length);
       } catch (error) {
         ordersEnabled = false;

@@ -162,6 +162,25 @@ export async function onRequest({ request, env, ctx }) {
     try { output = JSON.parse(raw); } catch (_) { return fail('Google Sheets trả dữ liệu không hợp lệ.', 502); }
     if (!output || typeof output !== 'object' || typeof output.ok !== 'boolean')
       return fail('Phản hồi từ Sheets không hợp lệ.', 502);
+    // Chỉ cung cấp thông tin ngân hàng cho đơn tra cứu hợp lệ, đã được
+    // Admin xác nhận phí và chuyển sang Chờ chuyển khoản.
+    if (route === 'orders/lookup' && output.ok === true &&
+        output.status === 'confirmed' && output.payment_status === 'awaiting_transfer' &&
+        output.fee_pending === false && Number.isSafeInteger(output.delivery_fee) && output.delivery_fee >= 0 &&
+        Number.isSafeInteger(output.subtotal) && output.subtotal > 0 &&
+        Number.isSafeInteger(output.total) && output.total === output.subtotal + output.delivery_fee &&
+        /^HH[0-9A-F]{12}$/.test(String(output.order_code || ''))) {
+      const bankId = String(env.PAYMENT_BANK_BIN || '').trim();
+      const account = String(env.PAYMENT_BANK_ACCOUNT || '').trim();
+      const accountName = String(env.PAYMENT_BANK_NAME || '').trim();
+      if (/^\d{6}$/.test(bankId) && /^\d{6,19}$/.test(account) &&
+          accountName.length >= 3 && accountName.length <= 80 && !/[\x00-\x1f]/.test(accountName)) {
+        output.payment_instructions = {
+          bank_bin: bankId, account_number: account, account_name: accountName,
+          amount: output.total, transfer_content: output.order_code
+        };
+      }
+    }
     const status = !output.ok ? (output.error_code === 'not_found' ? 404 : 400) : 200;
     if (route === 'products' && output.ok && catalogCache && catalogKey && ctx && ctx.waitUntil) {
       const cacheResponse = new Response(JSON.stringify(output), {
