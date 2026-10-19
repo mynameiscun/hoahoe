@@ -12878,6 +12878,16 @@ input.cart-plus-minus-box {
   .btn-effect-1:hover::after {
     width: 100%; }
 
+
+/* Khi di chuột vào nút (HOVER) */
+.btn-effect-about:hover {
+  color: #000000; /* Đổi màu chữ thành màu đen */
+}
+
+/* Khi di chuột vào nút, lớp nền trắng sẽ tràn ra full 100% */
+.btn-effect-about:hover:after {
+  width: 100%;
+}
 .btn-effect-2:after {
   width: 0%;
   height: 100%;

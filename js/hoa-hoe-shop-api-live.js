@@ -15,7 +15,11 @@
   var isGitHubDemo = location.hostname.endsWith('.github.io');
   var apiWebsite = location.port === '8000' || (location.protocol === 'https:' && !isGitHubDemo);
   if (!apiWebsite) {
-    console.info('Hoa Hoè: đang xem giao diện tĩnh, mở http://127.0.0.1:8000/shop.html để xem sản phẩm từ MySQL.');
+    // Local static preview: all other pages use the same 'demo' state.
+    // Demo prices must never be used to submit real orders.
+    window.HOA_HOE_CATALOG_SYNC_STATE = 'demo';
+    window.HOA_HOE_CATALOG_READY = Promise.resolve('demo');
+    document.dispatchEvent(new CustomEvent('hoa-hoe:catalog-ready'));
     return;
   }
 

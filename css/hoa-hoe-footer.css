@@ -1,0 +1,151 @@
+/* Hoa Hoè — Footer dùng chung (mọi trang).
+   Không phụ thuộc flower-custom.css hoặc hoa-hoe-contact-links.css,
+   vì các trang không tải cùng một bộ CSS. */
+
+.flower-footer {
+  background: #273b31;
+  color: #f7f7f7;
+  padding: 60px 0 22px;
+}
+
+.flower-footer .flower-footer-heading {
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  margin: 0 0 16px;
+}
+
+.flower-footer p {
+  color: #f4f0e9;
+  line-height: 1.75;
+  margin: 0 0 14px;
+}
+
+.flower-footer a {
+  color: #f4f0e9;
+}
+
+.flower-footer a[href^="tel:"] {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.flower-footer .flower-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px;
+}
+
+.flower-footer .flower-footer-links li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.flower-footer .flower-footer-links a {
+  color: #f4f0e9;
+  text-decoration: none;
+}
+
+.flower-footer .flower-footer-links a:hover,
+.flower-footer .flower-footer-links a:focus-visible,
+.flower-footer a[href^="tel:"]:hover,
+.flower-footer a[href^="tel:"]:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.flower-footer .flower-socials {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.flower-footer .flower-socials a.flower-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #b6c6bc;
+  border-radius: 8px;
+  background: transparent;
+  color: #f5f5f5;
+  opacity: 1;
+  font-size: .9rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color .2s ease, background-color .2s ease, border-color .2s ease;
+}
+
+.flower-footer .flower-socials a.flower-social:hover,
+.flower-footer .flower-socials a.flower-social:focus-visible {
+  color: #fff;
+  border-color: #f1c7b9;
+  background: rgba(255, 255, 255, .12);
+}
+
+.flower-footer .flower-socials a.flower-social i {
+  margin: 0;
+  font-size: .95em;
+}
+
+.flower-footer .flower-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  padding-top: 20px;
+  margin-top: 30px;
+  font-size: .9rem;
+  line-height: 1.6;
+  color: #efefef;
+}
+
+/* Threads vector: cùng màu chữ với Font Awesome, không cần nâng phiên bản font. */
+.hoa-threads-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
+  vertical-align: -0.125em;
+  background-color: currentColor;
+  -webkit-mask: url("../img/threads.svg") center / contain no-repeat;
+  mask: url("../img/threads.svg") center / contain no-repeat;
+}
+
+.flower-footer .flower-socials .hoa-threads-icon { margin-right: 0; }
+
+/* Icon Threads tại menu mobile và trang liên hệ. */
+.ltn__social-media-2 .hoa-threads-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: -0.12em;
+}
+
+.flower-social-row .hoa-threads-icon { margin-right: 6px; }
+
+/* Icon Threads tại nút liên hệ nổi. */
+.hoa-contact-fab__icon .hoa-threads-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+}
+
+@media (max-width: 767px) {
+  .flower-footer { padding: 42px 0 20px; }
+  .flower-footer .row > [class*="col-"] { margin-bottom: 18px; }
+  .flower-footer .flower-footer-bottom { margin-top: 12px; }
+}
+
+@media (max-width: 600px) {
+  .hoa-contact-fab__icon .hoa-threads-icon {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flower-footer .flower-socials a.flower-social { transition: none; }
+}
