@@ -1,11 +1,7 @@
-/* Hoa Hoè Step 12.5B — UI thông tin phí giao + overlay cánh hoa.
- * Thay IG_CHAT_URL bằng URL nhắn tin thật sau khi shop cung cấp.
- * Không nhập mã ngân hàng ở đây: ngân hàng được cấu hình phía Cloudflare.
- */
 (function () {
   'use strict';
   if (window.HOA_HOE_PAYMENT_UI) return;
-  const IG_CHAT_URL = ''; // VD sau khi có link: https://ig.me/m/ten_shop
+  const IG_CHAT_URL = 'https://www.instagram.com/hoahoe_hoahoe?utm_source=ig_web_copy_link';
   const RATES = [
     ['Quận 1, Quận 3, Quận 5, Quận 10', '20.000đ'],
     ['Quận 4, Phú Nhuận', '30.000đ'],
@@ -26,7 +22,7 @@
     return new Intl.NumberFormat('vi-VN', {style:'currency', currency:'VND', maximumFractionDigits:0}).format(n);
   }
   function link() {
-    let url = null;
+    let url = 'https://www.instagram.com/hoahoe_hoahoe?utm_source=ig_web_copy_link';
     try {
       if (IG_CHAT_URL) {
         const proposed = new URL(IG_CHAT_URL);
@@ -34,12 +30,12 @@
       }
     } catch (_) { /* Chưa được cấu hình. */ }
     if (!url) {
-      const btn = el('button', 'hoa-ship-contact hoa-ship-contact--missing', 'Instagram shop · chờ cập nhật liên kết');
-      btn.type = 'button'; btn.disabled = true;
+      const btn = el('button', 'hoa-ship-contact hoa-ship-contact--missing', 'Nhắn Instagram trao đổi phí giao');
+      btn.type = 'button'; btn.disabled = false;
       btn.title = 'Shop sẽ bổ sung liên kết nhắn tin Instagram';
       return btn;
     }
-    const a = el('a', 'hoa-ship-contact', 'Nhắn Instagram hỏi phí giao');
+    const a = el('a', 'hoa-ship-contact', 'Nhắn Instagram trao đổi phí giao');
     a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     return a;
   }

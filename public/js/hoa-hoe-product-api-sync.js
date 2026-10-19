@@ -16,9 +16,13 @@
     return;
   }
 
+  // Giới hạn thời gian chờ để giao diện không kẹt mãi ở 'Đang tải giá'.
+  var controller = new AbortController();
+  var timeout = setTimeout(function () { controller.abort(); }, 18000);
   window.HOA_HOE_CATALOG_READY = fetch('/api/products/', {
     credentials: 'same-origin',
     cache: 'no-store',
+    signal: controller.signal,
     headers: { Accept: 'application/json' }
   }).then(function (response) {
     if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -64,7 +68,7 @@
     Object.keys(catalog).forEach(function (id) { delete catalog[id]; });
     document.dispatchEvent(new CustomEvent('hoa-hoe:catalog-error'));
     return 'error';
-  });
+  }).finally(function () { clearTimeout(timeout); });
 }());
 
 

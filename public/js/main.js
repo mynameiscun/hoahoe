@@ -1361,7 +1361,7 @@
 (function () {
     if (document.querySelector('script[data-hoa-contact-loader]')) return;
     var script = document.createElement('script');
-    script.src = 'js/hoa-hoe-contact.js?v=5.2';
+    script.src = 'js/hoa-hoe-contact.js?v=5.3';
     script.defer = true;
     script.setAttribute('data-hoa-contact-loader', '');
     document.head.appendChild(script);

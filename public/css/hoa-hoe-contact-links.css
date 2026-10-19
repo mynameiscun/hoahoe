@@ -1,0 +1,72 @@
+/* HoaHoe — liên kết chính thức và menu bó hoa sáu kênh (bản 6.0).
+   Bổ sung sau CSS nút bó hoa hiện có; không chỉnh nút iconcontact.png. */
+
+/* 6 điểm trên cung tròn theo chiều từ trên xuống sang trái. */
+.hoa-contact-fab.is-open::before {
+  width: 355px;
+  height: 355px;
+}
+.hoa-contact-fab__item[data-channel="messenger"] {
+  --hoa-fan-x: -10px; --hoa-fan-y: -242px; --hoa-fan-delay: 0ms;
+}
+.hoa-contact-fab__item[data-channel="zalo"] {
+  --hoa-fan-x: -90px; --hoa-fan-y: -228px; --hoa-fan-delay: 28ms;
+}
+.hoa-contact-fab__item[data-channel="facebook"] {
+  --hoa-fan-x: -163px; --hoa-fan-y: -194px; --hoa-fan-delay: 56ms;
+  --hoa-contact-tint: #eaf0ff; --hoa-contact-ink: #2066d5;
+}
+.hoa-contact-fab__item[data-channel="instagram"] {
+  --hoa-fan-x: -212px; --hoa-fan-y: -140px; --hoa-fan-delay: 84ms;
+}
+.hoa-contact-fab__item[data-channel="threads"] {
+  --hoa-fan-x: -240px; --hoa-fan-y: -75px; --hoa-fan-delay: 112ms;
+  --hoa-contact-tint: #f2f0ee; --hoa-contact-ink: #191919;
+}
+.hoa-contact-fab__item[data-channel="tiktok"] {
+  --hoa-fan-x: -244px; --hoa-fan-y: -8px; --hoa-fan-delay: 140ms;
+}
+
+/* Liên kết footer: CSS cũ định dạng button; nay dùng thẻ a có thể bấm. */
+.flower-footer .flower-socials a.flower-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-decoration: none;
+  color: #f5f5f5;
+  opacity: 1;
+  white-space: nowrap;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+.flower-footer .flower-socials a.flower-social:hover,
+.flower-footer .flower-socials a.flower-social:focus-visible {
+  color: #ffffff;
+  border-color: #f1c7b9;
+  background: rgba(255,255,255,.12);
+}
+.flower-footer a[href^="tel:"] { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.flower-contact-list a[href^="tel:"] { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.flower-social-row a.flower-social-chip {
+  display: inline-flex;
+  align-items: center;
+  color: #52663e;
+  background: #fffaf3;
+  text-decoration: none;
+  transition: background-color .2s ease;
+}
+.flower-social-row a.flower-social-chip:hover,
+.flower-social-row a.flower-social-chip:focus-visible {
+  background: #ecf0e1;
+  color: #3d552d;
+}
+
+@media (max-width: 600px) {
+  .hoa-contact-fab.is-open::before { width: 310px; height: 310px; }
+  .hoa-contact-fab__item[data-channel="messenger"] { --hoa-fan-x: -5px; --hoa-fan-y: -218px; }
+  .hoa-contact-fab__item[data-channel="zalo"] { --hoa-fan-x: -77px; --hoa-fan-y: -207px; }
+  .hoa-contact-fab__item[data-channel="facebook"] { --hoa-fan-x: -139px; --hoa-fan-y: -173px; }
+  .hoa-contact-fab__item[data-channel="instagram"] { --hoa-fan-x: -185px; --hoa-fan-y: -122px; }
+  .hoa-contact-fab__item[data-channel="threads"] { --hoa-fan-x: -212px; --hoa-fan-y: -61px; }
+  .hoa-contact-fab__item[data-channel="tiktok"] { --hoa-fan-x: -218px; --hoa-fan-y: -1px; }
+}

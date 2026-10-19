@@ -7,12 +7,15 @@
 
   // ===== CHỈNH LINK TẠI ĐÂY =====
   var CONTACT_LINKS = {
-    messenger: '', // VD: 'https://m.me/TenTrangFacebookCuaShop'
-    zalo: '',      // VD: URL Zalo chính thức của shop
-    instagram: '', // VD: 'https://www.instagram.com/TenTaiKhoanShop/'
-    tiktok: ''     // VD: 'https://www.tiktok.com/@TenTaiKhoanShop'
+    messenger: 'https://www.facebook.com/messages/t/1023836264156301',
+    zalo: '', // Chưa có liên kết Zalo chính thức; giữ nút dự phòng.
+    facebook: 'https://www.facebook.com/profile.php?id=61589432000117',
+    instagram: 'https://www.instagram.com/hoahoe_hoahoe/',
+    threads: 'https://www.threads.com/@hoahoe_hoahoe',
+    tiktok: 'https://www.tiktok.com/@hoahoe_hoahoe'
   };
-  // Tên file ảnh: img/iconcontact.png (bó hoa), và 4 ảnh kênh ở CHANNELS.
+  // Tên file ảnh: img/iconcontact.png và ảnh các mạng xã hội tại CHANNELS.
+  // Threads dùng chung icon SVG tại img/threads.svg (qua hoa-hoe-footer.css).
   // Không cần thêm ảnh kênh ngay: các icon SVG mặc định vẫn hiển thị.
 
   var CHANNELS = [
@@ -25,8 +28,16 @@
       icon: '<span class="hoa-contact-fab__wordmark" aria-hidden="true">Zalo</span>'
     },
     {
+      key: 'facebook', label: 'Facebook', image: 'img/contact-facebook.png',
+      icon: '<svg viewBox="0 0 36 36" fill="currentColor" aria-hidden="true"><path d="M21.3 31V19.9h3.8l.6-4.5h-4.4v-2.8c0-1.3.4-2.1 2.2-2.1h2.4v-4a32 32 0 0 0-3.5-.2c-3.5 0-5.9 2.1-5.9 6.1v3h-3.9v4.5h3.9V31z"/></svg>'
+    },
+    {
       key: 'instagram', label: 'Instagram', image: 'img/contact-instagram.png',
       icon: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><rect x="5.5" y="5.5" width="25" height="25" rx="7"/><circle cx="18" cy="18" r="6"/><circle cx="26.2" cy="9.8" r="1.8" fill="currentColor" stroke="none"/></svg>'
+    },
+    {
+      key: 'threads', label: 'Threads', image: '',
+      icon: '<span class="hoa-threads-icon" aria-hidden="true"></span>'
     },
     {
       key: 'tiktok', label: 'TikTok', image: 'img/contact-tiktok.png',
@@ -63,6 +74,12 @@
     css.rel = 'stylesheet';
     css.href = 'css/hoa-hoe-contact.css?v=5.2';
     document.head.appendChild(css);
+    // Lớp CSS bổ sung cho 6 kênh; không thay thế CSS chính người dùng đã tùy chỉnh.
+    var extra = make('link');
+    extra.rel = 'stylesheet';
+    extra.href = 'css/hoa-hoe-contact-links.css?v=6.0';
+    extra.id = 'hoa-contact-links-styles';
+    document.head.appendChild(extra);
   }
   function init() {
     if (!document.body || document.getElementById('hoa-contact-fab')) return;
@@ -131,7 +148,7 @@
       }
       var pictogram = make('span', 'hoa-contact-fab__icon');
       pictogram.innerHTML = item.icon; // markup SVG cố định, không nhận từ URL/người dùng
-      addOptionalImage(pictogram, item.image, 'hoa-contact-fab__channel-image');
+      if (item.image) addOptionalImage(pictogram, item.image, 'hoa-contact-fab__channel-image');
       control.appendChild(pictogram);
       control.appendChild(make('span', 'hoa-contact-fab__tooltip', item.label));
       items.appendChild(control);

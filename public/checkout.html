@@ -24,6 +24,7 @@
 <link href="css/hoa-hoe-products.css" rel="stylesheet"/><link href="css/hoa-hoe-motion.css" rel="stylesheet"/>
 <link href="css/hoa-hoe-checkout-v3.css" rel="stylesheet"/>
 <link href="css/hoa-hoe-checkout-area.css" rel="stylesheet"/>
+<link rel="stylesheet" href="css/hoa-hoe-footer.css?v=1.0">
 </head>
 <body>
 <!--[if lte IE 9]>
@@ -266,10 +267,10 @@
 </div>
 <div class="ltn__social-media-2">
 <ul>
-<li><a href="#" title="Facebook"><i class="icon-social-facebook"></i></a></li>
-<li><a href="#" title="Twitter"><i class="icon-social-twitter"></i></a></li>
-<li><a href="#" title="Pinterest"><i class="icon-social-pinterest"></i></a></li>
-<li><a href="#" title="Instagram"><i class="icon-social-instagram"></i></a></li>
+<li><a href="https://www.facebook.com/profile.php?id=61589432000117" target="_blank" rel="noopener noreferrer" title="Facebook HoaHoè"><i class="icon-social-facebook"></i></a></li>
+<li><a href="https://www.facebook.com/messages/t/1023836264156301" target="_blank" rel="noopener noreferrer" title="Messenger HoaHoè"><i class="fab fa-facebook-messenger"></i></a></li>
+<li><a href="https://www.threads.com/@hoahoe_hoahoe" target="_blank" rel="noopener noreferrer" title="Threads HoaHoè" aria-label="Threads HoaHoè"><span class="hoa-threads-icon" aria-hidden="true"></span></a></li>
+<li><a href="https://www.instagram.com/hoahoe_hoahoe/" target="_blank" rel="noopener noreferrer" title="Instagram HoaHoè"><i class="icon-social-instagram"></i></a></li>
 </ul>
 </div>
 </div>
@@ -295,14 +296,13 @@
 </div>
 </div>
 <!-- BREADCRUMB AREA END -->
-<!-- CHECKOUT AREA START — Hoa Hoè Step 09.3, local DEBUG only -->
+<!-- CHECKOUT AREA START — Hoa Hoè -->
 <section class="ltn__checkout-area hoa-hoe-checkout-v3 mb-100" aria-labelledby="hoa-checkout-title">
   <div class="container">
     <header class="hoa-checkout-heading">
-      <h2 id="hoa-checkout-title">Gửi yêu cầu đặt hoa</h2>
-      <p>Chọn ngày giao trước ít nhất một ngày, gửi yêu cầu để shop kiểm tra địa chỉ và xác nhận phí giao.</p>
+      <h2 id="hoa-checkout-title">Đặt hoa</h2>
+      <p>Điền thông tin giao hoa và kiểm tra đơn trước khi thanh toán.</p>
     </header>
-    <div id="hoa-checkout-mode" class="hoa-checkout-banner" role="status" aria-live="polite">Đang kiểm tra kết nối cửa hàng...</div>
     <div class="row hoa-checkout-layout">
       <div class="col-lg-7">
         <form id="hoa-checkout-form" autocomplete="on" novalidate>
@@ -340,7 +340,7 @@
               <div class="col-12">
                 <label for="hoa-delivery-street">Số nhà, tên đường và địa chỉ cụ thể <span aria-hidden="true">*</span></label>
                 <textarea id="hoa-delivery-street" name="delivery_street" required minlength="5" maxlength="220" rows="2" placeholder="Ví dụ: 15 Nguyễn Huệ, tòa nhà A, tầng 2"></textarea>
-                <small>Thông tin khu vực sẽ được lưu cùng địa chỉ vào đơn hàng; phí giao do Admin kiểm tra và nhập sau.</small>
+                <small>Shop sẽ kiểm tra địa chỉ trước khi xác nhận đơn.</small>
               </div>
             </div>
           </fieldset>
@@ -354,19 +354,18 @@
           </fieldset>
           <div class="hoa-checkout-actions">
             <button class="theme-btn-1 btn btn-effect-1" id="hoa-preview-order" type="button" disabled>Kiểm tra yêu cầu</button>
-            <label class="hoa-checkout-consent"><input id="hoa-checkout-test-consent" type="checkbox"/> Tôi hiểu đây là <strong>đơn thử nghiệm trên máy cá nhân</strong>, được lưu vào MySQL và không phải đơn giao hoa thật.</label>
-            <button class="theme-btn-1 btn btn-effect-1" id="hoa-submit-order" type="button" disabled>Gửi yêu cầu thử nghiệm</button>
+            <label class="hoa-checkout-consent"><input id="hoa-checkout-test-consent" type="checkbox"/> Tôi đồng ý cung cấp thông tin theo <a href="policy.html">chính sách cửa hàng</a>.</label>
+            <button class="theme-btn-1 btn btn-effect-1" id="hoa-submit-order" type="button" disabled>Tiếp tục · Xác nhận phí giao</button>
           </div>
-          <div id="hoa-checkout-status" class="hoa-checkout-status" role="status" aria-live="polite">Đang tải giỏ hàng...</div>
+          <div id="hoa-checkout-status" class="hoa-checkout-status" role="status" aria-live="polite" hidden></div>
           <div id="hoa-checkout-success" class="hoa-checkout-success" hidden tabindex="-1"></div>
         </form>
       </div>
       <div class="col-lg-5">
         <aside class="hoa-checkout-summary" aria-label="Tóm tắt yêu cầu">
           <h3>Giỏ hoa của bạn</h3>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Thành tiền</th></tr></thead><tbody id="hoa-checkout-items"><tr><td colspan="2">Đang xác minh giá...</td></tr></tbody><tfoot><tr><th>Tạm tính tiền hoa</th><td id="hoa-checkout-subtotal">—</td></tr><tr><th>Phí giao</th><td>Shop xác nhận sau</td></tr></tfoot></table></div>
-          <p>Phí giao sẽ được Admin kiểm tra và nhập sau. <strong>Chưa chuyển khoản ở bước này.</strong></p>
-          <p>Đơn được gửi ở trạng thái <strong>Chờ xác nhận</strong>. Chỉ thanh toán sau khi shop duyệt và hướng dẫn.</p>
+          <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Thành tiền</th></tr></thead><tbody id="hoa-checkout-items"><tr><td colspan="2">Đang xác minh giá...</td></tr></tbody><tfoot><tr><th>Tạm tính tiền hoa</th><td id="hoa-checkout-subtotal">—</td></tr><tr><th>Phí giao</th><td>Xác nhận ở bước tiếp theo</td></tr></tfoot></table></div>
+          <p>Giá hoa chưa gồm phí giao. Vui lòng xác nhận phí với shop trước khi chuyển khoản.</p>
           <a href="cart.html">← Quay lại giỏ hàng</a>
         </aside>
       </div>
@@ -377,47 +376,19 @@
 <!-- BRAND LOGO AREA START -->
 <!-- BRAND LOGO AREA END -->
 <!-- FOOTER AREA START -->
-<footer aria-label="Thông tin cửa hàng" class="flower-footer">
-<div class="container">
-<div class="row">
-<div class="col-lg-4 col-md-6">
-<h2 class="flower-footer-heading">Hoa Hoè Flower Shop</h2>
-<p>Điểm xuất phát giao hoa: khu Tân Vạn – Long Hưng, Biên Hòa.</p>
-<p>Giao hoa tại địa bàn TP.HCM cũ theo khu vực shop hỗ trợ.</p>
-</div>
-<div class="col-lg-4 col-md-6">
-<h2 class="flower-footer-heading">Thông tin</h2>
-<ul class="flower-footer-links">
-<li><a href="contact.html">Liên hệ</a></li>
-<li><a href="policy.html">Chính sách cửa hàng</a></li>
-<li><a href="order-tracking.html">Tra cứu đơn hàng</a></li>
-</ul>
-<p>Giờ hoạt động: <strong>chưa cung cấp</strong>.</p>
-</div>
-<div class="col-lg-4 col-md-12">
-<h2 class="flower-footer-heading">Kết nối với shop</h2>
-<p>Liên kết mạng xã hội sẽ được thêm sau khi shop cung cấp địa chỉ.</p>
-<div aria-label="Các kênh liên hệ đang chờ cấu hình" class="flower-socials">
-<button class="flower-social" data-social="instagram" disabled="" title="Chưa có liên kết Instagram" type="button"><i aria-hidden="true" class="fab fa-instagram"></i>Instagram</button>
-<button class="flower-social" data-social="facebook" disabled="" title="Chưa có liên kết Facebook" type="button"><i aria-hidden="true" class="fab fa-facebook-f"></i>Facebook</button>
-<button class="flower-social" data-social="tiktok" disabled="" title="Chưa có liên kết TikTok" type="button"><i aria-hidden="true" class="fas fa-music"></i>TikTok</button>
-</div>
-</div>
-</div>
-<div class="flower-footer-bottom">© Hoa Hoè Flower Shop · Giao diện đang hoàn thiện; giá hoa hiện là dự kiến.</div>
-</div>
-</footer>
+<div id="hoa-hoe-footer-root"></div>
+<script src="js/hoa-hoe-footer.js?v=1.0"></script>
 <!-- FOOTER AREA END -->
 </div>
 <!-- Body main wrapper end -->
-<!-- Step 09.7 — Xác nhận đã tiếp nhận yêu cầu, chỉ hiển thị khi Django lưu thành công. -->
+<!-- Modal xác nhận đơn sau khi API ghi nhận thành công. -->
 <div id="hoa-order-success-modal" class="hoa-order-modal" hidden>
   <div class="hoa-order-modal__backdrop" data-hoa-close-modal="true"></div>
   <section class="hoa-order-modal__panel" role="dialog" aria-modal="true" aria-labelledby="hoa-order-modal-title" aria-describedby="hoa-order-modal-description" tabindex="-1">
     <button type="button" class="hoa-order-modal__close" data-hoa-close-modal="true" aria-label="Đóng thông báo">&times;</button>
     <div class="hoa-order-modal__flower" aria-hidden="true">✿</div>
-    <h2 id="hoa-order-modal-title">Hoa Hoè đã nhận yêu cầu!</h2>
-    <p id="hoa-order-modal-description">Yêu cầu đặt hoa đã được lưu. Shop sẽ kiểm tra lịch giao và thông báo phí giao sau khi duyệt.</p>
+    <h2 id="hoa-order-modal-title">Đã gửi đơn · Chờ xác nhận</h2>
+    <p id="hoa-order-modal-description">Shop sẽ kiểm tra chuyển khoản và liên hệ xác nhận đơn với bạn.</p>
     <div class="hoa-order-modal__codebox">
       <span class="hoa-order-modal__eyebrow">MÃ ĐƠN CỦA BẠN</span>
       <output id="hoa-order-modal-code" class="hoa-order-modal__code" aria-label="Mã đơn hàng">—</output>
@@ -425,13 +396,11 @@
       <span id="hoa-order-modal-copy-status" class="hoa-order-modal__copy-status" role="status" aria-live="polite"></span>
     </div>
     <p class="hoa-order-modal__reminder"><strong>Lưu ý:</strong> Hãy lưu lại mã đơn và dùng số điện thoại người đặt để tra cứu sau này.</p>
-    <p class="hoa-order-modal__pending">Trạng thái: <strong>Chờ xác nhận</strong> · <strong>Chưa chuyển khoản</strong></p>
-    <p class="hoa-order-modal__test">ĐÂY LÀ ĐƠN THỬ NGHIỆM TRÊN MÁY LOCAL — KHÔNG GIAO HOA THẬT.</p>
+    <p class="hoa-order-modal__pending">Trạng thái: <strong>Chờ shop xác nhận</strong></p>
     <div class="hoa-order-modal__actions">
       <a href="order-tracking.html" class="hoa-order-modal__tracking">Tra cứu đơn hàng</a>
-      <button type="button" id="hoa-order-modal-shop" class="hoa-order-modal__shop" disabled>Xem thêm hoa xinh (5s)</button>
+      <button type="button" id="hoa-order-modal-shop" class="hoa-order-modal__shop">Xem thêm hoa</button>
     </div>
-    <span class="hoa-order-modal__hint">Bạn có thể đóng thông báo bất cứ lúc nào. Mã đơn vẫn hiển thị bên dưới Checkout.</span>
   </section>
 </div>
 
@@ -440,12 +409,12 @@
 <!-- Main JS -->
 <script src="js/main.js"></script>
 <script src="js/flower-product-data.js"></script>
-<script src="js/hoa-hoe-product-api-sync.js"></script>
+<script src="js/hoa-hoe-product-api-sync.js?v=20261020c"></script>
 <script src="js/hoa-hoe-catalog-sync.js"></script>
-<script src="js/flower-cart-demo.js"></script>
-<script src="js/hoa-hoe-turnstile.js"></script>
-<script src="js/hoa-hoe-checkout-v3.js"></script>
+<script src="js/flower-cart-demo.js?v=20261020c"></script>
+<script src="js/hoa-hoe-checkout-v3.js?v=20261020c"></script>
 <script src="js/hoa-hoe-motion.js"></script>
+<script src="js/hoa-hoe-turnstile.js"></script>
 <script src="js/hoa-hoe-shipping-entry.js"></script>
 </body>
 </html>

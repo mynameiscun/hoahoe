@@ -1,6 +1,5 @@
-/* Hoa Hoè Step 09.5 — Checkout ket noi Django, CHI TEST LOCAL.
- * API submit Step09.2 chi nhan 127.0.0.1 DEBUG, CSRF + cookie. Khong co thanh toan.
- * Luu YEU CAU thu nghiem vao MySQL; khong cong khai khi deploy.
+/* Hoa Hoè Checkout: kiểm tra giá, xác nhận phí giao, chuyển khoản và gửi đơn.
+ * Bảo toàn các bước kiểm tra từ API và xác minh giao dịch thủ công của shop.
  */
 (function () {
   'use strict';
@@ -19,40 +18,14 @@
     const consent = byId('hoa-checkout-test-consent');
     const status = byId('hoa-checkout-status');
     const success = byId('hoa-checkout-success');
-    const banner = byId('hoa-checkout-mode');
     const rows = byId('hoa-checkout-items');
     const total = byId('hoa-checkout-subtotal');
-    // Step 12.5E: phí giao do khách tự khai sau khi thống nhất với shop;
-    // KHÔNG tạo mã đơn trước thao tác khách tự báo đã chuyển khoản.
-    const heading = document.querySelector('.hoa-checkout-heading');
-    if (heading) {
-      const title = heading.querySelector('h1,h2,h3');
-      if (title) title.textContent = 'Đặt hoa · Xác nhận phí giao · Thanh toán';
-      const lead = heading.querySelector('p');
-      if (lead) lead.textContent = 'Điền thông tin giao hoa, kiểm tra tiền hoa, nhập phí ship đã thương lượng, chuyển khoản rồi mới gửi đơn để shop đối soát.';
-    }
-    const checkoutSummary = document.querySelector('.hoa-checkout-summary');
-    if (checkoutSummary) {
-      checkoutSummary.querySelectorAll('p').forEach(el => {
-        if (/Shop xác nhận sau|Admin kiểm tra và nhập sau|chưa chuyển khoản ở bước này|chỉ thanh toán sau khi shop duyệt/i.test(el.textContent || ''))
-          el.textContent = 'Chưa tạo đơn ở bước này. Sau khi nhập phí giao đã thống nhất và chuyển khoản, bạn bấm “Tôi đã chuyển khoản” để gửi yêu cầu cho shop đối soát.';
-      });
-    }
-    if (checkoutSummary && !byId('hoa-checkout-fee-disclaimer')) {
-      const note = document.createElement('p');
-      note.id = 'hoa-checkout-fee-disclaimer';
-      note.className = 'hoa-checkout-fee-disclaimer';
-      note.textContent = 'Giá hoa chưa bao gồm phí giao. Sau khi kiểm tra thông tin, bạn chọn phí đã thống nhất với shop hoặc liên hệ nhận báo giá sau. Mã đơn chỉ tạo khi bạn báo đã chuyển khoản; shop vẫn đối soát thủ công.';
-      checkoutSummary.appendChild(note);
-    }
     const modal = byId('hoa-order-success-modal');
     const modalPanel = modal.querySelector('.hoa-order-modal__panel');
     const modalCode = byId('hoa-order-modal-code');
     const modalCopyStatus = byId('hoa-order-modal-copy-status');
     const modalShopButton = byId('hoa-order-modal-shop');
     const pageWrapper = document.querySelector('.body-wrapper');
-    // Step 12.5A: loading overlay rieng cua Checkout; khong can sua HTML hay API.
-    // Chi hien sau khi form hop le va sap thuc hien request; khong bao gio che thong bao loi.
     const hoaLoading = document.createElement('div');
     hoaLoading.className = 'hoa-action-loading';
     hoaLoading.id = 'hoa-action-loading';
@@ -80,13 +53,14 @@
     hoaLoadingText.className = 'hoa-action-loading__text';
     hoaLoadingText.textContent = 'Hoa Hoè đang xử lý...';
     const hoaLoadingNote = document.createElement('small');
-    hoaLoadingNote.textContent = 'Vui lòng giữ trang này mở và không gửi lại yêu cầu.';
+    hoaLoadingNote.textContent = 'Vui lòng không gửi lại đơn khi đang xử lý.';
+    hoaLoadingNote.hidden = true;
     hoaLoadingPanel.append(hoaFlower, hoaLoadingText, hoaLoadingNote);
     hoaLoading.appendChild(hoaLoadingPanel);
     document.body.appendChild(hoaLoading);
     let hoaLoadingOldOverflow = '';
     let hoaLoadingFocus = null;
-    function hoaShowLoading(text) {
+    function hoaShowLoading(text, submitting = false) {
       if (hoaLoading.hidden) {
         hoaLoadingFocus = document.activeElement;
         hoaLoadingOldOverflow = document.body.style.overflow;
@@ -95,6 +69,7 @@
         hoaLoading.hidden = false;
       }
       hoaLoadingText.textContent = text || 'Hoa Hoè đang xử lý...';
+      hoaLoadingNote.hidden = !submitting;
       hoaLoading.focus({preventScroll:true});
     }
     function hoaHideLoading() {
@@ -117,9 +92,6 @@
     }, true);
     let submittedCode = '';
     let paymentStage = null;
-    let countdownTimer = null;
-    let countdownSeconds = 0;
-
     async function copyCode(code, feedback) {
       if (!code) return;
       let copied = false;
@@ -151,47 +123,16 @@
       (fallbackCopy || success).focus();
     }
 
-    function displayCountdown() {
-      modalShopButton.disabled = countdownSeconds > 0;
-      modalShopButton.textContent = countdownSeconds > 0
-        ? 'Xem thêm hoa xinh (' + countdownSeconds + 's)'
-        : 'Xem thêm hoa xinh';
-    }
-
     function showSuccessModal(code) {
       submittedCode = code;
-      // Noi dung modal cu mo ta luong tao don som; thay bang noi dung moi.
-      const oldHeading=modalPanel.querySelector('h1,h2,h3');
-      if (oldHeading) oldHeading.textContent='Đã gửi đơn — Chờ shop xác nhận';
-      // Sua cac cau chu cu tren moi thanh phan (ca span/div/strong), giu nguyen button.
-      const walker = document.createTreeWalker(modalPanel, NodeFilter.SHOW_TEXT);
-      let tn;
-      while ((tn = walker.nextNode())) {
-        const t = tn.textContent || '';
-        if (/Shop sẽ kiểm tra lịch giao|thông báo phí giao sau khi duyệt/i.test(t))
-          tn.textContent='Shop đang đối soát tiền khách báo chuyển khoản và kiểm tra lịch giao.';
-        if (/ĐÂY LÀ ĐƠN THỬ NGHIỆM|KHÔNG GIAO HOA THẬT/i.test(t))
-          tn.textContent='CHỜ XÁC NHẬN — SHOP CHƯA ĐỐI SOÁT CHUYỂN KHOẢN.';
-        if (/Chờ xác nhận.*Chưa chuyển khoản/i.test(t))
-          tn.textContent='Chờ xác nhận · Khách báo đã chuyển khoản';
-      }
       modalCode.textContent = code;
       modalCopyStatus.textContent = '';
-      if (countdownTimer !== null) clearInterval(countdownTimer);
-      countdownSeconds = 5;
-      displayCountdown();
+      modalShopButton.disabled = false;
+      modalShopButton.textContent = 'Xem thêm hoa';
       modal.hidden = false;
       document.body.classList.add('hoa-order-modal-open');
       if (pageWrapper) pageWrapper.setAttribute('inert', '');
       byId('hoa-order-modal-copy').focus();
-      countdownTimer = setInterval(() => {
-        countdownSeconds = Math.max(0, countdownSeconds - 1);
-        displayCountdown();
-        if (countdownSeconds === 0) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-        }
-      }, 1000);
     }
 
     modal.querySelectorAll('[data-hoa-close-modal]').forEach(button => {
@@ -263,12 +204,14 @@
       wardSelect.disabled = false;
       wardSelect.value = 'manual';
       showManualWard(true);
-      if (message) messageArea.textContent = message;
+      messageArea.textContent = message || '';
+      messageArea.hidden = !message;
     }
     const messageArea = document.createElement('small');
     messageArea.id = 'hoa-ward-source-note';
     messageArea.setAttribute('role', 'status');
     wardSelect.insertAdjacentElement('afterend', messageArea);
+    messageArea.hidden = true;
     let wardRequestCounter = 0;
 
     async function loadDistricts() {
@@ -282,57 +225,101 @@
             throw new Error('Danh sách khu vực không hợp lệ.');
           data = body.districts;
         } catch (_) {
-          messageArea.textContent = 'Đang dùng danh sách quận/huyện dự phòng; cần xác minh khi gửi.';
+          messageArea.textContent = 'Vui lòng kiểm tra lại khu vực giao hoa trước khi gửi.';
+          messageArea.hidden = false;
         }
       }
       districtSelect.replaceChildren();
       option(districtSelect, '', 'Chọn quận / huyện cũ');
       data.forEach(d => option(districtSelect, String(d.code), d.name));
     }
+    // Phường/xã theo quận huyện cũ. Ưu tiên API của shop, chỉ dùng nguồn
+    // công khai v1 (trước 07/2025) nếu API shop không có danh mục.
+    // Nếu cả hai không truy cập được, khách vẫn nhập tay; không tự đoán tên địa danh.
+    async function fetchWardJson(url, timeoutMs) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, {
+          cache: 'no-store', signal: controller.signal,
+          headers: {Accept: 'application/json'}
+        });
+        if (!response.ok) throw new Error('Không lấy được danh mục phường/xã.');
+        return await response.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    function cleanWards(data) {
+      if (!Array.isArray(data)) throw new Error('Danh mục phường/xã không hợp lệ.');
+      const seen = new Set();
+      const wards = [];
+      data.forEach(w => {
+        const code = String(w && w.code != null ? w.code : '');
+        const name = String(w && w.name || '').trim();
+        if (!/^\d{4,8}$/.test(code) || name.length < 2 || name.length > 100 || seen.has(code)) return;
+        seen.add(code);
+        wards.push({code, name});
+      });
+      if (!wards.length) throw new Error('Danh mục phường/xã đang trống.');
+      return wards;
+    }
+    function saveWardCache(district, wards) {
+      try { sessionStorage.setItem('hoa-wards-v1-' + district, JSON.stringify(wards)); } catch (_) {}
+    }
+    function readWardCache(district) {
+      try {
+        const content = sessionStorage.getItem('hoa-wards-v1-' + district);
+        return content ? cleanWards(JSON.parse(content)) : null;
+      } catch (_) { return null; }
+    }
+    function displayWards(wards, notice) {
+      wardSelect.replaceChildren();
+      option(wardSelect, '', 'Chọn phường / xã cũ');
+      wards.forEach(w => option(wardSelect, w.code, w.name));
+      option(wardSelect, 'manual', 'Không thấy phường/xã? Nhập tay');
+      wardSelect.disabled = false;
+      messageArea.textContent = notice || '';
+      messageArea.hidden = !notice;
+    }
     async function loadWards() {
       const requestNo = ++wardRequestCounter;
+      const district = districtSelect.value;
       wardSelect.replaceChildren();
       wardSelect.disabled = true;
       showManualWard(false);
       messageArea.textContent = '';
-      if (!districtSelect.value) {
+      messageArea.hidden = true;
+      if (!district) {
         option(wardSelect, '', 'Chọn quận / huyện trước');
         return;
       }
-      // Cloudflare Pages cung cap danh muc phuong/xa cu qua API cung domain.
-      // Google Sheets van yeu cau Admin xac minh khu vuc truoc khi giao.
-      if (!djangoLocal && !sheetsWebsite) {
-        useManualWard('Bản xem giao diện — không gửi đơn thật tại đây.');
+      const cached = readWardCache(district);
+      if (cached) {
+        displayWards(cached, 'Chọn địa danh theo quận/huyện cũ; shop sẽ xác nhận địa chỉ giao.');
         return;
       }
       option(wardSelect, '', 'Đang tải phường / xã...');
+      let wards;
       try {
-        const res = await fetch('/api/orders/areas/?district=' + encodeURIComponent(districtSelect.value), {
-          cache:'no-store', credentials:'same-origin'
-        });
-        if (!res.ok) throw new Error('Không tải được danh sách.');
-        const body = await res.json();
-        if (requestNo !== wardRequestCounter) return;
-        if (body.ok !== true || !Array.isArray(body.wards) || !body.wards.length)
-          throw new Error('Danh sách hiện chưa sẵn sàng.');
-        const seen = new Set();
-        wardSelect.replaceChildren();
-        option(wardSelect, '', 'Chọn phường / xã cũ');
-        body.wards.forEach(w => {
-          const code = String(w.code || '');
-          const label = String(w.name || '').trim();
-          if (!/^\d{4,8}$/.test(code) || label.length < 2 || label.length > 100 || seen.has(code)) return;
-          seen.add(code);
-          option(wardSelect, code, label);
-        });
-        if (!seen.size) throw new Error('Danh mục địa danh chưa hợp lệ.');
-        option(wardSelect, 'manual', 'Không thấy địa danh? Nhập tay để shop kiểm tra');
-        wardSelect.disabled = false;
-        messageArea.textContent = 'Danh mục phường/xã theo quận/huyện cũ (trước 01/07/2025). Shop vẫn xác minh địa chỉ trước khi giao.';
+        const body = await fetchWardJson('/api/orders/areas/?district=' + encodeURIComponent(district), 4500);
+        if (body.ok !== true) throw new Error('Danh mục nội bộ chưa sẵn sàng.');
+        wards = cleanWards(body.wards);
       } catch (_) {
-        if (requestNo === wardRequestCounter)
-          useManualWard('Danh mục phường/xã tạm thời không truy cập được. Bạn có thể nhập tay để Admin kiểm tra.');
+        try {
+          // API công khai hỗ trợ địa giới cũ trước 01/07/2025.
+          const legacy = await fetchWardJson('https://provinces.open-api.vn/api/v1/d/' + encodeURIComponent(district) + '?depth=2', 7000);
+          if (String(legacy.code) !== district) throw new Error('Khu vực không khớp.');
+          wards = cleanWards(legacy.wards);
+        } catch (__) {
+          if (requestNo === wardRequestCounter)
+            useManualWard('Chưa tải được danh sách. Hãy nhập tên phường/xã để shop kiểm tra.');
+          return;
+        }
       }
+      if (requestNo !== wardRequestCounter || districtSelect.value !== district) return;
+      saveWardCache(district, wards);
+      displayWards(wards, 'Danh mục địa danh cũ (trước 01/07/2025); shop sẽ xác nhận địa chỉ giao.');
     }
     districtSelect.addEventListener('change', loadWards);
     wardSelect.addEventListener('change', () => showManualWard(wardSelect.value === 'manual'));
@@ -342,8 +329,17 @@
     let active = false, ordersEnabled = false, busy = false, items = [], previewed = null, submissionId = null;
 
     function message(text, isError) {
-      status.textContent = text;
+      status.textContent = text || '';
+      status.hidden = !text;
       status.classList.toggle('is-error', Boolean(isError));
+    }
+    function friendlyError(error, afterPayment = false) {
+      const text = String(error?.message || '').trim();
+      const generic = !text || /HTTP \d+|CSRF|Django|Google Sheets|MySQL|JSON|API |turnstile\.js|\[object Object\]/i.test(text);
+      if (generic) return afterPayment
+        ? 'Chưa thể xác nhận đơn. Hãy tra cứu đơn hoặc liên hệ shop trước khi thử lại. Không chuyển tiền thêm.'
+        : 'Hệ thống đang bận. Vui lòng thử lại hoặc liên hệ shop.';
+      return text;
     }
     function disableActions() {
       previewButton.disabled = !active || busy || items.length === 0;
@@ -352,12 +348,14 @@
     function invalidate(event) {
       if (event && event.target === consent) return;
       if (success.hidden === false || busy) return;
+      // Không hiển thị thông báo trên mỗi ký tự khi khách đang nhập form.
+      if (!previewed && !submissionId && feeClaimed === null && !checkoutReference) return;
       previewed = null;
       submissionId = null;
       feeClaimed = null;
       checkoutReference = null;
       disableActions();
-      message('Đã thay đổi thông tin. Hãy kiểm tra lại trước khi đến bước phí giao.', false);
+      message('Thông tin đã thay đổi. Hãy kiểm tra lại đơn trước khi tiếp tục.', false);
     }
     function localDay(addDays) {
       const d = new Date();
@@ -533,14 +531,14 @@
         previewed = null;
         renderItems();
         disableActions();
-        message('Kiểm tra giao diện đạt: đã nhập các trường bắt buộc và có sản phẩm với giá lấy từ danh mục. Đây KHÔNG phải xác nhận đơn, chưa kiểm tra lịch giao/tồn kho tại máy chủ, chưa ghi Google Sheets và chưa phát sinh thanh toán.', false);
+        message(window.HOA_HOE_CATALOG_SYNC_STATE === 'demo' ? 'Đã kiểm tra biểu mẫu. Đây là bản xem trước; không gửi đơn thật.' : 'Thông tin đã đầy đủ. Shop hiện chưa nhận đơn trực tuyến.', false);
         return;
       }
       busy = true;
       previewed = null;
       disableActions();
-      message('Đang kiểm tra lịch giao, sản phẩm và giá từ cửa hàng...', false);
-      hoaShowLoading('Đang xác nhận thông tin đặt hoa...');
+      message('', false);
+      hoaShowLoading('Đang kiểm tra đơn hoa...');
       try {
         const result = await withCsrf('/api/orders/preview/', payload());
         if (!Number.isSafeInteger(result.subtotal) || !Array.isArray(result.items))
@@ -549,17 +547,18 @@
         renderItems(result.items);
         const areaResult = result.delivery_area;
         const pendingWardReview = areaResult && areaResult.ward_reference_checked === false;
-        message('Yêu cầu hợp lệ. Tiền hoa ' + money(result.subtotal) + '. Giá chưa bao gồm phí giao; vui lòng xác nhận phí giao với shop trước khi thanh toán.' + (pendingWardReview ? ' Phường/xã nhập tay cần được shop đối chiếu.' : '') + ' Chưa thanh toán.', false);
+        message('Đã kiểm tra đơn: ' + money(result.subtotal) + ' (chưa gồm phí giao).' +
+          (pendingWardReview ? ' Shop sẽ xác nhận lại địa chỉ giao.' : '') +
+          ' Bạn có thể tiếp tục.', false);
       } catch (error) {
-        message('Không thể kiểm tra: ' + error.message, true);
+        message('Không thể kiểm tra đơn: ' + friendlyError(error), true);
       } finally {hoaHideLoading(); busy = false; disableActions();}
     }
-    // Step 12.5E: Quy trình gồm 3 bước. Trước nút "Tôi đã chuyển khoản" chỉ
-    // gọi /preview để đọc giá thực, KHÔNG gọi API ghi đơn và không sinh mã đơn.
+    // Chỉ ghi đơn khi khách đã xác nhận chuyển khoản.
     let inProgressPayment = false;
     let feeClaimed = null;
     let checkoutReference = null;
-        function node(tag, className, text) {
+    function node(tag, className, text) {
       const x = document.createElement(tag);
       if (className) x.className = className;
       if (text !== undefined) x.textContent = text;
@@ -604,7 +603,7 @@
     }
     function contactArea(container) {
       const block=node('div','hoa-e-contact');
-      block.appendChild(node('p','', 'Liên hệ shop để chốt đúng phí giao trước khi thanh toán.'));
+      block.appendChild(node('p','', 'Cần hỗ trợ về phí giao? Liên hệ Hoa Hoè:'));
       if (window.HOA_HOE_PAYMENT_UI && window.HOA_HOE_PAYMENT_UI.link) {
         block.appendChild(window.HOA_HOE_PAYMENT_UI.link());
       }
@@ -613,33 +612,33 @@
     }
     function feeStep() {
       const card=showPaymentStep('fee');
-      card.appendChild(node('p','hoa-e-hint','Giá hoa chưa bao gồm phí ship. Bảng phí chỉ để tham khảo; không tự suy ra phí cuối cùng.'));
+      card.appendChild(node('p','hoa-e-hint','Nhập phí giao đã thống nhất với shop để xem tổng thanh toán.'));
       card.appendChild(textLine('Tiền hoa đã kiểm tra',money(previewed.subtotal)));
       const formChoices = node('fieldset','hoa-e-choice');
-      formChoices.appendChild(node('legend','','Bạn đã thống nhất phí giao với shop chưa?'));
+      formChoices.appendChild(node('legend','','Phí giao hàng'));
       const yesLabel=node('label','hoa-e-radio');const yes=node('input');yes.type='radio';yes.name='hoa-e-shipping-choice';yes.value='confirmed';yes.checked=true;
-      yesLabel.append(yes, document.createTextNode(' Đã xác nhận phí ship với shop'));
+      yesLabel.append(yes, document.createTextNode(' Tôi đã có phí giao'));
       const laterLabel=node('label','hoa-e-radio');const later=node('input');later.type='radio';later.name='hoa-e-shipping-choice';later.value='later';
-      laterLabel.append(later,document.createTextNode(' Tôi muốn nhận báo phí ship sau'));
+      laterLabel.append(later,document.createTextNode(' Tôi cần hỏi phí giao'));
       formChoices.append(yesLabel,laterLabel);card.append(formChoices);
       const confirmedSection=node('div','hoa-e-confirmed');
-      const feeLabel=node('label','','Phí ship đã thương lượng (VNĐ)');
+      const feeLabel=node('label','','Phí giao đã thống nhất (VNĐ)');
       const feeInput=node('input','hoa-e-input');feeInput.type='number';feeInput.inputMode='numeric';feeInput.min='0';feeInput.max='999999';feeInput.step='1000';
       feeInput.placeholder='Ví dụ: 40000';feeInput.value=feeClaimed === null ? '' : String(feeClaimed);
       feeLabel.appendChild(feeInput);
       confirmedSection.appendChild(feeLabel);
-      confirmedSection.appendChild(node('small','hoa-e-hint','Chỉ nhập số tiền mà shop đã báo; nếu được miễn phí hãy nhập 0. Khoản phí này sẽ được Admin kiểm tra lại.'));
+      confirmedSection.appendChild(node('small','hoa-e-hint','Nhập 0 nếu shop miễn phí giao.'));
       const agreeLabel=node('label','hoa-e-agree');const agree=node('input');agree.type='checkbox';
-      agreeLabel.append(agree,document.createTextNode(' Tôi xác nhận mức phí trên đã được thống nhất với Hoa Hoè.'));
+      agreeLabel.append(agree,document.createTextNode(' Tôi đã xác nhận phí giao với shop.'));
       confirmedSection.append(agreeLabel);
       const total=textLine('Tổng cần chuyển', '—',true);confirmedSection.append(total);
       const error=node('p','hoa-e-error');error.setAttribute('role','alert');
       const next=node('button','hoa-e-primary','Tiếp tục đến QR →');next.type='button';
       confirmedSection.append(error,next);card.appendChild(confirmedSection);
       const laterSection=node('div','hoa-e-later');laterSection.hidden=true;
-      laterSection.append(node('p','','Bạn có thể liên hệ shop để nhận báo phí. Chưa có tổng tiền thì chưa mở QR và chưa tạo đơn hàng. Vui lòng giữ trang này để quay lại nhập phí.'));
+      laterSection.append(node('p','','Vui lòng liên hệ shop để xác nhận phí giao trước khi thanh toán.'));
       contactArea(laterSection);
-      const returnBtn=node('button','hoa-e-secondary','Tôi đã nhận báo phí — nhập lại');returnBtn.type='button';
+      const returnBtn=node('button','hoa-e-secondary','Đã có phí giao · Tiếp tục');returnBtn.type='button';
       returnBtn.addEventListener('click',()=>{yes.checked=true;toggle();});laterSection.append(returnBtn);card.append(laterSection);
       contactArea(confirmedSection);
       function toggle(){confirmedSection.hidden=later.checked;laterSection.hidden=!later.checked;}
@@ -663,7 +662,7 @@
     }
     function qrStep() {
       const card=showPaymentStep('qr');
-      card.appendChild(node('p','hoa-e-hint','Hãy quét QR ngân hàng của shop rồi chuyển đúng tổng tiền và nội dung dưới đây. Mã đối soát KHÔNG phải mã đơn hàng.'));
+      card.appendChild(node('p','hoa-e-hint','Quét mã QR để chuyển đúng số tiền và nội dung bên dưới.'));
       const qrFrame=node('div','hoa-e-qr');
       // HOAHOE_DYNAMIC_QR_12_5F: QR động theo tổng tiền đã xác nhận với shop.
       const placeholder=node('div','hoa-e-qr-empty','Đang tạo QR chuyển khoản...');
@@ -687,8 +686,8 @@
       qr.onerror=()=>{
         if(paymentStage!==currentPaymentStage)return;
         qrReady=false;placeholder.hidden=false;qr.hidden=true;
-        placeholder.textContent='Không tải được QR. Vui lòng liên hệ shop, chưa chuyển khoản.';
-        error.textContent='QR không khả dụng. Không xác nhận thanh toán trên trang này.';
+        placeholder.textContent='Không hiển thị được mã QR.';
+        error.textContent='Vui lòng liên hệ shop trước khi chuyển khoản.';
         refreshButton();
       };
       async function loadDynamicQR(){
@@ -705,8 +704,7 @@
             throw new Error(bank && bank.error || 'Shop chưa cấu hình tài khoản nhận tiền.');
           if(paymentStage!==currentPaymentStage)return;
           bankBox.replaceChildren(
-            textLine('Ngân hàng (BIN)',bank.bank_bin),
-            textLine('Số tài khoản nhận',bank.account_number),
+            textLine('Số tài khoản',bank.account_number),
             textLine('Chủ tài khoản',bank.account_name)
           );
           // VietQR Quick Link: QR chứa sẵn tiền + mã đối soát, KHÔNG sinh mã đơn.
@@ -719,8 +717,7 @@
           if(paymentStage!==currentPaymentStage)return;
           qrReady=false;
           placeholder.textContent='Chưa tạo được QR chuyển khoản.';
-          error.textContent=(err && err.message ? err.message : 'Không kết nối được ngân hàng nhận tiền.')+
-            ' Vui lòng liên hệ shop và chưa báo đã chuyển khoản.';
+          error.textContent='Không tạo được QR. Vui lòng liên hệ shop trước khi chuyển khoản.';
           refreshButton();
         }
       }
@@ -729,7 +726,7 @@
         textLine('Phí giao bạn đã thống nhất',money(feeClaimed)),
         textLine('Tổng thanh toán',money(previewed.subtotal + feeClaimed),true),
         textLine('Nội dung chuyển khoản',checkoutReference));
-      const caution=node('p','hoa-e-hint','QR đã điền sẵn tổng tiền và mã đối soát. Hãy đối chiếu tên chủ tài khoản trước khi xác nhận trên ứng dụng ngân hàng. Admin vẫn phải kiểm tra giao dịch thực nhận.');
+      const caution=node('p','hoa-e-hint','Hãy đối chiếu tên chủ tài khoản trước khi chuyển tiền. Shop sẽ xác minh giao dịch sau khi bạn gửi đơn.');
       card.appendChild(caution);
       const confirm=node('label','hoa-e-agree');const checked=node('input');checked.type='checkbox';
       confirm.append(checked,document.createTextNode(' Tôi đã chuyển khoản đúng tổng tiền và nội dung trên.'));
@@ -745,18 +742,18 @@
       send.addEventListener('click',async()=>{
         if (!qrReady || !checked.checked || inProgressPayment) return;
         if (sheetsWebsite && !captchaToken) {
-          error.textContent='Vui lòng hoàn tất xác minh chống robot ở Checkout trước khi gửi đơn.';
+          error.textContent='Vui lòng hoàn tất bước xác minh để gửi đơn.';
           closePayment();captcha?.reset();return;
         }
         inProgressPayment=true;refreshButton();error.textContent='';
         let orderSaved=false;
-        hoaShowLoading('Đang đối chiếu giá và ghi nhận đơn sau khi bạn báo chuyển khoản...');
+        hoaShowLoading('Đang ghi nhận đơn hàng...', true);
         try {
           const fresh=await withCsrf('/api/orders/preview/',payload());
           if (!Number.isSafeInteger(fresh.subtotal) || fresh.subtotal !== previewed.subtotal ||
               JSON.stringify(fresh.items) !== JSON.stringify(previewed.items)) {
             previewed=null;closePayment();renderItems(fresh.items);
-            throw new Error('Giá hoa hoặc sản phẩm đã đổi. Vui lòng kiểm tra lại trước khi chuyển khoản. Nếu đã chuyển, liên hệ shop ngay để được hỗ trợ.');
+            throw new Error('Giá hoa đã thay đổi. Nếu bạn đã chuyển khoản, hãy liên hệ shop để được hỗ trợ.');
           }
           if (!submissionId) {
             if (typeof crypto === 'undefined' || !crypto.randomUUID) throw new Error('Trình duyệt không hỗ trợ mã gửi đơn an toàn.');
@@ -768,7 +765,7 @@
           if (sheetsWebsite) data.turnstile_token=captchaToken;
           const result=await withCsrf('/api/orders/paid-submit/',data);
           if (!result.ok || typeof result.order_code !== 'string' || !/^HH[0-9A-F]{12}$/.test(result.order_code))
-            throw new Error('Hệ thống chưa xác nhận ghi nhận đơn. Hãy liên hệ shop, không chuyển khoản lần nữa.');
+            throw new Error('Chưa xác nhận được đơn hàng. Hãy tra cứu đơn hoặc liên hệ shop trước khi thử lại.');
           if (result.subtotal !== fresh.subtotal || result.delivery_fee !== feeClaimed ||
               result.total !== fresh.subtotal + feeClaimed) throw new Error('Phản hồi tổng tiền không khớp. Đã ghi nhận mã đơn ' + result.order_code + '. Vui lòng liên hệ shop.');
           orderSaved=true;
@@ -776,9 +773,9 @@
           submittedCode=actualCode;
           success.hidden=false;
           success.replaceChildren();
-          const title=node('h3','', 'Đã ghi nhận yêu cầu — Chờ shop xác nhận');
+          const title=node('h3','', 'Đã gửi đơn · Chờ xác nhận');
           const code=node('p','', 'Mã đơn: '+actualCode);
-          const statusText=node('p','', 'Khách báo đã chuyển khoản '+money(result.total)+' (bao gồm phí giao '+money(feeClaimed)+'). Shop sẽ kiểm tra giao dịch thực nhận, phí giao và lịch giao.');
+          const statusText=node('p','', 'Shop sẽ kiểm tra chuyển khoản và xác nhận đơn với bạn.');
           const transfer=node('p','', 'Mã đối soát: '+checkoutReference);
           const copy=node('button','hoa-checkout-success-copy','Sao chép mã đơn');copy.type='button';copy.id='hoa-checkout-success-copy';
           const copyFeed=node('span','hoa-checkout-success-feedback');copyFeed.setAttribute('role','status');
@@ -789,16 +786,16 @@
           form.querySelectorAll('input, textarea, select, button').forEach(el=>{if(!success.contains(el))el.disabled=true;});
           try{localStorage.removeItem(CART_KEY);}catch(_){}
           closePayment();
-          message('Đã ghi nhận mã đơn sau khi khách báo chuyển khoản. Đang chờ Admin đối soát.',false);
+          message('', false);
           try{showSuccessModal(actualCode);}catch(ex){console.error('Không mở được modal xác nhận',ex);}
         } catch(ex) {
-          error.textContent=ex.message;
-          if (!paymentStage) message(ex.message,true);
+          error.textContent=friendlyError(ex, true);
+          if (!paymentStage) message(friendlyError(ex, true), true);
         } finally {
           hoaHideLoading();inProgressPayment=false;
           if(sheetsWebsite && !orderSaved && captcha){
             captcha.reset();captchaToken='';
-            if(paymentStage) error.textContent+=' Nếu mã chống robot hết hạn, quay lại Checkout xác minh và thử gửi lại; KHÔNG chuyển khoản lần nữa.';
+            // Xác minh có thể đã hết hạn; khách cần xác minh lại trước khi gửi.
           }
           disableActions();refreshButton();
         }
@@ -817,22 +814,31 @@
         }
         // TUYET DOI KHONG gọi endpoint tạo đơn ở bước này.
         feeStep();
-        message('Chưa tạo đơn. Hãy xác nhận phí giao và chuyển khoản trước khi báo đã chuyển khoản.',false);
-      } catch(error) {message('Không thể mở bước phí giao: '+error.message,true);}
+        message('', false);
+      } catch(error) {message('Không thể tiếp tục: '+friendlyError(error),true);}
       finally{hoaHideLoading();busy=false;disableActions();}
     }
     previewButton.addEventListener('click', doPreview);
     submitButton.addEventListener('click', doSubmit);
 
     async function initialize() {
-      if (!localOnly) {
-        banner.textContent = 'Cổng 5000 chỉ để xem giao diện; muốn thử tạo yêu cầu, mở trang này trên cổng Django 8000.';
-        message('Chức năng gửi yêu cầu không bật tại địa chỉ này.', true);
-        rows.innerHTML = '<tr><td colspan="2">Chế độ giao diện thử, không lấy giá thực từ MySQL.</td></tr>';
-        return;
-      }
+      message('', false);
       try {
         await Promise.resolve(window.HOA_HOE_CATALOG_READY);
+        // Offline/Live Server is a browsing preview only. Render the actual saved
+        // cart from the sample catalog, but never enable payment or order APIs.
+        if (!localOnly && window.HOA_HOE_CATALOG_SYNC_STATE === 'demo') {
+          items = readItems();
+          renderItems();
+          active = Boolean(items.length);
+          ordersEnabled = false;
+          previewButton.textContent = 'Kiểm tra thông tin';
+          message(items.length
+            ? 'Đang xem trước trên máy: giá chỉ để tham khảo, không thể gửi đơn hoặc thanh toán.'
+            : 'Giỏ hàng trống. Vui lòng chọn hoa để tiếp tục.', !items.length);
+          return;
+        }
+        if (!localOnly) throw new Error('Địa chỉ này chưa hỗ trợ đặt hoa.');
         if (window.HOA_HOE_CATALOG_SYNC_STATE !== 'live') throw new Error('Chưa xác minh được giá sản phẩm từ dữ liệu cửa hàng.');
         // Hiển thị giỏ ngay khi giá đã xác minh, ngay cả khi API nhận đơn còn khóa.
         items = readItems();
@@ -844,22 +850,8 @@
         ordersEnabled = Boolean(health.orders_enabled &&
           (sheetsWebsite ? health.public_orders_enabled === true : health.public_orders_enabled === false));
         active = Boolean(items.length);
-        previewButton.textContent = ordersEnabled ? 'Kiểm tra yêu cầu' : 'Kiểm tra thông tin (không gửi đơn)';
-        banner.textContent = ordersEnabled
-          ? (sheetsWebsite
-            ? 'ĐẶT HOA 3 BƯỚC — Chưa tạo đơn ở Checkout. Khách nhập phí đã thống nhất, chuyển khoản rồi mới gửi đơn để shop đối soát.'
-            : 'CHẠY THỬ TRÊN MÁY LOCAL — Gửi yêu cầu sẽ tạo bản ghi trong MySQL; chưa nhận đơn công khai.')
-          : 'CHẾ ĐỘ KIỂM THỬ AN TOÀN — Chỉ kiểm tra thông tin tại trình duyệt. Shop chưa bật nhận đơn, không ghi Google Sheets/MySQL.';
+        previewButton.textContent = 'Kiểm tra đơn';
         if (ordersEnabled && sheetsWebsite) {
-          const label = document.querySelector('label.hoa-checkout-consent');
-          if (label) {
-            // Preserve checkbox and replace text only, no innerHTML from untrusted data.
-            const box = consent;
-            label.replaceChildren(box, document.createTextNode(' Tôi đồng ý cung cấp thông tin để shop xác nhận, xử lý và giao đơn hoa theo '));
-            const link = document.createElement('a');
-            link.href = 'policy.html'; link.textContent = 'chính sách cửa hàng';
-            label.appendChild(link);
-          }
           submitButton.textContent = 'Tiếp tục · Xác nhận phí giao';
           const verifyBox = document.createElement('div');
           verifyBox.id = 'hoa-sheets-turnstile';
@@ -871,23 +863,14 @@
             token => { captchaToken = token; disableActions(); }
           );
         }
-        if (!ordersEnabled && sheetsWebsite) {
-          const label = document.querySelector('label.hoa-checkout-consent');
-          if (label) {
-            label.replaceChildren(consent, document.createTextNode(' Tôi đã đọc và đồng ý với chính sách xử lý thông tin của shop. Chưa thể gửi đơn khi shop đang đóng nhận đơn.'));
-          }
-        }
-        message(!items.length ? 'Giỏ hàng trống. Vui lòng quay về trang Shop chọn hoa.'
-          : ordersEnabled ? 'Điền thông tin, kiểm tra giá hoa rồi tiếp tục xác nhận phí giao. Chưa tạo mã đơn cho đến sau bước báo đã chuyển khoản.'
-          : 'Bạn có thể nhập thông tin và bấm “Kiểm tra thông tin (không gửi đơn)”. Shop chưa bật nhận đơn nên nút Gửi yêu cầu vẫn khóa.', !items.length);
+        message(!items.length
+          ? 'Giỏ hàng trống. Vui lòng chọn hoa để tiếp tục.'
+          : ordersEnabled ? '' : 'Shop hiện tạm ngừng nhận đơn trực tuyến.', !items.length);
       } catch (error) {
         ordersEnabled = false;
         active = window.HOA_HOE_CATALOG_SYNC_STATE === 'live' && items.length > 0;
-        previewButton.textContent = 'Kiểm tra thông tin (không gửi đơn)';
-        banner.textContent = 'TẠM KHÓA GỬI YÊU CẦU — API chưa sẵn sàng. Có thể kiểm tra các trường đã nhập mà không gửi dữ liệu.';
-        message(error.message + (active
-          ? ' Có thể kiểm tra thông tin tại trang; nút Gửi yêu cầu vẫn khóa.'
-          : ' Không thể kiểm tra do danh mục/giỏ chưa được xác minh.'), true);
+        previewButton.textContent = 'Kiểm tra đơn';
+        message('Chưa thể kết nối để xác minh đơn. Vui lòng thử lại sau.', true);
         if (window.HOA_HOE_CATALOG_SYNC_STATE === 'live' && items.length) {
           // Giỏ đã được vẽ bằng dữ liệu giá API: giữ nguyên danh sách và tổng tiền.
         } else {
@@ -907,8 +890,8 @@
             amount.textContent = 'Chưa xác minh';
             tr.append(name, amount); rows.appendChild(tr);
           });
-          if (!rows.childElementCount) rows.innerHTML = '<tr><td colspan="2">Giỏ hàng trống hoặc chưa có dữ liệu.</td></tr>';
-          total.textContent = 'Chưa xác minh giá';
+          if (!rows.childElementCount) rows.innerHTML = '<tr><td colspan="2">Chưa có sản phẩm trong giỏ.</td></tr>';
+          total.textContent = '—';
         }
       } finally {disableActions();}
     }
