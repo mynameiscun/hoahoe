@@ -164,7 +164,7 @@
 
       const warning = document.createElement('p');
       warning.className = 'hoa-pay-shop__note';
-      warning.textContent = 'Lưu ý: QR ảnh của shop có thể không tự điền số tiền hoặc mã đơn. Hãy nhập đúng tổng tiền và mã đơn phía trên. Chỉ Admin được xác nhận đã nhận tiền sau khi đối soát ngân hàng.';
+      warning.textContent = 'Lưu ý: Ảnh QR có thể không tự điền số tiền hoặc nội dung chuyển khoản. Hãy kiểm tra đúng tổng tiền và mã đơn trước khi chuyển. Cửa hàng sẽ xác nhận sau khi đối soát giao dịch.';
       frame.appendChild(warning);
       return frame;
     }
@@ -183,13 +183,13 @@
       }
       // Step 12.5E payment_reported â€” Khach da BAO chuyen khoan; khong mo QR lan hai.
       if (order.payment_reported === true) {
-        instructions.textContent = 'Ban da bao chuyen khoan cho don nay. Hoa Hoe dang cho Admin doi soat so tien thuc nhan va phi giao da thong nhat. KHONG chuyen khoan lan nua.';
+        instructions.textContent = 'Bạn đã báo chuyển khoản cho đơn này. Hoa Hoè đang kiểm tra giao dịch và phí giao đã thống nhất. Vui lòng không chuyển khoản thêm lần nữa.';
         panel.appendChild(instructions);
-        panel.append(makeRow('Tien hoa', ui.money(order.subtotal)));
+        panel.append(makeRow('Tiền hoa', ui.money(order.subtotal)));
         if (Number.isSafeInteger(order.delivery_fee))
-          panel.append(makeRow('Phi giao khach da khai', ui.money(order.delivery_fee)));
+          panel.append(makeRow('Phí giao đã báo', ui.money(order.delivery_fee)));
         if (Number.isSafeInteger(order.total))
-          panel.append(makeRow('Tong da bao chuyen', ui.money(order.total)));
+          panel.append(makeRow('Tổng tiền đã báo chuyển', ui.money(order.total)));
         container.appendChild(panel);
         return container;
       }
@@ -202,9 +202,9 @@
         panel.appendChild(instructions);container.appendChild(panel);return container;
       }
       panel.append(makeRow('Tiền hoa',ui.money(order.subtotal)));
-      panel.append(makeRow('Phí giao đã được Admin chốt',ui.money(order.delivery_fee)));
+      panel.append(makeRow('Phí giao đã xác nhận',ui.money(order.delivery_fee)));
       const sum=makeRow('Tổng chuyển khoản một lần',ui.money(order.total));sum.classList.add('hoa-pay-total');panel.appendChild(sum);
-      instructions.textContent='Chỉ tiếp tục khi bạn đã thống nhất phí giao với shop. Giá ở bảng tham khảo không thay thế số tiền Admin đã chốt.';
+      instructions.textContent='Chỉ tiếp tục khi bạn đã thống nhất phí giao với cửa hàng. Bảng phí tham khảo không thay thế tổng tiền đã được xác nhận.';
       panel.appendChild(instructions);
       const consent=document.createElement('label');consent.className='hoa-pay-check';
       const checkbox=document.createElement('input');checkbox.type='checkbox';
@@ -220,7 +220,7 @@
         Number.isSafeInteger(info.amount) && info.amount===order.total &&
         info.transfer_content===order.order_code;
       if (!valid) {
-        message.textContent='Shop chưa cấu hình QR ngân hàng trong Cloudflare hoặc thông tin thanh toán chưa hợp lệ. Chưa chuyển khoản; vui lòng liên hệ shop.';
+        message.textContent='Chưa có thông tin chuyển khoản hợp lệ cho đơn này. Vui lòng liên hệ cửa hàng và chưa chuyển khoản lúc này.';
       }
       checkbox.disabled=!valid;
       checkbox.addEventListener('change',()=>{reveal.disabled = !checkbox.checked || !valid;});

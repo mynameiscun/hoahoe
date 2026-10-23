@@ -55,7 +55,7 @@
     RATES.forEach(function(pair) {const row=el('tr');row.append(el('td','',pair[0]),el('td','',pair[1]));tbody.append(row);});
     table.append(tbody);
     details.appendChild(table);
-    details.appendChild(el('p','hoa-ship-note','Dùng tên Quận/Huyện cũ (trước sáp nhập); Quận 8 chỉ tính một lần. Phí theo Grab và địa chỉ đặc biệt cần báo giá riêng.'));
+    details.appendChild(el('p','hoa-ship-note','Tên quận/huyện được ghi theo địa giới cũ. Với một số khu vực và địa chỉ đặc biệt, cửa hàng sẽ báo phí giao riêng.'));
     section.append(details, link());
     return section;
   }

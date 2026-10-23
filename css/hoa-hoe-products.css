@@ -18,3 +18,38 @@
 /* Fiama gốc đặt ảnh dưới nền bằng z-index:-1; khi thêm nền sáng cho thẻ hoa phải đưa ảnh lên lại. */
 .ltn__product-item .product-img img { z-index: 0; }
 .ltn__product-item .product-hover-action { z-index: 2; }
+
+
+/* Hoa Hoè — font chữ cho các khung thông tin khách hàng.
+   Chỉ áp dụng thông báo/trạng thái; không đổi typography menu và banner thương hiệu.
+   Segoe UI / Arial có đủ dấu tiếng Việt và không phụ thuộc font trang trí. */
+body .hoa-draft-notice,
+body .hoa-detail-api-status,
+body .hoa-no-results,
+body .flower-cart-demo-note,
+body .flower-notice,
+body .flower-inline-info,
+body .hoa-track-result,
+body .hoa-track-advice,
+body .hoa-checkout-banner,
+body .hoa-checkout-status,
+body .hoa-checkout-fee-disclaimer,
+body .hoa-ship-guide,
+body .hoa-ship-warning,
+body .hoa-ship-note,
+body .hoa-pay-muted,
+body .hoa-pay-card,
+body .hoa-pay-shop,
+body .hoa-pay-shop__note {
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-weight: 400;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Các khung thông báo chỉ xuất hiện khi có nội dung thực sự cần đọc. */
+body .hoa-draft-notice:empty,
+body .hoa-detail-api-status:empty,
+body .flower-cart-demo-note[hidden] {
+  display: none !important;
+}

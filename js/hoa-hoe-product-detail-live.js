@@ -174,9 +174,9 @@
     });
     updateGallery(p);
     updateRelated(catalog, p.id);
-    status.textContent = window.HOA_HOE_CATALOG_SYNC_STATE === 'live'
-      ? 'Giá và thông tin được đồng bộ từ dữ liệu cửa hàng. Phí giao được xác nhận riêng.'
-      : 'Bản xem giao diện (cổng 5000). Giá và giỏ hàng chỉ dùng để thử nghiệm.';
+    // Giá và tên đã có trên trang; không lặp lại thông tin kỹ thuật cho người mua.
+    status.hidden = window.HOA_HOE_CATALOG_SYNC_STATE === 'live';
+    status.textContent = status.hidden ? '' : 'Bạn đang xem bản xem trước. Chưa thể đặt hàng từ trang này.';
   }
 
   function start() {

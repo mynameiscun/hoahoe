@@ -47,7 +47,8 @@
 
   var banner = document.createElement('p');
   banner.setAttribute('role', 'status');
-  banner.style.cssText = 'margin:0 0 18px; padding:10px 14px; border:1px solid #ddd; font-size:14px;';
+  banner.className = 'hoa-draft-notice';
+  banner.style.marginBottom = '18px';
   banner.textContent = 'Đang tải sản phẩm và bảng giá mới nhất… Bạn vẫn có thể xem mẫu hoa trong lúc chờ.';
   options.parentNode.insertBefore(banner, options);
 
@@ -175,9 +176,9 @@
       [grid, list].forEach(function (box) { box.removeAttribute('aria-busy'); });
       window.HOA_HOE_CATALOG_SYNC_STATE = 'live';
       notifyCatalogChange();
-      banner.textContent = rows.length
-        ? 'Đang hiển thị ' + rows.length + ' sản phẩm từ cửa hàng. Giá được xác minh lại khi gửi đơn.'
-        : 'Hiện chưa có bó hoa nào đang kinh doanh.';
+      // Sản phẩm đã hiển thị thành công: không cần thêm một khung thông báo lặp lại.
+      banner.hidden = rows.length > 0;
+      banner.textContent = rows.length ? '' : 'Hiện chưa có bó hoa nào đang kinh doanh.';
       return 'live';
     })
     .catch(function (error) {

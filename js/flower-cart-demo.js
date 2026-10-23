@@ -136,7 +136,7 @@
       }).join('');
     }
     var totals=one('.shoping-cart-total table tbody');
-    if(totals) totals.innerHTML='<tr><td>Tạm tính tiền hoa</td><td>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</td></tr><tr><td>Phí giao hoa</td><td>Chưa tính — Admin sẽ cấu hình theo vùng</td></tr><tr><td><strong>Tiền sản phẩm tạm tính</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</strong></td></tr>';
+    if(totals) totals.innerHTML='<tr><td>Tạm tính tiền hoa</td><td>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</td></tr><tr><td>Phí giao hoa</td><td>Xác nhận khi đặt hàng</td></tr><tr><td><strong>Tiền sản phẩm tạm tính</strong></td><td><strong>'+(list.some(function(x){return x.pending;})?priceStatus():money(subtotal(list)))+'</strong></td></tr>';
     // Điều hướng tới Checkout luôn khả dụng khi có sản phẩm.
     // Chỉ Checkout/API mới quyết định có thể gửi đơn hay không.
     var button = one('.shoping-cart-total a[href="checkout.html"]');
@@ -166,11 +166,12 @@
     }
     if (note) {
       var state = window.HOA_HOE_CATALOG_SYNC_STATE;
-      note.textContent = !list.length ? 'Giỏ hoa đang trống.' :
-        verified ? 'Giá hoa sẽ được kiểm tra lần cuối khi xác nhận đơn. Phí giao tính riêng.' :
-        previewMode ? 'Bạn đang xem bản thử trên máy. Trang đặt hoa chỉ cho xem giao diện, chưa thể gửi đơn.' :
-        state === 'loading' ? 'Đang kết nối để kiểm tra giá. Bạn có thể mở trang đặt hoa; hệ thống chỉ nhận đơn khi giá được xác minh.' :
-        'Chưa xác minh được giá. Bạn có thể mở trang đặt hoa, nhưng chưa thể gửi đơn đến khi kết nối được khôi phục.';
+      // Đừng lặp lại thông báo khi giỏ bình thường hoặc đang trống.
+      note.hidden = !list.length || verified;
+      note.textContent = note.hidden ? '' :
+        previewMode ? 'Bạn đang xem bản xem trước trên máy. Chưa thể gửi đơn từ trang này.' :
+        state === 'loading' ? 'Đang kiểm tra giá sản phẩm. Hệ thống chỉ tiếp nhận đơn khi giá được xác minh.' :
+        'Chưa xác minh được giá sản phẩm. Vui lòng thử tải lại trang trước khi đặt hoa.';
     }
     var coupon=one('.cart-coupon'); if(coupon) coupon.style.display='none';
     var update=all('button').find(function(b){return text(b).toLowerCase()==='update cart';});if(update) update.style.display='none';
