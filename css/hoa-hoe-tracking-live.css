@@ -24,3 +24,76 @@
 @media (max-width: 540px) {
   .hoa-track-row { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* Form tra cuu: dong bo input text/tel, chi tac dong den trang tra cuu don. */
+#flower-order-lookup .flower-field {
+  margin-bottom: 22px;
+}
+
+#flower-order-lookup .flower-field label {
+  display: block;
+  margin-bottom: 9px;
+  color: #333e36;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+#flower-order-lookup .flower-field input[type="text"],
+#flower-order-lookup .flower-field input[type="tel"] {
+  display: block;
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 17px;
+  box-sizing: border-box;
+  border: 1px solid #d7e0d9;
+  border-radius: 10px !important;
+  background-color: #fbfcfa;
+  color: #29362f;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  box-shadow: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+#flower-order-lookup .flower-field input[type="text"]::placeholder,
+#flower-order-lookup .flower-field input[type="tel"]::placeholder {
+  color: #929d96;
+  opacity: 1;
+  font-size: 14px;
+}
+
+#flower-order-lookup .flower-field input[type="text"]:hover,
+#flower-order-lookup .flower-field input[type="tel"]:hover {
+  border-color: #aebeb3;
+  background-color: #fff;
+}
+
+#flower-order-lookup .flower-field input[type="text"]:focus,
+#flower-order-lookup .flower-field input[type="tel"]:focus {
+  border: 1px solid #6d977d;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(109, 151, 125, .15);
+}
+
+@media (max-width: 767px) {
+  #flower-order-lookup .flower-field input[type="text"],
+  #flower-order-lookup .flower-field input[type="tel"] {
+    height: 52px;
+    min-height: 52px;
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #flower-order-lookup .flower-field input[type="text"],
+  #flower-order-lookup .flower-field input[type="tel"] {
+    transition: none;
+  }
+}
